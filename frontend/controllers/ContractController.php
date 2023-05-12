@@ -81,7 +81,8 @@ class ContractController extends Controller
             $transaction = \Yii::$app->db->beginTransaction();
             try {
                 if ($model->load($this->request->post())) {
-                    $so_number = $this->request->post('so_number');
+                    // $so_number = $this->request->post('so_number');
+                    $so_number = $model->so_number;
 
                     if (!isset($so_number) && empty($so_number)) {
                         $so_number = "";
@@ -89,7 +90,11 @@ class ContractController extends Controller
 
                     $exist = Client::find()->where(['name' => $this->request->post('client_name')])->count();
                     $clientId = 0;
-                    if ($exist == 0 && !isset($so_number) && empty($so_number)) {
+
+                    // if ($exist == 0 && !isset($so_number) && empty($so_number)) {
+                    if ($exist == 0) {
+
+
                         $modelCLient->name = $this->request->post('client_name');
                         $modelCLient->address = '';
                         $modelCLient->phone_number = '';
@@ -146,19 +151,21 @@ class ContractController extends Controller
         $client = $model->getClient()->one();
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            $so_number = $this->request->post('so_number');
+            // $so_number = $this->request->post('so_number');
+            $so_number = $model->so_number;
+
             $clientId = $model->getOldAttribute('client_id');
 
             if (!isset($so_number) && empty($so_number)) {
                 $so_number = "";
             }
-
-            if ($model->getOldAttribute('so_number') != $so_number) {
-
+            // if ($model->getOldAttribute('so_number') != $so_number) {
+            if ($model->getOldAttribute('client_name') != $this->request->post('client_name')) {
                 $modelCLient = new Client();
                 $exist = Client::find()->where(['name' => $this->request->post('client_name')])->count();
                 $clientId = 0;
-                if ($exist == 0 && isset($so_number) && !empty($so_number)) {
+                // if ($exist == 0 && isset($so_number) && !empty($so_number)) {
+                if ($exist == 0) {
 
                     $modelCLient->name = $this->request->post('client_name');
                     $modelCLient->address = '';
@@ -172,8 +179,10 @@ class ContractController extends Controller
                     }
 
                     $clientId = $modelCLient->id;
+                } else {
+                    $exist = Client::find()->where(['name' => $this->request->post('client_name')])->one();
+                    $clientId = $exist->id;
                 }
-
             }
 
             $model->so_number = $so_number;

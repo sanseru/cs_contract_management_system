@@ -94,17 +94,15 @@ $this->registerCss("
                 <?= $form->field($model, 'contract_number')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md-4">
-                <?= Html::label('SO Number', 'so_number', ['class' => 'form-label']) ?>
-                <?= Html::dropDownList('so_number', 'asasa', [], [
-                    'id' => 'so_number',
-                    'class' => 'form-control',
-                    'prompt' => 'Select a So Number ...',
-                ]) ?>
+                <!-- <?php // Html::label('SO Number', 'so_number', ['class' => 'form-label']) ?> -->
+                <!-- <?php // Html::dropDownList('so_number', '', [], ['id' => 'so_number','class' => 'form-control','prompt' => 'Select a So Number ...',]) ?> -->
+                <?= $form->field($model, 'so_number')->textInput(['maxlength' => true]) ?>
+
             </div>
             <div class="col-md-4">
                 <?= Html::label('Client Name', 'client_name', ['class' => 'form-label']) ?>
 
-                <?= Html::input('text', 'client_name', null, ['class' => 'form-control', 'id' => 'client_name', 'readonly' => true]) ?>
+                <?= Html::input('text', 'client_name', null, ['class' => 'form-control', 'id' => 'client_name', 'readonly' => false]) ?>
             </div>
         </div>
         <div class="row">
