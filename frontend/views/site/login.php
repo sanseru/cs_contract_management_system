@@ -26,7 +26,7 @@ AppAsset::register($this);
 <style>
     .logincard {
 
-        background-color: #fff;
+        background-color: #AFD3E2;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -46,7 +46,13 @@ AppAsset::register($this);
     .account {
 
         font-weight: 500;
-        font-size: 17px;
+        font-size: 14px;
+    }
+
+    .account {
+
+        font-weight: 500;
+        font-size: 23px;
     }
 
     .contact {
@@ -121,7 +127,9 @@ AppAsset::register($this);
 
     <div class="card border border-3">
         <div class="text-center intro">
-            <img src="https://i.imgur.com/uNiv4bD.png" width="160">
+            <span class="d-block account mb-4">Contract Management System</span>
+            <?= Html::img('@web/images/login.svg', ['alt' => 'Login Image', 'width' => 160]); ?>
+            <!-- <img src="https://i.imgur.com/uNiv4bD.png" width="160"> -->
             <span class="d-block account">Don't have account yet?</span>
             <span class="contact">Contact Administrator</span>
         </div>
@@ -130,13 +138,13 @@ AppAsset::register($this);
             <h4>Log In.</h4>
             <span>Login with your credentials</span>
             <div class="mt-3 inputbox">
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder'=> "username"])->label(false) ?>
+                <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder' => "username"])->label(false) ?>
 
                 <!-- <input type="text" class="form-control" name="" placeholder="Email"> -->
                 <i class="fa fa-user"></i>
             </div>
             <div class="inputbox">
-                <?= $form->field($model, 'password')->passwordInput(['placeholder'=> "Password"])->label(false) ?>
+                <?= $form->field($model, 'password')->passwordInput(['placeholder' => "Password"])->label(false) ?>
 
                 <!-- <input type="text" class="form-control" name="" placeholder="Password"> -->
                 <i class="fa fa-lock"></i>
