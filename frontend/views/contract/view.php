@@ -93,43 +93,36 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="container py-2">
                 <h2 class="font-weight-light text-center text-muted py-3">Timeline</h2>
                 <!-- timeline item 1 -->
-                <div class="row">
-                    <!-- timeline item 1 left dot -->
-                    <div class="col-auto text-center flex-column d-none d-sm-flex">
-                        <div class="row h-50">
-                            <div class="col">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                        <h5 class="m-2">
-                            <span class="badge rounded-pill bg-light border">&nbsp;</span>
-                        </h5>
-                        <div class="row h-50">
-                            <div class="col border-end">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                    </div>
-                    <!-- timeline item 1 event content -->
-                    <div class="col py-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="float-right text-muted">Mon, Jan 9th 2020 7:00 AM</div>
-                                <h4 class="card-title text-muted">Day 1 Orientation</h4>
-                                <p class="card-text">Welcome to the campus, introduction and get started with the tour.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <?php
-                foreach ($activity as $event) : ?>
+                foreach ($activity as $index => $event) : ?>
+
+                    <?php
+                    if ($event['status'] == 2) {
+                        $textColor = 'text-success';
+                        $bg = 'bg-success animate__animated animate__pulse pulse';
+                        $border = 'border border-3 border-success';
+                    } elseif ($event['status'] == 1) {
+                        $textColor = '';
+                        $bg = 'bg-light border';
+                        $border = '';
+
+                    } else {
+                        $textColor = 'text-muted';
+                        $bg = 'bg-light border';
+                        $border = '';
+
+                    }
+                    ?>
+
                     <div class="row">
                         <!-- timeline item left dot -->
                         <div class="col-auto text-center flex-column d-none d-sm-flex">
                             <div class="row h-50">
-                                <div class="col border-end">&nbsp;</div>
+                                <div class="col <?= $index == 0 ? '': 'border-end' ?>">&nbsp;</div>
                                 <div class="col">&nbsp;</div>
                             </div>
                             <h5 class="m-2">
-                                <span class="badge rounded-pill bg-success animate__animated animate__pulse pulse">&nbsp;</span>
+                                <span class="badge rounded-pill <?= $bg ?>">&nbsp;</span>
                             </h5>
                             <div class="row h-50">
                                 <div class="col border-end">&nbsp;</div>
@@ -138,13 +131,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <!-- timeline item event content -->
                         <div class="col py-2">
-                            <div class="card">
+                            <div class="card <?= $border ?> ">
                                 <div class="card-body">
-                                    <div class="float-right text-success"><?= $event['created_date'] ?></div>
-                                    <h4 class="card-title text-success"><?= $event['activity'] ?></h4>
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-target="#t<?=  $event['id']  ?>_details" data-bs-toggle="collapse">Show Details ▼</button>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="float-right <?= $textColor ?>"><?= date('D, jS M Y g:i A', strtotime($event['created_date'])); ?></div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item" href="<?= Url::toRoute(['activity-contract/update/', 'id' => $event['id'], 'contract_id' => $model->id]); ?>">Edit</a></li>
+                                                <li><a class="dropdown-item" data-confirm="Are you sure you want to delete this item?" data-method="post" href="<?= Url::toRoute(['activity-contract/delete/', 'id' => $event['id']]); ?>">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <h4 class="card-title <?= $textColor ?>"><?= $event['activity'] ?></h4>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-target="#t<?= $event['id']  ?>_details" data-bs-toggle="collapse">Show Details ▼</button>
 
-                                    <div class="collapse border" id="t<?=  $event['id']  ?>_details">
+                                    <div class="collapse border" id="t<?= $event['id']  ?>_details">
                                         <div class="p-2 font-monospace">
                                             <p class="card-text"><?= $event['description'] ?></p>
 

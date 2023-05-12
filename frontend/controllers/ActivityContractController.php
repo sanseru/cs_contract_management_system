@@ -7,6 +7,7 @@ use frontend\models\ActivityContractSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ActivityContractController implements the CRUD actions for ActivityContract model.
@@ -97,16 +98,17 @@ class ActivityContractController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $contract_id)
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save(false)) {
+            return $this->redirect(['contract/view', 'id' => $contract_id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'id' => $contract_id
         ]);
     }
 
@@ -138,5 +140,33 @@ class ActivityContractController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+
+
+    public function actionUploadImage()
+    {
+        if (\Yii::$app->request->isAjax) {
+            $image = UploadedFile::getInstanceByName('image');
+            $filename = uniqid() . time() . '.' . $image->extension;
+            $image->saveAs('uploads/' . $filename);
+            // if ($image->upload()) {
+            //     $imageUrl = \Yii::getAlias('@web/uploads/') . $image->imageFile->name;
+            //     var_dump($imageUrl);die;
+            //     \Yii::$app->response->data = [
+            //         'filelink' => $imageUrl,
+            //     ];
+            // }
+            // process the data here
+            //     return json_encode(['success' => true]); // return a JSON response
+            return json_encode([
+                'success' => true,
+                'url' => \Yii::$app->urlManager->createUrl(['uploads/'. $filename])
+            ]); // return a JSON response
+
+        } else {
+            throw new \yii\web\BadRequestHttpException('Invalid request'); // throw an error if the request is not AJAX
+        }
     }
 }

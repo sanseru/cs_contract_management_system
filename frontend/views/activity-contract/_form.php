@@ -10,11 +10,40 @@ use yii\bootstrap5\ActiveForm;
 $this->registerJs(
     <<<JS
     $(document).ready(function() {
-    $('#desc').summernote({
-        height: 280
+        $('#desc').summernote({
+            height: ($(window).height() - 500),
+            callbacks: {
+                onImageUpload: function(image) {
+                    uploadImage(image[0]);
+                }
+            }
+        });
+    });
 
+
+    function uploadImage(image) {
+    var data = new FormData();
+    data.append("image", image);
+    $.ajax({
+        url: 'upload-image',
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: data,
+        type: "post",
+        success: function(url) {
+            var url = JSON.parse(url);
+            console.log(url);
+            var image = $('<img>').attr('src', url.url);
+            $('#desc').summernote("insertNode", image[0]);
+        },
+        error: function(data) {
+            console.log(data);
+        }
     });
-    });
+}
+
+
 JS
 );
 
@@ -31,10 +60,13 @@ JS
         </div>
     </div>
     <?= $form->field($model, 'description')->textarea(['rows' => 80, 'id' => 'desc']) ?>
-    <?= $form->field($model, 'status')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'status')->dropDownList([1 => 'Open', 2 => 'On Proggress', 9 => 'Close'], [
+        'prompt' => '- Select Status -',         'value' => $model->isNewRecord ? 1 : $model->status
+    ]) ?>
+
     <?= $form->field($model, 'contract_id')->hiddenInput(['value' => $id])->label(false) ?>
 
-    <div class="form-group">
+    <div class="form-group d-md-flex justify-content-md-end">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary']) ?>
     </div>
 
