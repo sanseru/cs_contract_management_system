@@ -28,15 +28,6 @@ AppAsset::register($this);
     <?php $this->beginBody() ?>
 
     <header>
-        <style>
-            .bg-navbarnavypastel {
-                background-color: #537188;
-            }
-
-            .bg-beigebtn {
-                background-color: #CBB279;
-            }
-        </style>
         <?php
         NavBar::begin([
             'brandLabel' => Yii::$app->name,
@@ -69,7 +60,7 @@ AppAsset::register($this);
             echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
                 . Html::submitButton(
                     'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout text-decoration-none']
+                    ['class' => 'btn btn-link logout text-decoration-none text-white']
                 )
                 . Html::endForm();
         }
@@ -80,6 +71,9 @@ AppAsset::register($this);
     <main role="main" class="flex-shrink-0">
         <div class="container">
             <?= Breadcrumbs::widget([
+                'options' => [
+                    'class' => '', // add class to the <ol> tag
+                ],
                 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
             ]) ?>
             <?= Alert::widget() ?>

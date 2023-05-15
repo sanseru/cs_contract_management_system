@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var frontend\models\ActivityContract $model */
 
 $this->title = 'Create Activity Contract';
-$this->params['breadcrumbs'][] = ['label' => 'Activity Contracts', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Activity Contracts', 'url' => ['contract/view', 'id' => $id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activity-contract-create">

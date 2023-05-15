@@ -87,7 +87,8 @@ class ContractController extends Controller
         $model = new Contract();
         $modelCLient = new Client();
         if ($this->request->isPost) {
-            // print_r($this->request->post());die;
+            // print_r($model->activity);die;
+
             $transaction = \Yii::$app->db->beginTransaction();
             try {
                 if ($model->load($this->request->post())) {
@@ -100,7 +101,6 @@ class ContractController extends Controller
 
                     $exist = Client::find()->where(['name' => $this->request->post('client_name')])->count();
                     $clientId = 0;
-
                     // if ($exist == 0 && !isset($so_number) && empty($so_number)) {
                     if ($exist == 0) {
 
@@ -119,7 +119,8 @@ class ContractController extends Controller
 
                         $clientId = $modelCLient->id;
                     }
-
+                    $activity = implode(',', $this->request->post('Contract')['activity']);
+                    $model->activity = $activity;
                     $model->so_number = $so_number;
                     $model->client_id = $clientId;
                     $model->start_date = date('Y-m-d', strtotime($model->start_date));
@@ -172,9 +173,11 @@ class ContractController extends Controller
                 $so_number = "";
             }
             // if ($model->getOldAttribute('so_number') != $so_number) {
+            // print_r($this->request->post('client_name'));die;
+
             if ($model->getOldAttribute('client_name') != $this->request->post('client_name')) {
                 $modelCLient = new Client();
-                $exist = Client::find()->where(['name' => $this->request->post('client_name')])->count();
+                $exist = Client::find()->where(['id' => $this->request->post('client_name')])->count();
                 $clientId = 0;
                 // if ($exist == 0 && isset($so_number) && !empty($so_number)) {
                 if ($exist == 0) {
@@ -192,10 +195,12 @@ class ContractController extends Controller
 
                     $clientId = $modelCLient->id;
                 } else {
-                    $exist = Client::find()->where(['name' => $this->request->post('client_name')])->one();
+                    $exist = Client::find()->where(['id' => $this->request->post('client_name')])->one();
                     $clientId = $exist->id;
                 }
             }
+            $activity = implode(',', $this->request->post('Contract')['activity']);
+            $model->activity = $activity;
 
             $model->so_number = $so_number;
             $model->client_id = $clientId;
@@ -206,6 +211,7 @@ class ContractController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $model->activity = explode(',', $model->activity);
         return $this->render('update', [
             'model' => $model,
             'client' => $client,

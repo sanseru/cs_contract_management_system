@@ -18,7 +18,7 @@ class m230510_025417_create_client_table extends Migration
             'address' => $this->text()->notNull(),
             'phone_number' => $this->string(20)->notNull(),
             'email' => $this->string()->notNull(),
-            'created_by' => $this->integer()->notNull(),
+            'created_by' => $this->integer(),
             'created_at' => $this->dateTime()->notNull(),
             'updated_by' => $this->integer(),
             'updated_at' => $this->dateTime()->notNull(),
