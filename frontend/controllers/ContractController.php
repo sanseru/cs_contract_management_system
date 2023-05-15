@@ -8,6 +8,7 @@ use frontend\models\ContractSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * ContractController implements the CRUD actions for Contract model.
@@ -26,6 +27,15 @@ class ContractController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -99,6 +109,7 @@ class ContractController extends Controller
                         $modelCLient->address = '';
                         $modelCLient->phone_number = '';
                         $modelCLient->email = '';
+                        $modelCLient->created_by = \Yii::$app->user->identity->id;
                         $modelCLient->created_at = date('Y-m-d H:i:s');
                         $modelCLient->updated_at = date('Y-m-d H:i:s');
 
@@ -114,6 +125,7 @@ class ContractController extends Controller
                     $model->start_date = date('Y-m-d', strtotime($model->start_date));
                     $model->end_date = date('Y-m-d', strtotime($model->end_date));
                     $model->created_at = date('Y-m-d H:i:s');
+                    $model->created_by = \Yii::$app->user->identity->id;
                     $model->updated_at = date('Y-m-d H:i:s');
 
 

@@ -37,7 +37,7 @@ class Contract extends \yii\db\ActiveRecord
         return [
             [['contract_number', 'client_id', 'so_number', 'contract_type', 'activity', 'start_date', 'end_date', 'created_at', 'updated_at'], 'required'],
             [['client_id', 'status'], 'integer'],
-            [['start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
+            [['start_date', 'end_date', 'created_at', 'updated_at','created_by', 'updated_by'], 'safe'],
             [['contract_number', 'so_number', 'contract_type', 'activity'], 'string', 'max' => 255],
             [['contract_number'], 'unique'],
         ];

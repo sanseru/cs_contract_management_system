@@ -22,7 +22,9 @@ class m230510_015834_create_contract_table extends Migration
             'start_date' => $this->date()->notNull(),
             'end_date' => $this->date()->notNull(),
             'status' => $this->integer()->defaultValue(0),
+            'created_by' => $this->integer()->notNull(),
             'created_at' => $this->dateTime()->notNull(),
+            'updated_by' => $this->integer(),
             'updated_at' => $this->dateTime()->notNull(),
         ]);
 
@@ -32,6 +34,7 @@ class m230510_015834_create_contract_table extends Migration
             'contract_number',
             true
         );
+
     }
 
     /**
@@ -41,6 +44,5 @@ class m230510_015834_create_contract_table extends Migration
     {
         $this->dropIndex('idx-contract-contract_number', '{{%contract}}');
         $this->dropTable('{{%contract}}');
-
     }
 }

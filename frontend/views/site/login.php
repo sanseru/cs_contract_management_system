@@ -7,10 +7,16 @@
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 use frontend\assets\AppAsset;
+use yii\web\View;
 
 $this->title = 'Login';
 // $this->params['breadcrumbs'][] = $this->title;
 AppAsset::register($this);
+
+
+$this->registerCssFile("@web/css/login.css", [
+    'depends' => [\yii\bootstrap5\BootstrapAsset::class],
+], 'login');
 
 ?>
 <?php $this->beginPage() ?>
@@ -23,108 +29,7 @@ AppAsset::register($this);
     <?php $this->head() ?>
 </head>
 <?php $this->beginBody() ?>
-<style>
-    .logincard {
-
-        background-color: #AFD3E2;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-
-    .card {
-
-        width: 400px;
-        padding: 20px;
-        border: none;
-    }
-
-
-
-    .account {
-
-        font-weight: 500;
-        font-size: 14px;
-    }
-
-    .account {
-
-        font-weight: 500;
-        font-size: 23px;
-    }
-
-    .contact {
-
-        font-size: 13px;
-    }
-
-    .form-control {
-        text-indent: 14px;
-    }
-
-    .form-control:focus {
-        color: #495057;
-        background-color: #fff;
-        border-color: #4a148c;
-        outline: 0;
-        box-shadow: none;
-    }
-
-    .inputbox {
-
-        margin-bottom: 10px;
-        position: relative;
-    }
-
-    .inputbox i {
-
-        position: absolute;
-        left: 8px;
-        top: 12px;
-        color: #dadada;
-    }
-
-
-    .form-check-label {
-
-        font-size: 13px;
-    }
-
-    .form-check-input {
-        width: 14px;
-        height: 15px;
-        margin-top: 5px;
-
-    }
-
-    .forgot {
-        font-size: 14px;
-        text-decoration: none;
-        color: #4A148C;
-    }
-
-    .mail {
-
-        color: #4a148c;
-        text-decoration: none;
-    }
-
-
-    .form-check {
-
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        color: #fff;
-        background-color: #4A148C;
-        border-color: #4A148C;
-    }
-</style>
 <div class="logincard">
-
     <div class="card border border-3">
         <div class="text-center intro">
             <span class="d-block account mb-4">Contract Management System</span>

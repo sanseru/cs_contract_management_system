@@ -7,6 +7,7 @@ use frontend\models\ClientSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * ClientController implements the CRUD actions for Client model.
@@ -130,5 +131,24 @@ class ClientController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionSelect2Get()
+    {
+        $clients =  Client::find()->select(['id', 'name'])->asArray()->all();
+        // Format the data as required by Select2
+        $data = [];
+        foreach ($clients as $client) {
+            $data[] = [
+                'id' => $client['id'],
+                'text' => $client['name'],
+            ];
+        }
+
+        // Output the data as JSON
+        return Json::encode([
+            'results' => $data,
+            'pagination' => ['more' => false], // Pagination not implemented in this example
+        ]);
     }
 }
