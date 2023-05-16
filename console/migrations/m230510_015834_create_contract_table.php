@@ -35,7 +35,6 @@ class m230510_015834_create_contract_table extends Migration
             'contract_number',
             true
         );
-
     }
 
     /**

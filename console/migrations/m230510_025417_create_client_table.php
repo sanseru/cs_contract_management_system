@@ -30,9 +30,7 @@ class m230510_025417_create_client_table extends Migration
             'name',
             true
         );
-
-        // Menambahkann foreignkey Ke table contract
-
+        
         $this->addForeignKey(
             'fk-contract-client_id',
             '{{%contract}}',
@@ -48,7 +46,7 @@ class m230510_025417_create_client_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropIndex('idx-client-name', '{{%client}}');
+        // $this->dropIndex('idx-client-name', '{{%client}}');
         $this->dropTable('{{%client}}');
 
     }

@@ -38,11 +38,17 @@ AppAsset::register($this);
         ]);
         $menuItems = [
             ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Contract', 'url' => ['/contract/index']],
             [
-                'label' => 'Contract',
+                'label' => 'Configuration',
                 'items' => [
-                    ['label' => 'Client List', 'url' => ['/client/index']],
-                    ['label' => 'Contract List', 'url' => ['/contract/index']],
+                    ['label' => 'Client', 'url' => ['/client/index']],
+                    ['label' => 'Activity', 'url' => ['/master-activity/index']],
+                    ['label' => 'Item', 'url' => ['/item/index']],
+                    ['label' => 'Costing', 'url' => ['/costing/index']],
+
+
+
                 ],
             ],
         ];

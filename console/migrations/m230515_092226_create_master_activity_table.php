@@ -16,7 +16,7 @@ class m230515_092226_create_master_activity_table extends Migration
             'id' => $this->primaryKey(),
             'activity_code' => $this->string(10),
             'activity_name' => $this->string(50),
-            'created_at' => $this->dateTime()->notNull(),
+            'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime(),
         ]);
 

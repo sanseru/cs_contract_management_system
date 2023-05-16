@@ -2,18 +2,16 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Client;
-use frontend\models\ClientSearch;
+use frontend\models\ClientContract;
+use frontend\models\ClientContractSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\Json;
-use frontend\models\ClientContract;
-use frontend\models\ClientContractSearch;
+
 /**
- * ClientController implements the CRUD actions for Client model.
+ * ClientContractController implements the CRUD actions for ClientContract model.
  */
-class ClientController extends Controller
+class ClientContractController extends Controller
 {
     /**
      * @inheritDoc
@@ -34,16 +32,14 @@ class ClientController extends Controller
     }
 
     /**
-     * Lists all Client models.
+     * Lists all ClientContract models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ClientSearch();
+        $searchModel = new ClientContractSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -52,54 +48,53 @@ class ClientController extends Controller
     }
 
     /**
-     * Displays a single Client model.
+     * Displays a single ClientContract model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $searchModelClientContract = new ClientContractSearch();
-        $dataProviderClientContract = $searchModelClientContract->search($this->request->queryParams);
-        $modelClientContract = new ClientContract();
-        $clientContract = $modelClientContract->getClient()->one();
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'searchModelClientContract' => $searchModelClientContract,
-            'dataProviderClientContract' => $dataProviderClientContract,
-            'modelClientContract' => $modelClientContract,
-            'clientContract' => $clientContract
         ]);
     }
 
     /**
-     * Creates a new Client model.
+     * Creates a new ClientContract model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Client();
+        $model = new ClientContract();
 
-        if ($this->request->isPost) {
+        if ($this->request->isAjax && $this->request->isPost) {
+
             if ($model->load($this->request->post())) {
 
+                $model->start_date = date('Y-m-d', strtotime($model->start_date));
+                $model->end_date = date('Y-m-d', strtotime($model->end_date));
                 $model->created_at = date('Y-m-d H:i:s');
-                $model->updated_at = date('Y-m-d H:i:s');
-                $model->save();
-                return $this->redirect(['view', 'id' => $model->id]);
+                $model->created_by = \Yii::$app->user->identity->id;
+
+                if ($model->save()) {
+                    return json_encode(['status' => 'success']);
+                } else {
+                    return json_encode(['status' => 'error']);
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        // return $this->render('create', [
+        //     'model' => $model,
+        // ]);
     }
 
     /**
-     * Updates an existing Client model.
+     * Updates an existing ClientContract model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -119,7 +114,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Deletes an existing Client model.
+     * Deletes an existing ClientContract model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -127,43 +122,32 @@ class ClientController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $clientId = \Yii::$app->request->get('client');
 
+        if ($model->delete()) {
+            \Yii::$app->session->setFlash('success', 'Delete Success');
+            return $this->redirect(['client/view', 'id' => $clientId]);
+        } else {
+            \Yii::$app->session->setFlash('error', 'Failed Delete Data');
+        }
+    
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Client model based on its primary key value.
+     * Finds the ClientContract model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Client the loaded model
+     * @return ClientContract the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Client::findOne(['id' => $id])) !== null) {
+        if (($model = ClientContract::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionSelect2Get()
-    {
-        $clients =  Client::find()->select(['id', 'name'])->asArray()->all();
-        // Format the data as required by Select2
-        $data = [];
-        foreach ($clients as $client) {
-            $data[] = [
-                'id' => $client['id'],
-                'text' => $client['name'],
-            ];
-        }
-
-        // Output the data as JSON
-        return Json::encode([
-            'results' => $data,
-            'pagination' => ['more' => false], // Pagination not implemented in this example
-        ]);
     }
 }

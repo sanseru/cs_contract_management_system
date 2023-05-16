@@ -2,18 +2,16 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Client;
-use frontend\models\ClientSearch;
+use frontend\models\MasterActivity;
+use frontend\models\MasterActivitySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\Json;
-use frontend\models\ClientContract;
-use frontend\models\ClientContractSearch;
+
 /**
- * ClientController implements the CRUD actions for Client model.
+ * MasterActivityController implements the CRUD actions for MasterActivity model.
  */
-class ClientController extends Controller
+class MasterActivityController extends Controller
 {
     /**
      * @inheritDoc
@@ -34,16 +32,14 @@ class ClientController extends Controller
     }
 
     /**
-     * Lists all Client models.
+     * Lists all MasterActivity models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ClientSearch();
+        $searchModel = new MasterActivitySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -52,41 +48,29 @@ class ClientController extends Controller
     }
 
     /**
-     * Displays a single Client model.
+     * Displays a single MasterActivity model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $searchModelClientContract = new ClientContractSearch();
-        $dataProviderClientContract = $searchModelClientContract->search($this->request->queryParams);
-        $modelClientContract = new ClientContract();
-        $clientContract = $modelClientContract->getClient()->one();
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'searchModelClientContract' => $searchModelClientContract,
-            'dataProviderClientContract' => $dataProviderClientContract,
-            'modelClientContract' => $modelClientContract,
-            'clientContract' => $clientContract
         ]);
     }
 
     /**
-     * Creates a new Client model.
+     * Creates a new MasterActivity model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Client();
+        $model = new MasterActivity();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-
-                $model->created_at = date('Y-m-d H:i:s');
-                $model->updated_at = date('Y-m-d H:i:s');
-                $model->save();
+            if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -99,7 +83,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Updates an existing Client model.
+     * Updates an existing MasterActivity model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -119,7 +103,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Deletes an existing Client model.
+     * Deletes an existing MasterActivity model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -133,37 +117,18 @@ class ClientController extends Controller
     }
 
     /**
-     * Finds the Client model based on its primary key value.
+     * Finds the MasterActivity model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Client the loaded model
+     * @return MasterActivity the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Client::findOne(['id' => $id])) !== null) {
+        if (($model = MasterActivity::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionSelect2Get()
-    {
-        $clients =  Client::find()->select(['id', 'name'])->asArray()->all();
-        // Format the data as required by Select2
-        $data = [];
-        foreach ($clients as $client) {
-            $data[] = [
-                'id' => $client['id'],
-                'text' => $client['name'],
-            ];
-        }
-
-        // Output the data as JSON
-        return Json::encode([
-            'results' => $data,
-            'pagination' => ['more' => false], // Pagination not implemented in this example
-        ]);
     }
 }
