@@ -16,7 +16,7 @@ use Yii;
  * @property string $updated_at
  *
  * @property Client $client
- * @property Contract $contract
+ * @property ClientContract $clientContract
  * @property UnitRate $unitRate
  */
 class Costing extends \yii\db\ActiveRecord
@@ -24,6 +24,8 @@ class Costing extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $clientName;
+
     public static function tableName()
     {
         return 'costing';
@@ -37,10 +39,10 @@ class Costing extends \yii\db\ActiveRecord
         return [
             [['client_id', 'contract_id', 'unit_rate_id', 'price', 'created_at', 'updated_at'], 'required'],
             [['client_id', 'contract_id', 'unit_rate_id'], 'integer'],
-            [['price'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            // [['price'], 'number'],
+            [['created_at', 'updated_at','clientName','price'], 'safe'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
-            [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contract::class, 'targetAttribute' => ['contract_id' => 'id']],
+            [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientContract::class, 'targetAttribute' => ['contract_id' => 'id']],
             [['unit_rate_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnitRate::class, 'targetAttribute' => ['unit_rate_id' => 'id']],
         ];
     }
@@ -76,9 +78,9 @@ class Costing extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getContract()
+    public function getClientContract()
     {
-        return $this->hasOne(Contract::class, ['id' => 'contract_id']);
+        return $this->hasOne(ClientContract::class, ['id' => 'contract_id']);
     }
 
     /**
@@ -90,4 +92,5 @@ class Costing extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UnitRate::class, ['id' => 'unit_rate_id']);
     }
+
 }

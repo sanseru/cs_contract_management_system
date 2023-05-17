@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var frontend\models\Contract $model */
 
-$this->title = 'Create Contract';
-$this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
+$this->title = 'Create Request order';
+$this->params['breadcrumbs'][] = ['label' => 'Request Order', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contract-create">

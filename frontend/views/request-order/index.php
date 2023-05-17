@@ -1,6 +1,6 @@
 <?php
 
-use frontend\models\Contract;
+use frontend\models\RequestOrder;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, Contract $model, $key, $index, $column) {
+                        'urlCreator' => function ($action, RequestOrder $model, $key, $index, $column) {
                             return Url::toRoute([$action, 'id' => $model->id]);
                         }
                     ],

@@ -1,11 +1,14 @@
 <?php
 
+use frontend\models\ClientContract;
+use frontend\models\MasterActivity;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\helpers\ArrayHelper;
 use yii\jui\DatePicker;
 
 /** @var yii\web\View $this */
-/** @var frontend\models\Contract $model */
+/** @var frontend\models\RequestOrder $model */
 /** @var yii\widgets\ActiveForm $form */
 // var_dump($model->isNewRecord);die;
 $this->registerJs("
@@ -66,45 +69,41 @@ $('#end_date').datepicker({
 
 $this->registerJs(
     <<<JS
-$('#client_name').select2({
-    ajax: {
-        url: '/client/select2-get',
-        dataType: 'json',
-        delay: 250,
-        data: function (params) {
-            return {
-                q: params.term, // Search term
-            };
-        },
-        processResults: function (data) {
-            return {
-                results: data.results,
-            };
-        },
-        cache: true,
-    },
-    placeholder: 'Select a client',
-    minimumInputLength: 0,
-    tags: true,
-});
+    $('#activity').select2();
+    $('#contract_id').change(function(){
+            var contractId = $(this).val();
+            $.ajax({
+                url: '/client/get-client',
+                data: { id: contractId },
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // handle success response here
+                    console.log(response);
+                    $('#client_name').val(response.name)
+                    $('#client_id').val(response.id)
+                },
+                error: function(error) {
+                    // handle error response here
+                    alert(error.responseText);
 
-$('#activity').select2();
-
-
+                }
+            });
+        });
 JS
 );
 
 if (!$model->isNewRecord) {
     $this->registerJs("
         $(document).ready(function() {
-            var option = new Option('" . $model->so_number . "', '" . $model->so_number . "', true, true);
-            $('#so_number').append(option).trigger('change');
-            $('#so_number').trigger('change');
+            // var option = new Option('" . $model->so_number . "', '" . $model->so_number . "', true, true);
+            // $('#so_number').append(option).trigger('change');
+            // $('#so_number').trigger('change');
             // $('#client_name').val('" . (!empty($client) && !empty($client->name) ? $client->name : "") . "'); 
             
-            var optionCLient = new Option('" . $client->name. "', '" . $model->client_id   . "', true, true);
-            $('#client_name').append(optionCLient).trigger('change');
-            $('#client_name').trigger('change');
+            // var optionCLient = new Option('" . $client->name . "', '" . $model->client_id   . "', true, true);
+            // $('#client_name').append(optionCLient).trigger('change');
+            // $('#client_name').trigger('change');
         });
     ");
 }
@@ -126,28 +125,32 @@ $this->registerCss("
     <?php $form = ActiveForm::begin(); ?>
     <div class="row">
         <div class="col-md-4">
-            <?= $form->field($model, 'contract_number')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-md-4">
-            <!-- <?php // Html::label('SO Number', 'so_number', ['class' => 'form-label']) 
-                    ?> -->
-            <!-- <?php // Html::dropDownList('so_number', '', [], ['id' => 'so_number','class' => 'form-control','prompt' => 'Select a So Number ...',]) 
-                    ?> -->
-            <?= $form->field($model, 'so_number')->textInput(['maxlength' => true]) ?>
-
+            <?= $form->field($model, 'contract_id')->dropDownList(
+                ArrayHelper::map(ClientContract::find()->all(), 'id', 'contract_number'),
+                ['id' => 'contract_id', 'class' => 'form-control', 'prompt' => 'Select a Contract ...']
+            )->label('Contract Number') ?>
         </div>
         <div class="col-md-4">
             <?= Html::label('Client Name', 'client_name', ['class' => 'form-label']) ?>
+            <?= Html::input('text', 'client_name', null, ['class' => 'form-control', 'id' => 'client_name', 'readonly' => true]) ?>
+            <?= $form->field($model, 'client_id', ['enableClientValidation' => false])->hiddenInput(['id' => 'client_id'])->label(false) ?>
 
-            <?php // Html::input('text', 'client_name', null, ['class' => 'form-control', 'id' => 'client_name', 'readonly' => false]) 
-            ?>
+        </div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'so_number')->textInput(['maxlength' => true]) ?>
 
-            <?= Html::dropDownList('client_name', '', [], ['id' => 'client_name', 'class' => 'form-control', 'prompt' => 'Select a Client Name ...',])
+
+
+            <?php // Html::dropDownList('client_name', '', [], ['id' => 'client_name', 'class' => 'form-control', 'prompt' => 'Select a Client Name ...',])
             ?>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <?= $form->field($model, 'ro_number')->textInput(['maxlength' => true]) ?>
+
+        </div>
+        <div class="col-md-4">
             <?= $form->field($model, 'contract_type')->dropDownList(
                 [
                     'RO' => 'RO',
@@ -156,19 +159,15 @@ $this->registerCss("
                 ['prompt' => 'Select an option...']
             ) ?>
         </div>
-        <div class="col-md-6">
-            <?= $form->field($model, 'activity')->dropDownList(
-                [
-                    'PM' => 'PM',
-                    'SWD' => 'SWD',
-                    'REPR' => 'REPAIR',
-
-                ],
+        <div class="col-md-4">
+            <?= $form->field($model, 'activityCodeArray')->dropDownList(
+                ArrayHelper::map(MasterActivity::find()->all(), 'activity_code', 'activity_name'),
                 [
                     'multiple' => 'multiple',
                     'prompt' => 'Select an option...', 'id' => 'activity'
                 ]
             ) ?>
+
 
         </div>
     </div>

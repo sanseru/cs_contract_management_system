@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use frontend\models\ClientContract;
 use frontend\models\ClientContractSearch;
+
 /**
  * ClientController implements the CRUD actions for Client model.
  */
@@ -165,5 +166,11 @@ class ClientController extends Controller
             'results' => $data,
             'pagination' => ['more' => false], // Pagination not implemented in this example
         ]);
+    }
+
+    public function actionGetClient($id)
+    {
+        $model = $this->findModel($id);
+        return Json::encode($model);
     }
 }

@@ -10,11 +10,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Costings', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="costing-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+    <div class="card">
+    <div class="card-header"><?= Html::encode($this->title) ?></div>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
-
+    </div>
 </div>
