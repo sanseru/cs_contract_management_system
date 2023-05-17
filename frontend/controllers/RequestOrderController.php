@@ -89,7 +89,6 @@ class RequestOrderController extends Controller
 
                 // return $this->redirect(['view', 'id' => $model->id]);
                 return $this->redirect(['create']);
-
             }
         } else {
             $model->loadDefaultValues();
@@ -111,9 +110,20 @@ class RequestOrderController extends Controller
     {
         $model = $this->findModel($id);
 
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+        $selectedCodes = $model->requestOrderActivities; // assuming attribute name is activityCodes
+
+
+        $activityCodes = [];
+
+        foreach ($selectedCodes as $item) {
+            $activityCodes[] = $item->attributes['activity_code'];
+        }
+        // var_dump($activityCodes);die;
+        $model->activityCodeArray = json_encode($activityCodes);
 
         return $this->render('update', [
             'model' => $model,

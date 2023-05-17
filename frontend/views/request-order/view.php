@@ -6,8 +6,7 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\Contract $model */
-
-$this->title = $model->contract_number;
+$this->title =  $model->contract->contract_number;
 $this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -30,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    'contract_number',
+                    'contract.contract_number',
                     'client.name',
                     'so_number',
 
@@ -53,6 +52,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $badgeClass = 'bg-danger';
                                     break;
                             }
+                            $activitys = "";
+                            // foreach ($model->requestOrderActivities as $key => $value) {
+                            //     $activitys .= $value->activity_code->activity_name ;
+                            //     // print_r($value->activity_code);die;
+                            // }
+
+                            $activities = array_map(function ($activity) {
+                                return $activity->activityCode->activity_name;
+                            }, $model->requestOrderActivities);
+                            $activitys =  implode(', ', $activities);
 
                             return "<strong style=\"margin-right: 50px;\">Contract Type</strong>  
                     <span class=\"badge bg-primary\" style=\"padding: 5px 10px;margin-right: 10px;\">$model->contract_type</span>
@@ -60,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <span class=\"badge " . $badgeClass . "\" style=\"padding: 5px 5px;\">" . $status . "</span>
                     <br>
                     <strong style=\"
-                    margin-right: 30px;\">Contract Activity</strong><span class=\"badge bg-warning text-dark mr-5\">$model->activity</span>";
+                    margin-right: 30px;\">Contract Activity</strong><span class=\"badge bg-warning text-dark mr-5\">$activitys</span>";
                         }
                     ],
                     [
@@ -94,7 +103,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <h2 class="font-weight-light text-center text-muted py-3">Timeline</h2>
                 <!-- timeline item 1 -->
                 <?php
-                foreach ($activity as $index => $event) : ?>
+                foreach ($model->activityContract as $index => $event) : ?>
 
                     <?php
                     if ($event['status'] == 2) {

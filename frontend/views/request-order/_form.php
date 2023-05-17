@@ -94,18 +94,13 @@ JS
 );
 
 if (!$model->isNewRecord) {
-    $this->registerJs("
+    $this->registerJs(<<<JS
         $(document).ready(function() {
-            // var option = new Option('" . $model->so_number . "', '" . $model->so_number . "', true, true);
-            // $('#so_number').append(option).trigger('change');
-            // $('#so_number').trigger('change');
-            // $('#client_name').val('" . (!empty($client) && !empty($client->name) ? $client->name : "") . "'); 
-            
-            // var optionCLient = new Option('" . $client->name . "', '" . $model->client_id   . "', true, true);
-            // $('#client_name').append(optionCLient).trigger('change');
-            // $('#client_name').trigger('change');
+            $('#activity').val($model->activityCodeArray).change();
+            $('#contract_id').trigger('change');
+
         });
-    ");
+JS);
 }
 
 

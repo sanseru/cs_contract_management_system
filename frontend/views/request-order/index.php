@@ -9,7 +9,6 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var frontend\models\ContractSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-
 $this->title = 'Contracts';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -32,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
-                    'contract_number',
+                    'contract.contract_number',
                     [
                         'label' => 'Client Name',
                         'attribute' => 'clientName',
@@ -40,7 +39,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'so_number',
                     'contract_type',
-                    'activity',
+                    [
+                        'attribute' => 'requestOrderActivities',
+                        'value' => function ($model) {
+                            $activities = array_map(function ($activity) {
+                                return $activity->activityCode->activity_name;
+                            }, $model->requestOrderActivities);
+                            return implode(', ', $activities);
+                        },
+                    ],
                     [
                         'label' => 'Status',
                         'attribute' => 'status',

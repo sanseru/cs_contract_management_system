@@ -105,4 +105,9 @@ class RequestOrder extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RequestOrderActivity::class, ['request_order_id' => 'id']);
     }
+
+    public function getActivityContract()
+    {
+        return $this->hasMany(ActivityContract::class, ['contract_id' => 'id']);
+    }
 }
