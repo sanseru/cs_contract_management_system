@@ -2,18 +2,17 @@
 
 namespace frontend\controllers;
 
-use frontend\models\RequestOrder;
-use frontend\models\RequestOrderActivity;
-use frontend\models\RequestOrderSearch;
+use frontend\models\Client;
+use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * RequestOrderController implements the CRUD actions for RequestOrder model.
+ * RequestOrderTransController implements the CRUD actions for RequestOrderTrans model.
  */
-class RequestOrderController extends Controller
+class RequestOrderTransController extends Controller
 {
     /**
      * @inheritDoc
@@ -34,81 +33,68 @@ class RequestOrderController extends Controller
     }
 
     /**
-     * Lists all RequestOrder models.
+     * Lists all RequestOrderTrans models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new RequestOrderSearch();
+        $searchModel = new RequestOrderTransSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+
         ]);
     }
 
     /**
-     * Displays a single RequestOrder model.
+     * Displays a single RequestOrderTrans model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        
-        $dataRequestOrderTranssearchModel = new RequestOrderTransSearch();
-        $dataRequestOrderTransProvider = $dataRequestOrderTranssearchModel->search($this->request->queryParams);
-
-
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'dataRequestOrderTranssearchModel' => $dataRequestOrderTranssearchModel,
-            'dataRequestOrderTransProvider' => $dataRequestOrderTransProvider,
         ]);
     }
 
     /**
-     * Creates a new RequestOrder model.
+     * Creates a new RequestOrderTrans model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id,$client_id)
     {
-        $model = new RequestOrder();
+        $model = new RequestOrderTrans();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                // print_r($model->activityCodeArray );die;
-                $model->start_date = date('Y-m-d', strtotime($model->start_date));
-                $model->end_date = date('Y-m-d', strtotime($model->end_date));
-                $model->created_at = date('Y-m-d H:i:s');
-                $model->created_by = \Yii::$app->user->identity->id;
-                $model->updated_at = date('Y-m-d H:i:s');
-                $model->activity_code = ' ';
-                $model->save(false);
-                foreach ($model->activityCodeArray as $activity_code) {
-                    $pivot = new RequestOrderActivity();
-                    $pivot->request_order_id = $model->id;
-                    $pivot->activity_code = $activity_code;
-                    $pivot->save(false);
-                }
-
-                // return $this->redirect(['view', 'id' => $model->id]);
-                return $this->redirect(['create']);
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
         }
 
-        return $this->render('create', [
+        $client = Client::find()->where(['id'=>$client_id])->one();
+        // print_r($client->contracts);
+        $model->request_order_id = $id;
+
+        
+        $client_id = $client_id;
+
+        return $this->renderAjax('create', [
             'model' => $model,
+            'client_id' =>$client_id,
         ]);
     }
 
     /**
-     * Updates an existing RequestOrder model.
+     * Updates an existing RequestOrderTrans model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -118,20 +104,9 @@ class RequestOrderController extends Controller
     {
         $model = $this->findModel($id);
 
-
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-        $selectedCodes = $model->requestOrderActivities; // assuming attribute name is activityCodes
-
-
-        $activityCodes = [];
-
-        foreach ($selectedCodes as $item) {
-            $activityCodes[] = $item->attributes['activity_code'];
-        }
-        // var_dump($activityCodes);die;
-        $model->activityCodeArray = json_encode($activityCodes);
 
         return $this->render('update', [
             'model' => $model,
@@ -139,7 +114,7 @@ class RequestOrderController extends Controller
     }
 
     /**
-     * Deletes an existing RequestOrder model.
+     * Deletes an existing RequestOrderTrans model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -153,15 +128,15 @@ class RequestOrderController extends Controller
     }
 
     /**
-     * Finds the RequestOrder model based on its primary key value.
+     * Finds the RequestOrderTrans model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return RequestOrder the loaded model
+     * @return RequestOrderTrans the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = RequestOrder::findOne(['id' => $id])) !== null) {
+        if (($model = RequestOrderTrans::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

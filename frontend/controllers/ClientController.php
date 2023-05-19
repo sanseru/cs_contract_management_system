@@ -60,7 +60,7 @@ class ClientController extends Controller
      */
     public function actionView($id)
     {
-        $searchModelClientContract = new ClientContractSearch();
+        $searchModelClientContract = new ClientContractSearch(['client_id' => $id]);
         $dataProviderClientContract = $searchModelClientContract->search($this->request->queryParams);
         $modelClientContract = new ClientContract();
         $clientContract = $modelClientContract->getClient()->one();

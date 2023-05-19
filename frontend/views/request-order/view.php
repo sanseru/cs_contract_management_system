@@ -1,8 +1,13 @@
 <?php
 
+use frontend\models\RequestOrderTrans;
 use yii\widgets\DetailView;
 use yii\bootstrap5\Html;
+use yii\bootstrap5\Modal;
 use yii\helpers\Url;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+use yii\grid\ActionColumn;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\Contract $model */
@@ -94,6 +99,58 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="card mt-5">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"># Service To Provide <?= Html::encode($this->title) ?> </h5>
+            <?= Html::button('<i class="glyphicon glyphicon-plus"></i> Create', [
+                'value' => Url::to(['request-order-trans/create', 'id' => $model->id, 'client_id'=> $model->client_id]),
+                'class' => 'btn btn-success',
+                'onclick' => "$('#myModal').modal('show').find('#modalContent').load($(this).attr('value'))",
+            ]); ?>
+        </div>
+
+        <div class="card-body">
+            <?php Pjax::begin(); ?>
+            <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            ?>
+
+            <?= GridView::widget([
+                'dataProvider' => $dataRequestOrderTransProvider,
+                'filterModel' => $dataRequestOrderTranssearchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+
+                    'id',
+                    'request_order_id',
+                    'costing_id',
+                    'quantity',
+                    'unit_price',
+                    //'sub_total',
+                    [
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                    ],
+                ],
+            ]); ?>
+
+            <?php Pjax::end(); ?>
+        </div>
+    </div>
+
+    <!-- Trans Modal -->
+
+    <?php Modal::begin([
+        'title' => '<h5>Add Request Order Trans</h5>',
+        'headerOptions' => ['id' => 'modalHeader'],
+        'id' => 'myModal',
+    ]); ?>
+
+    <div id='modalContent'></div>
+
+    <?php Modal::end(); ?>
+    <!-- End Trans Modal -->
+    <div class="card mt-5">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">#<?= Html::encode($this->title) ?> </h5>
             <a href="<?= Url::toRoute(['activity-contract/create', 'id' => $model->id]); ?>"><button class="btn btn-sm btn-primary">Add Activity</button></a>
         </div>
@@ -114,12 +171,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         $textColor = '';
                         $bg = 'bg-light border';
                         $border = '';
-
                     } else {
                         $textColor = 'text-muted';
                         $bg = 'bg-light border';
                         $border = '';
-
                     }
                     ?>
 
@@ -127,7 +182,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <!-- timeline item left dot -->
                         <div class="col-auto text-center flex-column d-none d-sm-flex">
                             <div class="row h-50">
-                                <div class="col <?= $index == 0 ? '': 'border-end' ?>">&nbsp;</div>
+                                <div class="col <?= $index == 0 ? '' : 'border-end' ?>">&nbsp;</div>
                                 <div class="col">&nbsp;</div>
                             </div>
                             <h5 class="m-2">
@@ -168,6 +223,37 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                 <?php endforeach ?>
+
+
+
+                <?php
+                $this->registerJs("
+                    $('#myModal').on('hidden.bs.modal', function () {
+                        $(this).find('form').trigger('reset');
+                    });
+                    
+                    $('#myModal').on('submit', 'form#addCosting', function(e){
+                        e.preventDefault();
+                        var form = $(this);
+                        console.log(form);
+                                $('#myModal').modal('hide');
+
+                        // $.ajax({
+                        //     url: form.attr('action'),
+                        //     method: form.attr('method'),
+                        //     data: form.serialize(),
+                        //     success: function(response){
+                        //         $('#myModal').modal('hide');
+                        //         $('#users-container').html(response);
+                        //     },
+                        // });
+                    });
+                ");
+                ?>
+
+
+
+
 
                 <style>
                     /* @keyframes pulse {

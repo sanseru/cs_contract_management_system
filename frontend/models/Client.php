@@ -58,7 +58,7 @@ class Client extends \yii\db\ActiveRecord
 
     public function getContracts()
     {
-        return $this->hasMany(Contract::class, ['client_id' => 'id']);
+        return $this->hasMany(ClientContract::class, ['client_id' => 'id']);
     }
     public function getContractsClient()
     {

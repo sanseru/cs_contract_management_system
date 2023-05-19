@@ -40,7 +40,7 @@ class Costing extends \yii\db\ActiveRecord
             [['client_id', 'contract_id', 'unit_rate_id', 'price', 'created_at', 'updated_at'], 'required'],
             [['client_id', 'contract_id', 'unit_rate_id'], 'integer'],
             // [['price'], 'number'],
-            [['created_at', 'updated_at','clientName','price'], 'safe'],
+            [['created_at', 'updated_at', 'clientName', 'price'], 'safe'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientContract::class, 'targetAttribute' => ['contract_id' => 'id']],
             [['unit_rate_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnitRate::class, 'targetAttribute' => ['unit_rate_id' => 'id']],
@@ -93,4 +93,13 @@ class Costing extends \yii\db\ActiveRecord
         return $this->hasOne(UnitRate::class, ['id' => 'unit_rate_id']);
     }
 
+    /** 
+     * Gets query for [[RequestOrderTrans]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getRequestOrderTrans()
+    {
+        return $this->hasMany(RequestOrderTrans::class, ['costing_id' => 'id']);
+    }
 }

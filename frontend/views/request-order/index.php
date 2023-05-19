@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'options' => ['class' => 'table table-striped table-bordered text-sm text-center font-monospace table-responsive'],
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-
+                    'ro_number',
                     'contract.contract_number',
                     [
                         'label' => 'Client Name',

@@ -43,7 +43,7 @@ class ClientContractSearch extends ClientContract
      */
     public function search($params)
     {
-        $query = ClientContract::find();
+        $query = ClientContract::find(['client_id' => $this->client_id]);
 
         // add conditions that should always apply here
 
