@@ -79,7 +79,7 @@ class ActivityContractController extends Controller
 
                 $model->created_by = \Yii::$app->user->identity->id;
                 $model->save(false);
-                return $this->redirect(['contract/view', 'id' => $id]);
+                return $this->redirect(['request-order/view', 'id' => $id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -103,7 +103,7 @@ class ActivityContractController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save(false)) {
-            return $this->redirect(['contract/view', 'id' => $contract_id]);
+            return $this->redirect(['request-order/view', 'id' => $contract_id]);
         }
 
         return $this->render('update', [

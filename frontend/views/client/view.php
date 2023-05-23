@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card mt-4">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">#Contract</h5>
-            <?= Html::button('Open Modal', ['class' => 'btn btn-success btn-modal', 'data-target' => '#myModal', 'data-toggle' => 'modal']) ?>
+            <?= Html::button('Add Contract', ['class' => 'btn btn-info btn-modal', 'data-target' => '#myModal', 'data-toggle' => 'modal']) ?>
 
             <!-- <a href="<?= Url::toRoute(['activity-contract/create', 'id' => $model->id]); ?>"><button class="btn btn-sm btn-primary">Add Contract</button></a> -->
         </div>
@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     //'updated_at',
                     [
                         'class' => ActionColumn::className(),
-                        'template' => '{view}{update} {delete}', // Show only Update and Delete buttons
+                        'template' => '{view} {update} {delete}', // Show only Update and Delete buttons
                         'urlCreator' => function ($action, ClientContract $modelClientContract, $key, $index, $column) {
                             if ($action === 'view') {
                                 return Url::to(['client-contract/view', 'id' => $modelClientContract->id]);

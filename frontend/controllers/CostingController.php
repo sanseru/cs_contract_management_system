@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use frontend\models\Client;
 use frontend\models\Costing;
 use frontend\models\CostingSerach;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -87,6 +88,24 @@ class CostingController extends Controller
         ]);
     }
 
+    public function actionCreateAjax()
+    {
+        $model = new Costing();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->updated_at = date('Y-m-d H:i:s');
+                $model->save();
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ['success' => true];
+            }
+        } else {
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['success' => false, 'errors' => $model->getErrors()];
+        }
+    }
+
     /**
      * Updates an existing Costing model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -118,7 +137,16 @@ class CostingController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        if(\Yii::$app->getRequest()->get('url_back')){
+            Yii::$app->session->setFlash('success', 'Costing Record deleted successfully.');
+            return $this->redirect(['client-contract/view', 'id'=> \Yii::$app->getRequest()->get('contract_id')]);
+
+        }else{
+            Yii::$app->session->setFlash('success', 'Record deleted successfully.');
+
+            return $this->redirect(['index']);
+
+        }
     }
 
     /**
@@ -163,15 +191,13 @@ class CostingController extends Controller
     }
 
     public function actionGetprice($costingId)
-    {    
+    {
         $product = $this->findModel($costingId); // find the product with the given ID
         $price = $product->price; // get the price of the product
-        
+
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON; // set the response format to JSON
         return [
             'price' => $price
         ];
     }
-
-
 }

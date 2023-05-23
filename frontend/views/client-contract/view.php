@@ -1,20 +1,32 @@
 <?php
 
+use frontend\models\ClientContract;
+use frontend\models\Costing;
+use frontend\models\Item;
+use frontend\models\UnitRate;
+use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Modal;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
+use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\ClientContract $model */
 
-$this->title = $model->id;
+$this->title = $model->contract_number;
 $this->params['breadcrumbs'][] = ['label' => 'Client Contracts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="client-contract-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
+    <div class="card">
+        <h5 class="card-header bg-1D267D text-white">#Contract Number <?= Html::encode($this->title) ?></h5>
+        <div class="card-body">
+            <!-- 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -24,21 +36,386 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-    </p>
+    </p> -->
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'client_id',
-            'contract_number',
-            'start_date',
-            'end_date',
-            'created_by',
-            'created_at',
-            'updated_by',
-            'updated_at',
-        ],
-    ]) ?>
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'client.name',
+                    'contract_number',
+                    [
+                        'attribute' => 'start_date',
+                        'format' => ['date', 'php:d-m-Y']
+                    ],
+                    [
+                        'attribute' => 'end_date',
+                        'format' => ['date', 'php:d-m-Y']
+                    ],
+                ],
+            ]) ?>
+
+        </div>
+    </div>
+
+
+    <?php Pjax::begin(['id' => 'my_pjax']); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
+    <div class="card mt-3">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h5 class="text-white">#Costing for Contract Number <?= Html::encode($this->title) ?></h5>
+            <?= Html::button('Add Costing', [
+                'class' => 'btn btn-info btn-sm btn-modal',
+                'data-target' => '#consting_client_contract', 'data-toggle' => 'modal'
+            ]) ?>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+
+                <?= GridView::widget([
+                    'dataProvider' => $dataCostingProvider,
+                    'filterModel' => $searchModelCosting,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        'client.name',
+                        'clientContract.contract_number',
+                        'unitRate.rate_name',
+                        [
+                            'attribute' => 'price',
+                            'value' => function ($model) {
+                                return Yii::$app->formatter->asCurrency($model->price, 'IDR');
+                            }
+                        ],
+                        //'created_at',
+                        //'updated_at',
+                        [
+                            'class' => ActionColumn::className(),
+                            'urlCreator' => function ($action, Costing $model, $key, $index, $column) {
+                                if ($action === 'view') {
+                                    return Url::to(['costing/view', 'id' => $model->id]);
+                                } elseif ($action === 'update') {
+                                    return Url::to(['costing/update', 'id' => $model->id]);
+                                } elseif ($action === 'delete') {
+                                    return Url::to(['costing/delete', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
+                                }
+                            }
+                        ],
+                    ],
+                ]); ?>
+            </div>
+
+            <?php Pjax::end(); ?>
+        </div>
+    </div>
 
 </div>
+
+
+<?php
+Modal::begin([
+    'title' => '<h5>Add Costing</h5>',
+    'headerOptions' => ['id' => 'modalHeader'],
+    'id' => 'consting_client_contract',
+    'size' => 'modal-lg', // ukuran modal: large, medium, small, fullscreen
+    'clientOptions' => ['backdrop' => 'static', 'keyboard' => TRUE]
+]);
+
+
+
+?>
+<div id='modalContent'>
+    <div class="card-body">
+
+        <?php $form = ActiveForm::begin(['id' => 'my-form']); ?>
+
+        <?php
+        $getUrl = Url::to(['client/find-model']);
+
+        $script = <<< JS
+    $('#contract_id').change(function(){
+        var contractId = $(this).val();
+        $.ajax({
+            url: '/client/get-client',
+            data: { id: contractId },
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // handle success response here
+                console.log(response);
+                $('#client_name').val(response.name)
+                $('#client_id').val(response.id)
+            },
+            error: function(error) {
+                // handle error response here
+                alert(error.responseText);
+
+            }
+        });
+    });
+JS;
+        $this->registerJs($script);
+        ?>
+        <div class="row">
+            <div class="col-md-12">
+                <?= $form->field($costing, 'contract_id')->dropDownList(
+                    ArrayHelper::map(ClientContract::find()->all(), 'id', 'contract_number'),
+                    [
+                        'id' => 'contract_id', 'class' => 'form-control',
+                        'options' => [$model->id => ['selected' => true]],
+                        'prompt' => 'Select a Contract ...',
+                        'style' => 'width:100%',
+                    ]
+                )->label('Contract Number') ?>
+            </div>
+            <div class="col-md-12">
+                <?= $form->field($costing, 'clientName')->textInput(['readonly' => true, 'id' => 'client_name', 'value' => $model->client->name]) ?>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <?= $form->field($costing, 'item_id')->dropDownList(
+                    ArrayHelper::map(
+                        Item::find()->all(),
+                        'id',
+                        function ($item) {
+                            return $item->masterActivityCode->activity_name . ' - ' . $item->itemType->type_name . ' (' . $item->size . ')';
+                        }
+                    ),
+                    ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Contract ...', 'style' => 'width:100%',]
+                )->label('Item') ?>
+            </div>
+            <div class="col-md-2">
+                <br>
+                <?= Html::a('Create Item', ['item/create'], ['target' => '_blank', 'class' => 'mt-2 form-control form-label  btn-sm btn btn-secondary', 'title' => 'Create a new item if Not Found']) ?>
+
+            </div>
+            <div class="col-md-12">
+                <?= $form->field($costing, 'unit_rate_id')->dropDownList(ArrayHelper::map(UnitRate::find()->all(), 'id', 'rate_name'), ['id' => 'rate_id', 'prompt' => 'Select unit Rate...']) ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <?= $form->field($costing, 'price')
+                    ->textInput(['maxlength' => true, 'enableClientValidation' => false])
+                    ->widget(\yii\widgets\MaskedInput::className(), [
+                        'clientOptions' => [
+                            'alias' => 'numeric',
+                            'groupSeparator' => ',',
+                            'autoGroup' => true,
+                            'digits' => 0,
+                            'prefix' => 'IDR ',
+                            'removeMaskOnSubmit' => true,
+                        ],
+                        'options' => [
+                            // 'class' => 'form-control',
+                            'autocomplete' => 'off',
+                            // 'onchange'=>'
+                            // alert("cobas");'
+                        ],
+                    ]);
+                ?>
+            </div>
+            <div class="col-md-8" id="price_text_div" style="display:none">
+                <label for="" class="form-label">&nbsp;</label>
+                <div id="teks_number" class="uppercase form-control" style="border: none;"></div>
+            </div>
+        </div>
+
+        <?= $form->field($costing, 'client_id')->hiddenInput(['id' => 'client_id', 'value' => $model->client_id])->label(false) ?>
+        <div class="form-group d-md-flex justify-content-md-end">
+
+            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+    </div>
+
+</div>
+<?php
+Modal::end();
+?>
+
+
+<?php
+$this->registerCss("
+.select2-container .select2-selection--single {
+    height: 36px;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+");
+
+$this->registerJs(
+    <<<JS
+        $(document).on('click', '.btn-modal', function (e) {
+            $('#consting_client_contract').modal('show');
+            $('#contract_id').trigger('change');
+
+        });
+
+        $(document).on('submit', '#my-form', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'post',
+                url: '/costing/create-ajax',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(data) {
+                    $('#my-form')[0].reset();
+                    $('#myModal').modal('hide');
+                    $.pjax.reload({container:'#my_pjax'});
+                    alert('Berhasil Di Tambahkan');
+                },
+                error: function() {
+                    alert('An error occurred while submitting the form.');
+                }
+            });
+        });
+    JS
+);
+
+
+$this->registerJs(
+    <<<JS
+        $('#contract_id').select2({
+            dropdownParent: $("#consting_client_contract")
+
+        });
+        $('#item_id').select2({
+            dropdownParent: $("#consting_client_contract")
+
+        });
+
+
+
+        $("#costing-price").keyup(function(){   // 1st way
+            var currency = $('#costing-price').val();
+            var myFieldValue = $('#costing-price').inputmask('unmaskedvalue');
+            // console.log(myFieldValue);
+            const resultField = document.getElementById('teks_number');
+            const text = currencyToWords(myFieldValue);
+            resultField.style.fontWeight = "bold";
+            resultField.style.fontSize = "15px";
+            resultField.style.color = "red";
+            resultField.innerHTML = text.toUpperCase();
+            const priceTextDiv = document.getElementById('price_text_div');
+            priceTextDiv.style.display = 'block';
+
+        });
+
+
+    JS
+);
+
+?>
+
+
+
+
+
+<?php
+$this->registerJs(
+    <<<JS
+        function rupiahToWords(number) {
+                let words = {
+                    ones: ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan'],
+                    tens: ['', 'sepuluh', 'dua puluh', 'tiga puluh', 'empat puluh', 'lima puluh', 'enam puluh', 'tujuh puluh', 'delapan puluh', 'sembilan puluh'],
+                    hundreds: ['', 'seratus', 'dua ratus', 'tiga ratus', 'empat ratus', 'lima ratus', 'enam ratus', 'tujuh ratus', 'delapan ratus', 'sembilan ratus'],
+                    rupiah: ['', 'ribu', 'juta', 'miliar', 'triliun']
+                };
+
+                if (typeof number === 'number') {
+                    number = String(number);
+                }
+
+                let rupiahArr = number.split('').reverse();
+                let result = [];
+
+                for (let i = 0, rupiahIndex = 0; i < rupiahArr.length; i += 3, rupiahIndex++) {
+                    let rupiahGroup = rupiahArr.slice(i, i + 3).reverse().join('');
+                    let wordsArr = [];
+
+                    if (rupiahGroup === '000') {
+                    continue;
+                    }
+
+                    if (rupiahGroup.length === 3 && rupiahGroup[0] !== '0') {
+                    let hundreds = Number(rupiahGroup[0]);
+                    wordsArr.push(words.hundreds[hundreds]);
+                    }
+
+                    if (rupiahGroup.length >= 2) {
+                    let tens = Number(rupiahGroup[rupiahGroup.length - 2]);
+                    let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
+
+                    if (tens === 1) {
+                        let teen = Number(rupiahGroup.slice(-2));
+                        if (teen === 11) {
+                        wordsArr.push('sebelas');
+                        } else if (teen === 10) {
+                        wordsArr.push('sepuluh');
+                        } else {
+                        wordsArr.push(words.ones[teen % 10] + ' belas');
+                        }
+                    } else {
+                        if (tens !== 0) {
+                        wordsArr.push(words.tens[tens]);
+                        }
+
+                        if (ones !== 0) {
+                        wordsArr.push(words.ones[ones]);
+                        }
+                    }
+                    } else {
+                    let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
+                    if (ones !== 0) {
+                        wordsArr.push(words.ones[ones]);
+                    }
+                    }
+
+                    if (rupiahIndex > 0 && wordsArr.length > 0) {
+                    wordsArr.push(words.rupiah[rupiahIndex]);
+                    }
+
+                    result.unshift(wordsArr.join(' '));
+                }
+
+                return result.join(' ');
+            }
+
+            function currencyToWords(currency) {
+                var currencyArray = currency.toString().split(',');
+
+                var amount = parseInt(currencyArray.join(''));
+
+                var currencyWord = '';
+
+                switch (currencyArray[0]) {
+                    case 'IDR':
+                    currencyWord = 'rupiah';
+                    break;
+                    default:
+                    currencyWord = '';
+
+                }
+
+                var amountWord = rupiahToWords(amount);
+
+                if (amountWord.trim() === '') {
+                    amountWord = 'nol';
+                }
+
+                var result = 'Total: ' + amountWord + ' ' + currencyWord + ' Rupiah';
+
+                return result;
+            }
+
+
+
+    JS
+);
+
+?>

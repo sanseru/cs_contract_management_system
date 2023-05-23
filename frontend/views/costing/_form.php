@@ -13,6 +13,10 @@ use yii\helpers\Url;
 /** @var yii\widgets\ActiveForm $form */
 $this->registerJs(
     <<<JS
+
+        $(document).ready(function() {
+            $('#contract_id').trigger('change');
+        });
         $('#contract_id').select2();
         $('#item_id').select2();
 
@@ -97,11 +101,13 @@ $this->registerCss("
         <div class="row">
             <div class="col-md-12">
                 <?= $form->field($model, 'item_id')->dropDownList(
-                    ArrayHelper::map(Item::find()->all(), 'id', 
-                    function($item) {
-                        return $item->masterActivityCode->activity_name. ' - ' .$item->itemType->type_name . ' (' . $item->size . ')';
-                    }
-                ),
+                    ArrayHelper::map(
+                        Item::find()->all(),
+                        'id',
+                        function ($item) {
+                            return $item->masterActivityCode->activity_name . ' - ' . $item->itemType->type_name . ' (' . $item->size . ')';
+                        }
+                    ),
                     ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Contract ...']
                 )->label('Item') ?>
             </div>
@@ -150,94 +156,98 @@ $this->registerCss("
 <?php
 $this->registerJs(
     <<<JS
-            function rupiahToWords(number) {
-            let words = {
-                ones: ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan'],
-                tens: ['', 'sepuluh', 'dua puluh', 'tiga puluh', 'empat puluh', 'lima puluh', 'enam puluh', 'tujuh puluh', 'delapan puluh', 'sembilan puluh'],
-                hundreds: ['', 'seratus', 'dua ratus', 'tiga ratus', 'empat ratus', 'lima ratus', 'enam ratus', 'tujuh ratus', 'delapan ratus', 'sembilan ratus'],
-                rupiah: ['', 'ribu', 'juta', 'miliar', 'triliun']
-            };
+        function rupiahToWords(number) {
+                let words = {
+                    ones: ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan'],
+                    tens: ['', 'sepuluh', 'dua puluh', 'tiga puluh', 'empat puluh', 'lima puluh', 'enam puluh', 'tujuh puluh', 'delapan puluh', 'sembilan puluh'],
+                    hundreds: ['', 'seratus', 'dua ratus', 'tiga ratus', 'empat ratus', 'lima ratus', 'enam ratus', 'tujuh ratus', 'delapan ratus', 'sembilan ratus'],
+                    rupiah: ['', 'ribu', 'juta', 'miliar', 'triliun']
+                };
 
-            if (typeof number === 'number') {
-                number = String(number);
-            }
-
-            let rupiahArr = number.split('').reverse();
-            let result = [];
-
-            for (let i = 0, rupiahIndex = 0; i < rupiahArr.length; i += 3, rupiahIndex++) {
-                let rupiahGroup = rupiahArr.slice(i, i + 3).reverse().join('');
-                let wordsArr = [];
-
-                if (rupiahGroup === '000') {
-                continue;
+                if (typeof number === 'number') {
+                    number = String(number);
                 }
 
-                if (rupiahGroup.length === 3 && rupiahGroup[0] !== '0') {
-                let hundreds = Number(rupiahGroup[0]);
-                wordsArr.push(words.hundreds[hundreds]);
-                }
+                let rupiahArr = number.split('').reverse();
+                let result = [];
 
-                if (rupiahGroup.length >= 2) {
-                let tens = Number(rupiahGroup[rupiahGroup.length - 2]);
-                let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
+                for (let i = 0, rupiahIndex = 0; i < rupiahArr.length; i += 3, rupiahIndex++) {
+                    let rupiahGroup = rupiahArr.slice(i, i + 3).reverse().join('');
+                    let wordsArr = [];
 
-                if (tens === 1) {
-                    let teen = Number(rupiahGroup.slice(-2));
-                    wordsArr.push(words.ones[teen]);
-                } else {
-                    if (tens !== 0) {
-                    wordsArr.push(words.tens[tens]);
+                    if (rupiahGroup === '000') {
+                    continue;
                     }
 
+                    if (rupiahGroup.length === 3 && rupiahGroup[0] !== '0') {
+                    let hundreds = Number(rupiahGroup[0]);
+                    wordsArr.push(words.hundreds[hundreds]);
+                    }
+
+                    if (rupiahGroup.length >= 2) {
+                    let tens = Number(rupiahGroup[rupiahGroup.length - 2]);
+                    let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
+
+                    if (tens === 1) {
+                        let teen = Number(rupiahGroup.slice(-2));
+                        if (teen === 11) {
+                        wordsArr.push('sebelas');
+                        } else if (teen === 10) {
+                        wordsArr.push('sepuluh');
+                        } else {
+                        wordsArr.push(words.ones[teen % 10] + ' belas');
+                        }
+                    } else {
+                        if (tens !== 0) {
+                        wordsArr.push(words.tens[tens]);
+                        }
+
+                        if (ones !== 0) {
+                        wordsArr.push(words.ones[ones]);
+                        }
+                    }
+                    } else {
+                    let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
                     if (ones !== 0) {
-                    wordsArr.push(words.ones[ones]);
+                        wordsArr.push(words.ones[ones]);
                     }
-                }
-                } else {
-                let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
-                if (ones !== 0) {
-                    wordsArr.push(words.ones[ones]);
-                }
+                    }
+
+                    if (rupiahIndex > 0 && wordsArr.length > 0) {
+                    wordsArr.push(words.rupiah[rupiahIndex]);
+                    }
+
+                    result.unshift(wordsArr.join(' '));
                 }
 
-                if (rupiahIndex > 0 && wordsArr.length > 0) {
-                wordsArr.push(words.rupiah[rupiahIndex]);
-                }
-
-                result.unshift(wordsArr.join(' '));
+                return result.join(' ');
             }
-
-            return result.join(' ');
-            }
-
-
 
             function currencyToWords(currency) {
+                var currencyArray = currency.toString().split(',');
 
-            // var currencyArray = currency.split(' ');
+                var amount = parseInt(currencyArray.join(''));
 
-            // var amount = parseInt(currencyArray[1].replace(',', ''));
-            var currencyArray = currency;
-            var amount = parseInt(currencyArray);
+                var currencyWord = '';
 
-            var currencyWord = '';
-
-            switch (currencyArray) {
-
-                case 'IDR':
+                switch (currencyArray[0]) {
+                    case 'IDR':
                     currencyWord = 'rupiah';
                     break;
-                default:
+                    default:
                     currencyWord = '';
 
-            }
+                }
 
-            var amountWord = rupiahToWords(amount);
+                var amountWord = rupiahToWords(amount);
 
-            var result = 'Total : '+ amountWord + ' ' + currencyWord + ' Rupiah';
+                if (amountWord.trim() === '') {
+                    amountWord = 'nol';
+                }
 
-            return result;
+                var result = 'Total: ' + amountWord + ' ' + currencyWord + ' Rupiah';
+
+                return result;
             }
 
     JS

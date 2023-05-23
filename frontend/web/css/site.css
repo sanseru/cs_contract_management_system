@@ -121,3 +121,19 @@ a.desc:after {
     background-color: #5C469C;
 
 }
+.btn-bgadd{
+    background-color: #1B9C85;
+
+}
+
+
+/* Select2 */
+
+.select2-container .select2-selection--single {
+    height: 36px;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+/* Select 2 */

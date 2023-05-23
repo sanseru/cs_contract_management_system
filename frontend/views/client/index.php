@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
 
             <p>
-                <?= Html::a('Create', ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('Create', ['create'], ['class' => 'btn btn-info']) ?>
             </p>
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -31,8 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filterModel' => $searchModel,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-
-                    'id',
                     'name',
                     'address:ntext',
                     'phone_number',

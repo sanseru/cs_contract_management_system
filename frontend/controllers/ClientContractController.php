@@ -4,6 +4,8 @@ namespace frontend\controllers;
 
 use frontend\models\ClientContract;
 use frontend\models\ClientContractSearch;
+use frontend\models\Costing;
+use frontend\models\CostingSerach;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -55,8 +57,17 @@ class ClientContractController extends Controller
      */
     public function actionView($id)
     {
+        $data = $this->findModel($id);
+
+        $searchModelCosting = new CostingSerach(['client_id'=> $data->client_id]);
+        $dataCostingProvider = $searchModelCosting->search($this->request->queryParams);
+        $costing = new Costing();
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'searchModelCosting' => $searchModelCosting,
+            'dataCostingProvider' => $dataCostingProvider,
+            'costing' => $costing
+
         ]);
     }
 
