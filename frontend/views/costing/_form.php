@@ -1,6 +1,7 @@
 <?php
 
 use frontend\models\ClientContract;
+use frontend\models\Item;
 use frontend\models\UnitRate;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
@@ -13,6 +14,8 @@ use yii\helpers\Url;
 $this->registerJs(
     <<<JS
         $('#contract_id').select2();
+        $('#item_id').select2();
+
 
 
         $("#costing-price").keyup(function(){   // 1st way
@@ -93,10 +96,17 @@ $this->registerCss("
         </div>
         <div class="row">
             <div class="col-md-12">
-                <?= $form->field($model, 'unit_rate_id')->dropDownList(ArrayHelper::map(UnitRate::find()->all(), 'id', 'rate_name'), ['id' => 'rate_id', 'prompt' => 'Select unit Rate...']) ?>
+                <?= $form->field($model, 'item_id')->dropDownList(
+                    ArrayHelper::map(Item::find()->all(), 'id', 
+                    function($item) {
+                        return $item->masterActivityCode->activity_name. ' - ' .$item->itemType->type_name . ' (' . $item->size . ')';
+                    }
+                ),
+                    ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Contract ...']
+                )->label('Item') ?>
             </div>
             <div class="col-md-12">
-
+                <?= $form->field($model, 'unit_rate_id')->dropDownList(ArrayHelper::map(UnitRate::find()->all(), 'id', 'rate_name'), ['id' => 'rate_id', 'prompt' => 'Select unit Rate...']) ?>
             </div>
         </div>
 

@@ -40,13 +40,13 @@ class RequestOrder extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
 
-     public $activityCodeArray;
+    public $activityCodeArray;
     public function rules()
     {
         return [
             [['contract_id', 'client_id', 'activity_code', 'so_number', 'contract_type', 'start_date', 'end_date', 'created_at', 'updated_at'], 'required'],
             [['contract_id', 'client_id', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['start_date', 'end_date', 'created_at', 'updated_at','activity_code','activityCodeArray'], 'safe'],
+            [['start_date', 'end_date', 'created_at', 'updated_at', 'activity_code', 'activityCodeArray'], 'safe'],
             [['so_number', 'ro_number', 'contract_type'], 'string', 'max' => 255],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientContract::class, 'targetAttribute' => ['contract_id' => 'id']],
@@ -109,5 +109,15 @@ class RequestOrder extends \yii\db\ActiveRecord
     public function getActivityContract()
     {
         return $this->hasMany(ActivityContract::class, ['contract_id' => 'id']);
+    }
+
+    public static function getTotal($provider, $columnName)
+    {
+
+        $total = 0;
+        foreach ($provider as $item) {
+            $total += $item[$columnName];
+        }
+        return  Yii::$app->formatter->asCurrency($total, 'IDR');
     }
 }

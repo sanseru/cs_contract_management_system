@@ -18,7 +18,6 @@ class RequestOrderTransSearch extends RequestOrderTrans
     {
         return [
             [['id', 'request_order_id', 'costing_id', 'quantity'], 'integer'],
-            [['unit_price', 'sub_total'], 'number'],
         ];
     }
 
@@ -40,7 +39,8 @@ class RequestOrderTransSearch extends RequestOrderTrans
      */
     public function search($params)
     {
-        $query = RequestOrderTrans::find();
+        $query = RequestOrderTrans::find(['request_order_id' => $this->request_order_id]);
+        
 
         // add conditions that should always apply here
 

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use frontend\models\RequestOrder;
 use frontend\models\RequestOrderActivity;
 use frontend\models\RequestOrderSearch;
+use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -58,7 +59,8 @@ class RequestOrderController extends Controller
     public function actionView($id)
     {
         
-        $dataRequestOrderTranssearchModel = new RequestOrderTransSearch();
+        $dataRequestOrderTransModel = new RequestOrderTrans();
+        $dataRequestOrderTranssearchModel = new RequestOrderTransSearch(['request_order_id' => $id]);
         $dataRequestOrderTransProvider = $dataRequestOrderTranssearchModel->search($this->request->queryParams);
 
 
@@ -66,6 +68,7 @@ class RequestOrderController extends Controller
             'model' => $this->findModel($id),
             'dataRequestOrderTranssearchModel' => $dataRequestOrderTranssearchModel,
             'dataRequestOrderTransProvider' => $dataRequestOrderTransProvider,
+            'dataRequestOrderTransModel' => $dataRequestOrderTransModel,
         ]);
     }
 
@@ -95,8 +98,8 @@ class RequestOrderController extends Controller
                     $pivot->save(false);
                 }
 
-                // return $this->redirect(['view', 'id' => $model->id]);
-                return $this->redirect(['create']);
+                return $this->redirect(['view', 'id' => $model->id]);
+                // return $this->redirect(['create']);
             }
         } else {
             $model->loadDefaultValues();

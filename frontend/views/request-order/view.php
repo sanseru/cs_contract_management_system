@@ -1,6 +1,9 @@
 <?php
 
+use frontend\models\Costing;
+use frontend\models\RequestOrder;
 use frontend\models\RequestOrderTrans;
+use yii\bootstrap5\ActiveForm;
 use yii\widgets\DetailView;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
@@ -8,13 +11,79 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\grid\ActionColumn;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\Contract $model */
 $this->title =  $model->contract->contract_number;
 $this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
 \yii\web\YiiAsset::register($this);
+$this->registerJs(<<<JS
+    $('#costing_idx').select2({
+        dropdownParent: $('#myModal')
+    });
+
+    $('#costing_idx').on('change', function() {
+        var selectedOption = $(this).find(':selected');
+        var costingId = selectedOption.val();
+        $.ajax({
+            url: '/costing/getprice',
+            method: 'GET',
+            data: { costingId: costingId },
+            dataType: 'json',
+            success: function(response) {
+                console.log(response.price);
+                $('#unit_pricex').val(response.price);
+                $('#curency_format').val(new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(response.price));
+
+                
+            },
+            error: function() {
+                console.log('An error occurred while fetching the price.');
+            }
+        });
+    });
+
+    $('#quantity2').on('keyup', function() {
+        // get the quantity and unit price values
+        var quantityInput = $('#quantity2');
+        var unitPriceInput = $('#unit_pricex');
+        var totalPriceInput = $('#total_price');
+        var total_curency_format = $('#total_curency_format');
+        // display the total price in the input field
+        var quantity = Number(quantityInput.val());
+        var currencyString = unitPriceInput.val();
+        var unitPrice = currencyString; // 10000
+
+
+        // calculate the total price
+        var totalPrice = quantity * unitPrice;
+        // display the total price in the input field
+        totalPriceInput.val(totalPrice);
+        total_curency_format.val(new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice));
+        
+    });
+JS);
+
+$this->registerCss("
+.select2-container .select2-selection--single {
+    height: 36px;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+");
+
+$activitiex = array_map(function ($activity) {
+    return $activity->activityCode->activity_code;
+}, $model->requestOrderActivities);
+$activityx =  implode(', ', $activitiex);
+$activityArray = explode(', ', $activityx);
+
+
 ?>
 <div class="contract-view">
     <div class="card">
@@ -36,6 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attributes' => [
                     'contract.contract_number',
                     'client.name',
+                    'ro_number',
                     'so_number',
 
                     [
@@ -101,54 +171,83 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0"># Service To Provide <?= Html::encode($this->title) ?> </h5>
             <?= Html::button('<i class="glyphicon glyphicon-plus"></i> Create', [
-                'value' => Url::to(['request-order-trans/create', 'id' => $model->id, 'client_id'=> $model->client_id]),
+                // 'value' => Url::to(['request-order-trans/create', 'id' => $model->id, 'client_id'=> $model->client_id,'contract_number'=> $model->contract->contract_number]),
                 'class' => 'btn btn-success',
-                'onclick' => "$('#myModal').modal('show').find('#modalContent').load($(this).attr('value'))",
+                'onclick' => "$('#myModal').modal('show').find('#modalContent').load()",
             ]); ?>
         </div>
 
         <div class="card-body">
-            <?php Pjax::begin(); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); 
-            ?>
+            <div class="table-responsive">
 
-            <?= GridView::widget([
-                'dataProvider' => $dataRequestOrderTransProvider,
-                'filterModel' => $dataRequestOrderTranssearchModel,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+                <?php Pjax::begin([
+                    'id' => 'my-pjax',
+                ]); ?>
+                <?php // echo $this->render('_search', ['model' => $searchModel]); 
+                ?>
 
-                    'id',
-                    'request_order_id',
-                    'costing_id',
-                    'quantity',
-                    'unit_price',
-                    //'sub_total',
-                    [
-                        'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
-                            return Url::toRoute([$action, 'id' => $model->id]);
-                        }
+                <?= GridView::widget([
+                    'dataProvider' => $dataRequestOrderTransProvider,
+                    'filterModel' => $dataRequestOrderTranssearchModel,
+                    'filterPosition' => false, // this line removes the filter header\
+                    'showFooter' => true, // this line enables the footer row
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        [
+                            'attribute' => 'costing_id',
+                            'label' => 'Costing',
+                            'filter' => false,
+                            'value' => function ($model) {
+                                $activityName = strtoupper($model->costing->item->masterActivityCode->activity_name);
+                                $typeName = strtoupper($model->costing->item->itemType->type_name);
+                                $class = strtoupper($model->costing->item->class);
+                                $size = strtoupper($model->costing->item->size);
+
+                                $rateName = strtoupper($model->costing->unitRate->rate_name);
+                                // $price = number_format($model->price, 0, ',', '.');
+                                // return "{$activityName} - {$typeName} - {$rateName} (Rp {$price})";;
+                                return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName}";
+                            }
+                        ],
+                        // 'requestOrder.ro_number',
+                        // 'quantity',
+                        [
+                            'attribute' => 'quantity',
+                            'filter' => false,
+                        ],
+
+                        // 'unit_price',
+                        // 'sub_total',
+                        [
+                            'attribute' => 'unit_price',
+                            'value' => function ($model) {
+                                return Yii::$app->formatter->asCurrency($model->unit_price, 'IDR');
+                            }
+                        ],
+                        [
+                            'attribute' => 'sub_total',
+                            'value' => function ($model) {
+                                return Yii::$app->formatter->asCurrency($model->sub_total, 'IDR');
+                            },
+                            'footer' => RequestOrder::getTotal($dataRequestOrderTransProvider->models, 'sub_total'),
+
+                        ],
+                        [
+                            'class' => ActionColumn::className(),
+                            'template' => '{delete}',
+                            'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
+                                return Url::toRoute(['/request-order-trans/delete', 'id' => $model->id, 'ro'=> \Yii::$app->request->get('id')]);
+                            }
+                        ],
                     ],
-                ],
-            ]); ?>
+                ]); ?>
 
-            <?php Pjax::end(); ?>
+                <?php Pjax::end(); ?>
+            </div>
         </div>
+
     </div>
 
-    <!-- Trans Modal -->
-
-    <?php Modal::begin([
-        'title' => '<h5>Add Request Order Trans</h5>',
-        'headerOptions' => ['id' => 'modalHeader'],
-        'id' => 'myModal',
-    ]); ?>
-
-    <div id='modalContent'></div>
-
-    <?php Modal::end(); ?>
-    <!-- End Trans Modal -->
     <div class="card mt-5">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">#<?= Html::encode($this->title) ?> </h5>
@@ -223,208 +322,105 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                 <?php endforeach ?>
-
-
-
-                <?php
-                $this->registerJs("
-                    $('#myModal').on('hidden.bs.modal', function () {
-                        $(this).find('form').trigger('reset');
-                    });
-                    
-                    $('#myModal').on('submit', 'form#addCosting', function(e){
-                        e.preventDefault();
-                        var form = $(this);
-                        console.log(form);
-                                $('#myModal').modal('hide');
-
-                        // $.ajax({
-                        //     url: form.attr('action'),
-                        //     method: form.attr('method'),
-                        //     data: form.serialize(),
-                        //     success: function(response){
-                        //         $('#myModal').modal('hide');
-                        //         $('#users-container').html(response);
-                        //     },
-                        // });
-                    });
-                ");
-                ?>
-
-
-
-
-
-                <style>
-                    /* @keyframes pulse {
-                        0% {
-                            transform: scale(1);
-                        }
-
-                        50% {
-                            transform: scale(1.1);
-                        }
-
-                        100% {
-                            transform: scale(1);
-                        }
-                    }
-
-                    .badge {
-                        animation-name: pulse;
-                        animation-duration: 1s;
-                        animation-iteration-count: infinite;
-                        animation: pulse 1s infinite;
-
-                    } */
-
-                    .pulse {
-                        /* margin: 100px;
-                        display: block;
-                        width: 22px;
-                        height: 22px;
-                        border-radius: 50%;
-                        background: rgb(25, 135, 84);
-                        cursor: pointer; */
-                        box-shadow: 0 0 0 rgba(204, 169, 44, 0.4);
-                        animation: pulse 1s infinite;
-                    }
-
-                    /* .pulse:hover {
-                        animation: none;
-                    } */
-
-                    @-webkit-keyframes pulse {
-                        0% {
-                            transform: scale(1);
-                            -webkit-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.1);
-                        }
-
-                        70% {
-                            transform: scale(1.1);
-
-                            -webkit-box-shadow: 0 0 0 10px rgba(204, 169, 44, 0);
-                        }
-
-                        100% {
-                            transform: scale(1);
-
-                            -webkit-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
-                        }
-                    }
-
-                    @keyframes pulse {
-                        0% {
-                            transform: scale(1);
-                            -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
-                            box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
-                        }
-
-                        70% {
-                            transform: scale(1.1);
-
-                            -moz-box-shadow: 0 0 0 10px rgba(204, 169, 44, 0);
-                            box-shadow: 0 0 0 10px rgba(204, 169, 44, 0);
-                        }
-
-                        100% {
-                            transform: scale(1);
-
-                            -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
-                            box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
-                        }
-                    }
-                </style>
-                <!--/row-->
-                <!-- timeline item 2 -->
-                <!-- <div class="row">
-                    <div class="col-auto text-center flex-column d-none d-sm-flex">
-                        <div class="row h-50">
-                            <div class="col border-end">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                        <h5 class="m-2">
-                            <span class="badge rounded-pill bg-success">&nbsp;</span>
-                        </h5>
-                        <div class="row h-50">
-                            <div class="col border-end">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="col py-2">
-                        <div class="card border-success shadow">
-                            <div class="card-body">
-                                <div class="float-right text-success">Tue, Jan 10th 2019 8:30 AM</div>
-                                <h4 class="card-title text-success">Day 2 Sessions</h4>
-                                <p class="card-text">Sign-up for the lessons and speakers that coincide with your course syllabus. Meet and greet with instructors.</p>
-                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-target="#t2_details" data-bs-toggle="collapse">Show Details ▼</button>
-                                <div class="collapse border" id="t2_details">
-                                    <div class="p-2 font-monospace">
-                                        <div>08:30 - 09:00 Breakfast in CR 2A</div>
-                                        <div>09:00 - 10:30 Live sessions in CR 3</div>
-                                        <div>10:30 - 10:45 Break</div>
-                                        <div>10:45 - 12:00 Live sessions in CR 3</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!--/row-->
-                <!-- timeline item 3 -->
-                <!-- <div class="row">
-                    <div class="col-auto text-center flex-column d-none d-sm-flex">
-                        <div class="row h-50">
-                            <div class="col border-end">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                        <h5 class="m-2">
-                            <span class="badge rounded-pill bg-light border">&nbsp;</span>
-                        </h5>
-                        <div class="row h-50">
-                            <div class="col border-end">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="col py-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="float-right text-muted">Wed, Jan 11th 2019 8:30 AM</div>
-                                <h4 class="card-title">Day 3 Sessions</h4>
-                                <p>Shoreditch vegan artisan Helvetica. Tattooed Codeply Echo Park Godard kogi, next level irony ennui twee squid fap selvage. Meggings flannel Brooklyn literally small batch, mumblecore PBR try-hard kale chips. Brooklyn vinyl lumbersexual
-                                    bicycle rights, viral fap cronut leggings squid chillwave pickled gentrify mustache. 3 wolf moon hashtag church-key Odd Future. Austin messenger bag normcore, Helvetica Williamsburg sartorial tote bag distillery Portland before
-                                    they sold out gastropub taxidermy Vice.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!--/row-->
-                <!-- timeline item 4 -->
-                <!-- <div class="row">
-                    <div class="col-auto text-center flex-column d-none d-sm-flex">
-                        <div class="row h-50">
-                            <div class="col border-end">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                        <h5 class="m-2">
-                            <span class="badge rounded-pill bg-light border">&nbsp;</span>
-                        </h5>
-                        <div class="row h-50">
-                            <div class="col">&nbsp;</div>
-                            <div class="col">&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="col py-2">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="float-right text-muted">Thu, Jan 12th 2019 11:30 AM</div>
-                                <h4 class="card-title">Day 4 Wrap-up</h4>
-                                <p>Join us for lunch in Bootsy's cafe across from the Campus Center.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!--/row-->
             </div>
             <!--container-->
         </div>
+
+        <?php
+        ?>
+
+
+
+        <!-- Trans Modal -->
+
+        <?php Modal::begin([
+            'title' => '<h5>Add Request Order Trans</h5>',
+            'headerOptions' => ['id' => 'modalHeader'],
+            'id' => 'myModal',
+        ]); ?>
+
+        <div id='modalContent'>
+
+            <?php $form = ActiveForm::begin(['id' => 'addCosting']); ?>
+            <?= $form->field($dataRequestOrderTransModel, 'contract_number')->textInput(['value' => $model->contract->contract_number, 'disabled' => true]) ?>
+            <?php // $form->field($dataRequestOrderTransModel, 'costing_name')->dropDownList(['1' => 1], ['id' => 'costing_name', 'class' => "costings", 'prompt' => 'Select unit Rate...']) 
+            ?>
+
+            <?=
+            $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList(
+                ArrayHelper::map(
+                    Costing::find()
+                        ->joinWith('item')
+                        ->where(['client_id' => $model->client_id])
+                        ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
+                        ->all(),
+                    'id',
+                    function ($costing) {
+                        $activityName = strtoupper($costing->item->masterActivityCode->activity_name);
+                        $typeName = strtoupper($costing->item->itemType->type_name);
+                        $size = strtoupper($costing->item->size);
+                        $class = strtoupper($costing->item->class);
+
+                        $rateName = strtoupper($costing->unitRate->rate_name);
+                        $price = number_format($costing->price, 0, ',', '.');
+
+                        return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName} (Rp {$price})";
+                    }
+                ),
+                ['id' => 'costing_idx', 'class' => 'form-control form-select', 'style' => 'width: 100%"', 'prompt' => 'Select a Costing ...']
+            )->label('Costing');
+            ?>
+
+            <?= $form->field($dataRequestOrderTransModel, 'curency_format')->textInput(['id' => 'curency_format', 'maxlength' => true, 'readonly' => true]) ?>
+
+
+            <?= $form->field($dataRequestOrderTransModel, 'quantity')->textInput(['id' => 'quantity2']) ?>
+
+
+            <?= $form->field($dataRequestOrderTransModel, 'total_curency_format')->textInput(['id' => 'total_curency_format', 'maxlength' => true]) ?>
+
+
+            <?= $form->field($dataRequestOrderTransModel, 'request_order_id')->hiddenInput(['value' => $model->id])->label(false) ?>
+            <?= $form->field($dataRequestOrderTransModel, 'unit_price')->hiddenInput(['id' => 'unit_pricex', 'maxlength' => true, 'readonly' => true])->label(false) ?>
+            <?= $form->field($dataRequestOrderTransModel, 'sub_total')->hiddenInput(['id' => 'total_price', 'maxlength' => true])->label(false) ?>
+
+            <div class="form-group mt-3">
+                <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+            </div>
+
+            <?php ActiveForm::end(); ?>
+        </div>
+
+        <?php Modal::end(); ?>
+        <!-- End Trans Modal -->
+        <?php
+        $this->registerJs(<<<JS
+            $('#myModal').on('hidden.bs.modal', function () {
+                $(this).find('form').trigger('reset');
+            });
+            
+            $('#myModal').on('submit', 'form#addCosting', function(e){
+                e.preventDefault();
+                var form = $(this);
+                // $('#myModal').modal('hide');
+                console.log(form.attr('method'));
+                $.ajax({
+                    url: '/request-order-trans/create',
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response){
+                        console.log(response);
+                        if(response.success){
+                            $('#myModal').modal('hide');
+                            alert('Saved Success');
+                        $.pjax.reload({container:'#my-pjax'});
+
+                        }else{
+                            alert('Failed Saved');
+
+                        }
+                    },
+                });
+            });
+        JS);
+        ?>

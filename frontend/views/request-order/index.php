@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     'ro_number',
-                    'contract.contract_number',
+                    // 'contract.contract_number',
                     [
                         'label' => 'Client Name',
                         'attribute' => 'clientName',

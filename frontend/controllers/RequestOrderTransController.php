@@ -68,29 +68,19 @@ class RequestOrderTransController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($id,$client_id)
+    public function actionCreate()
     {
         $model = new RequestOrderTrans();
-
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->save();
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                return ['success' => true];  
             }
         } else {
-            $model->loadDefaultValues();
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['success' => false, 'errors' => $model->getErrors()];    
         }
-
-        $client = Client::find()->where(['id'=>$client_id])->one();
-        // print_r($client->contracts);
-        $model->request_order_id = $id;
-
-        
-        $client_id = $client_id;
-
-        return $this->renderAjax('create', [
-            'model' => $model,
-            'client_id' =>$client_id,
-        ]);
     }
 
     /**
@@ -120,11 +110,11 @@ class RequestOrderTransController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id,$ro)
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/request-order/view', 'id'=>$ro]);
     }
 
     /**

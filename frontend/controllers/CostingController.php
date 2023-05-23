@@ -137,4 +137,41 @@ class CostingController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
+    public function actionSelect2Get()
+    {
+        // $clients =  Costing::find()->asArray()->all();
+        $clients =  Costing::find()->all();
+        // Format the data as required by Select2
+        $data = [];
+        foreach ($clients as $client) {
+
+            $data[] = [
+                'id' => $client['id'],
+                'client_name' => $client->client->name,
+                'unit_rate' => $client->unitRate->rate_name,
+                'price' => $client->price,
+
+
+            ];
+        }
+
+        // Output the data as JSON
+        return Json::encode([
+            'results' => $data,
+            'pagination' => ['more' => false], // Pagination not implemented in this example
+        ]);
+    }
+
+    public function actionGetprice($costingId)
+    {    
+        $product = $this->findModel($costingId); // find the product with the given ID
+        $price = $product->price; // get the price of the product
+        
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON; // set the response format to JSON
+        return [
+            'price' => $price
+        ];
+    }
+
+
 }

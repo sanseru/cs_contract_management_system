@@ -22,6 +22,7 @@ class RequestOrderTrans extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
     public static function tableName()
     {
         return 'request_order_trans';
@@ -30,12 +31,19 @@ class RequestOrderTrans extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $contract_number;
+    public $costing_name;
+    public $curency_format;
+    public $total_curency_format;
+
+
+
     public function rules()
     {
         return [
             [['request_order_id', 'costing_id', 'quantity', 'unit_price', 'sub_total'], 'required'],
             [['request_order_id', 'costing_id', 'quantity'], 'integer'],
-            [['unit_price', 'sub_total'], 'number'],
+            [['unit_price','contract_number'], 'safe'],
             [['costing_id'], 'exist', 'skipOnError' => true, 'targetClass' => Costing::class, 'targetAttribute' => ['costing_id' => 'id']],
             [['request_order_id'], 'exist', 'skipOnError' => true, 'targetClass' => RequestOrder::class, 'targetAttribute' => ['request_order_id' => 'id']],
         ];
@@ -53,6 +61,8 @@ class RequestOrderTrans extends \yii\db\ActiveRecord
             'quantity' => 'Quantity',
             'unit_price' => 'Unit Price',
             'sub_total' => 'Sub Total',
+            'contract_number' => 'Contract Number',
+            'costing_name' => 'Costing Name',
         ];
     }
 

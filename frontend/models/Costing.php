@@ -40,7 +40,7 @@ class Costing extends \yii\db\ActiveRecord
             [['client_id', 'contract_id', 'unit_rate_id', 'price', 'created_at', 'updated_at'], 'required'],
             [['client_id', 'contract_id', 'unit_rate_id'], 'integer'],
             // [['price'], 'number'],
-            [['created_at', 'updated_at', 'clientName', 'price'], 'safe'],
+            [['created_at', 'updated_at', 'clientName', 'price','item_id'], 'safe'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientContract::class, 'targetAttribute' => ['contract_id' => 'id']],
             [['unit_rate_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnitRate::class, 'targetAttribute' => ['unit_rate_id' => 'id']],
@@ -56,6 +56,7 @@ class Costing extends \yii\db\ActiveRecord
             'id' => 'ID',
             'client_id' => 'Client ID',
             'contract_id' => 'Contract ID',
+            'item_id' => 'Item ID',
             'unit_rate_id' => 'Unit Rate ID',
             'price' => 'Price',
             'created_at' => 'Created At',
@@ -102,4 +103,9 @@ class Costing extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RequestOrderTrans::class, ['costing_id' => 'id']);
     }
+
+    public function getItem() 
+    { 
+        return $this->hasOne(Item::class, ['id' => 'item_id']); 
+    } 
 }
