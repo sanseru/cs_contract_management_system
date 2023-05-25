@@ -7,6 +7,7 @@ use frontend\models\RequestOrderActivity;
 use frontend\models\RequestOrderSearch;
 use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,6 +25,15 @@ class RequestOrderController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -58,7 +68,7 @@ class RequestOrderController extends Controller
      */
     public function actionView($id)
     {
-        
+
         $dataRequestOrderTransModel = new RequestOrderTrans();
         $dataRequestOrderTranssearchModel = new RequestOrderTransSearch(['request_order_id' => $id]);
         $dataRequestOrderTransProvider = $dataRequestOrderTranssearchModel->search($this->request->queryParams);
@@ -83,7 +93,6 @@ class RequestOrderController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                // print_r($model->activityCodeArray );die;
                 $model->start_date = date('Y-m-d', strtotime($model->start_date));
                 $model->end_date = date('Y-m-d', strtotime($model->end_date));
                 $model->created_at = date('Y-m-d H:i:s');
@@ -125,6 +134,7 @@ class RequestOrderController extends Controller
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
         $selectedCodes = $model->requestOrderActivities; // assuming attribute name is activityCodes
 
 
@@ -133,7 +143,6 @@ class RequestOrderController extends Controller
         foreach ($selectedCodes as $item) {
             $activityCodes[] = $item->attributes['activity_code'];
         }
-        // var_dump($activityCodes);die;
         $model->activityCodeArray = json_encode($activityCodes);
 
         return $this->render('update', [

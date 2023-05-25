@@ -11,11 +11,11 @@ $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' 
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="costing-update">
+    <div class="card">
+        <div class="card-header"><?= Html::encode($this->title) ?></div>
+        <?= $this->render('_form', [
+            'model' => $model,
+        ]) ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+    </div>
 </div>

@@ -11,6 +11,7 @@ use Yii;
  * @property string|null $rate_name
  *
  * @property Costing[] $costings
+ * @property ActivityUnitRate[] $activityUnitRates 
  */
 class UnitRate extends \yii\db\ActiveRecord
 {
@@ -52,4 +53,15 @@ class UnitRate extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Costing::class, ['unit_rate_id' => 'id']);
     }
+    /**
+    * Gets query for [[ActivityUnitRates]]. 
+    * 
+    * @return \yii\db\ActiveQuery 
+    */ 
+   public function getActivityUnitRates() 
+   { 
+       return $this->hasMany(ActivityUnitRate::class, ['activity_code' => 'activity_code']); 
+   } 
+ 
+   
 }

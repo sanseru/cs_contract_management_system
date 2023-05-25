@@ -7,20 +7,83 @@ use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\View;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\Costing $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$this->registerJsFile('@web/js/costing/script.js', ['depends' => [\yii\web\JqueryAsset::class], 'position' => \yii\web\View::POS_END]);
+
+if (!$model->isNewRecord) {
+    $activity_name = $model->item->masterActivityCode->activity_name;
+    $type_name = $model->item->itemType->type_name;
+    $size = $model->item->size;
+    $class = $model->item->class;
+    $combine = "'" . $activity_name . " " . $type_name . " " . $size . " " . $class . "'";
+
+    $this->registerJs(
+        <<<JS
+            $(document).ready(function() {
+                $('#contract_id').trigger('change');
+                $('#item_id').val($model->item_id).change();
+                var option = new Option($combine, $model->item_id, true, true);
+                $('#item_id').append(option).trigger('change');
+                $('#item_id').trigger('change');
+            });
+        JS
+    );
+}
+
 $this->registerJs(
     <<<JS
-
-        $(document).ready(function() {
-            $('#contract_id').trigger('change');
-        });
         $('#contract_id').select2();
-        $('#item_id').select2();
+        $('#item_id').select2({
+            ajax: {
+                url: '/item/select2-get',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function(data, params) {
 
+                    return {
+                    results: $.map(data.results, function (obj) {
+                        return {id: obj.id, text: obj.activity_name, type_name: obj.type_name, size: obj.size,class: obj.class, 'data-customer': obj.id};
+                    }),
 
+                    };
+                },      
+                cache: true
+            },
+            templateResult: templateResult,
+            placeholder: 'Select a client ...',
+            allowClear: true,
+            templateSelection: function (data, container) {
+                // Add custom attributes to the <option> tag for the selected option
+                $(data.element).attr('data-customer', data.customer);
+                if(data.type_name){
+                    return data.text + ' - ' + data.type_name + ' - ' + data.size + ' - ' + data.class;
+
+                }else{
+
+                return data.text;
+
+                }
+            }
+        });
+
+        function templateResult(option) {
+            var \$option = $(
+                '<div><strong style=\"font-size:14px;\"> Activity : ' + 
+                    option.text 
+                + '</strong></div><div class=\"row\"><i style=\"font-size:11px\"><div class=\"col\"><b> Type: '+ option.type_name +'</b></div><div class=\"col\"><b> Size: '+option.size+'</b></div><div class=\"col\"><b> Class: '+option.class+'</b></div></i></div>'
+            );
+            return \$option;
+        }
 
         $("#costing-price").keyup(function(){   // 1st way
             var currency = $('#costing-price').val();
@@ -36,56 +99,22 @@ $this->registerJs(
             priceTextDiv.style.display = 'block';
 
         });
-
-
     JS
 );
 
 $this->registerCss("
-.select2-container .select2-selection--single {
-    height: 36px;
-}
-.form-control:disabled, .form-control[readonly] {
-    background-color: #e9ecef;
-    opacity: 1;
-}
+    .select2-container .select2-selection--single {
+        height: 36px;
+    }
+    .form-control:disabled, .form-control[readonly] {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
 ");
 ?>
-
-
-
 <div class="costing-form">
     <div class="card-body">
-
         <?php $form = ActiveForm::begin(); ?>
-
-        <?php
-        $getUrl = Url::to(['client/find-model']);
-
-        $script = <<< JS
-            $('#contract_id').change(function(){
-                var contractId = $(this).val();
-                $.ajax({
-                    url: '/client/get-client',
-                    data: { id: contractId },
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        // handle success response here
-                        console.log(response);
-                        $('#client_name').val(response.name)
-                        $('#client_id').val(response.id)
-                    },
-                    error: function(error) {
-                        // handle error response here
-                        alert(error.responseText);
-
-                    }
-                });
-            });
-        JS;
-        $this->registerJs($script);
-        ?>
         <div class="row">
             <div class="col-md-12">
                 <?= $form->field($model, 'contract_id')->dropDownList(
@@ -100,27 +129,17 @@ $this->registerCss("
         </div>
         <div class="row">
             <div class="col-md-12">
-                <?= $form->field($model, 'item_id')->dropDownList(
-                    ArrayHelper::map(
-                        Item::find()->all(),
-                        'id',
-                        function ($item) {
-                            return $item->masterActivityCode->activity_name . ' - ' . $item->itemType->type_name . ' (' . $item->size . ')';
-                        }
-                    ),
-                    ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Contract ...']
-                )->label('Item') ?>
+                <?= $form->field($model, 'item_id')->dropDownList([], ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Item ...', 'style' => 'width:100%',])->label('Item') ?>
             </div>
             <div class="col-md-12">
-                <?= $form->field($model, 'unit_rate_id')->dropDownList(ArrayHelper::map(UnitRate::find()->all(), 'id', 'rate_name'), ['id' => 'rate_id', 'prompt' => 'Select unit Rate...']) ?>
+                <?= $form->field($model, 'unit_rate_id')->dropDownList([], ['id' => 'rate_id', 'prompt' => 'Select unit Rate...']) ?>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-4">
                 <?= $form->field($model, 'price')
                     ->textInput(['maxlength' => true, 'enableClientValidation' => false])
-                    ->widget(\yii\widgets\MaskedInput::className(), [
+                    ->widget(\yii\widgets\MaskedInput::class, [
                         'clientOptions' => [
                             'alias' => 'numeric',
                             'groupSeparator' => ',',
@@ -130,10 +149,7 @@ $this->registerCss("
                             'removeMaskOnSubmit' => true,
                         ],
                         'options' => [
-                            // 'class' => 'form-control',
                             'autocomplete' => 'off',
-                            // 'onchange'=>'
-                            // alert("cobas");'
                         ],
                     ]);
                 ?>
@@ -143,114 +159,12 @@ $this->registerCss("
                 <div id="teks_number" class="uppercase form-control" style="border: none;"></div>
             </div>
         </div>
-
         <?= $form->field($model, 'client_id')->hiddenInput(['id' => 'client_id'])->label(false) ?>
-        <div class="form-group d-md-flex justify-content-md-end">
-            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-        </div>
-
-        <?php ActiveForm::end(); ?>
     </div>
+
+    <div class="form-group text-center card-footer">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-createcust']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>
-
-<?php
-$this->registerJs(
-    <<<JS
-        function rupiahToWords(number) {
-                let words = {
-                    ones: ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan'],
-                    tens: ['', 'sepuluh', 'dua puluh', 'tiga puluh', 'empat puluh', 'lima puluh', 'enam puluh', 'tujuh puluh', 'delapan puluh', 'sembilan puluh'],
-                    hundreds: ['', 'seratus', 'dua ratus', 'tiga ratus', 'empat ratus', 'lima ratus', 'enam ratus', 'tujuh ratus', 'delapan ratus', 'sembilan ratus'],
-                    rupiah: ['', 'ribu', 'juta', 'miliar', 'triliun']
-                };
-
-                if (typeof number === 'number') {
-                    number = String(number);
-                }
-
-                let rupiahArr = number.split('').reverse();
-                let result = [];
-
-                for (let i = 0, rupiahIndex = 0; i < rupiahArr.length; i += 3, rupiahIndex++) {
-                    let rupiahGroup = rupiahArr.slice(i, i + 3).reverse().join('');
-                    let wordsArr = [];
-
-                    if (rupiahGroup === '000') {
-                    continue;
-                    }
-
-                    if (rupiahGroup.length === 3 && rupiahGroup[0] !== '0') {
-                    let hundreds = Number(rupiahGroup[0]);
-                    wordsArr.push(words.hundreds[hundreds]);
-                    }
-
-                    if (rupiahGroup.length >= 2) {
-                    let tens = Number(rupiahGroup[rupiahGroup.length - 2]);
-                    let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
-
-                    if (tens === 1) {
-                        let teen = Number(rupiahGroup.slice(-2));
-                        if (teen === 11) {
-                        wordsArr.push('sebelas');
-                        } else if (teen === 10) {
-                        wordsArr.push('sepuluh');
-                        } else {
-                        wordsArr.push(words.ones[teen % 10] + ' belas');
-                        }
-                    } else {
-                        if (tens !== 0) {
-                        wordsArr.push(words.tens[tens]);
-                        }
-
-                        if (ones !== 0) {
-                        wordsArr.push(words.ones[ones]);
-                        }
-                    }
-                    } else {
-                    let ones = Number(rupiahGroup[rupiahGroup.length - 1]);
-                    if (ones !== 0) {
-                        wordsArr.push(words.ones[ones]);
-                    }
-                    }
-
-                    if (rupiahIndex > 0 && wordsArr.length > 0) {
-                    wordsArr.push(words.rupiah[rupiahIndex]);
-                    }
-
-                    result.unshift(wordsArr.join(' '));
-                }
-
-                return result.join(' ');
-            }
-
-            function currencyToWords(currency) {
-                var currencyArray = currency.toString().split(',');
-
-                var amount = parseInt(currencyArray.join(''));
-
-                var currencyWord = '';
-
-                switch (currencyArray[0]) {
-                    case 'IDR':
-                    currencyWord = 'rupiah';
-                    break;
-                    default:
-                    currencyWord = '';
-
-                }
-
-                var amountWord = rupiahToWords(amount);
-
-                if (amountWord.trim() === '') {
-                    amountWord = 'nol';
-                }
-
-                var result = 'Total: ' + amountWord + ' ' + currencyWord + ' Rupiah';
-
-                return result;
-            }
-
-    JS
-);
-
-?>
+</div>

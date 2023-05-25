@@ -137,3 +137,15 @@ a.desc:after {
     opacity: 1;
 }
 /* Select 2 */
+
+
+/* CUstome Boy Font */
+body {
+    font-family: 'font-monospace', monospace;
+}
+
+.btn-createcust{
+    width: 200px; /* Set your desired width here */
+    font-size: 18px;
+    font-weight: bold;
+}

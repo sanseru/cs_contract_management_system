@@ -25,6 +25,9 @@ class Costing extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public $clientName;
+    public $contractNumber;
+    public $rateName;
+    public $itemDetail;
 
     public static function tableName()
     {
@@ -33,14 +36,14 @@ class Costing extends \yii\db\ActiveRecord
 
     /**
      * {@inheritdoc}
-     */
+     */    
     public function rules()
     {
         return [
             [['client_id', 'contract_id', 'unit_rate_id', 'price', 'created_at', 'updated_at'], 'required'],
             [['client_id', 'contract_id', 'unit_rate_id'], 'integer'],
             // [['price'], 'number'],
-            [['created_at', 'updated_at', 'clientName', 'price','item_id'], 'safe'],
+            [['created_at', 'updated_at', 'clientName', 'price','item_id','contractNumber','rateName','itemDetail'], 'safe'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Client::class, 'targetAttribute' => ['client_id' => 'id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientContract::class, 'targetAttribute' => ['contract_id' => 'id']],
             [['unit_rate_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnitRate::class, 'targetAttribute' => ['unit_rate_id' => 'id']],

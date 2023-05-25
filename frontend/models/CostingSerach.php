@@ -19,7 +19,7 @@ class CostingSerach extends Costing
         return [
             [['id', 'client_id', 'contract_id', 'unit_rate_id'], 'integer'],
             [['price'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at','contractNumber','rateName','itemDetail','clientName'], 'safe'],
         ];
     }
 
@@ -41,12 +41,25 @@ class CostingSerach extends Costing
      */
     public function search($params)
     {
-        $query = Costing::find();
+        $query = Costing::find()->joinWith('client')->joinWith('clientContract')->joinWith('unitRate');
+        
+        
+        
+
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+                'attributes' => [
+                    'id','contractNumber', 'clientName', 'rateName',
+                    'itemDetail'
+                ]
+            ]
         ]);
 
         $this->load($params);
@@ -67,6 +80,11 @@ class CostingSerach extends Costing
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+
+        $query->andFilterWhere(['like', 'client.name', $this->clientName])
+        ->andFilterWhere(['like', 'client_contract.contract_number', $this->contractNumber])
+        ->andFilterWhere(['like', 'unit_rate.rate_name', $this->rateName]);
 
         return $dataProvider;
     }

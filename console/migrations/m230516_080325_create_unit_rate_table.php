@@ -18,8 +18,10 @@ class m230516_080325_create_unit_rate_table extends Migration
         ]);
 
         $this->batchInsert('{{%unit_rate}}', ['rate_name'], [
-            ['general'],
-            ['inspection'],
+            ['General'],
+            ['Daily Rate'],
+            ['Standby Rate'],
+            ['Inspection'],
             ['Minor Repair'],
             ['Major Repair'],
             ['Painting Testing & Packaging'],

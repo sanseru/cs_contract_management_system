@@ -26,26 +26,25 @@ AppAsset::register($this);
 
 <body class="d-flex flex-column h-100">
     <?php $this->beginBody() ?>
-
     <header>
         <?php
         NavBar::begin([
-            'brandLabel' => Yii::$app->name,
+            'brandLabel' => '<i class="fa-solid fa-network-wired"></i> ' . Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
             'options' => [
                 'class' => 'navbar navbar-expand-md navbar-dark bg-navbarnavypastel fixed-top',
             ],
         ]);
         $menuItems = [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Contract', 'url' => ['/request-order/index']],
+            ['label' => '<i class="fas fa-home"></i> Home', 'url' => ['/site/index']],
+            ['label' => '<i class="fa-solid fa-receipt"></i> Order', 'url' => ['/request-order/index']],
             [
-                'label' => 'Configuration',
+                'label' => '<i class="fa-solid fa-cube"></i> Configuration',
                 'items' => [
-                    ['label' => 'Client', 'url' => ['/client/index']],
-                    ['label' => 'Activity', 'url' => ['/master-activity/index']],
-                    ['label' => 'Item', 'url' => ['/item/index']],
-                    ['label' => 'Costing', 'url' => ['/costing/index']],
+                    ['label' => '<i class="fa-solid fa-address-book fa-sm"></i> Client', 'url' => ['/client/index']],
+                    ['label' => '<i class="fa-solid fa-list-check"></i> Activity', 'url' => ['/master-activity/index']],
+                    ['label' => '<i class="fa-solid fa-barcode fa-sm"></i> Item', 'url' => ['/item/index']],
+                    ['label' => '<i class="fa-solid fa-money-check-dollar fa-sm"></i> Costing', 'url' => ['/costing/index']],
 
 
 
@@ -57,6 +56,7 @@ AppAsset::register($this);
         }
 
         echo Nav::widget([
+            'encodeLabels' => false,
             'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
             'items' => $menuItems,
         ]);
@@ -65,7 +65,7 @@ AppAsset::register($this);
         } else {
             echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    '<i class="fa-solid fa-arrow-right-from-bracket fa-sm"></i> Logout (' . Yii::$app->user->identity->username . ')',
                     ['class' => 'btn btn-link logout text-decoration-none text-white']
                 )
                 . Html::endForm();
@@ -90,7 +90,7 @@ AppAsset::register($this);
     <footer class="footer mt-auto py-3 text-muted">
         <div class="container">
             <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-            <p class="float-end">Powered By PDI DIV Control System</p>
+            <p class="float-end">Powered By PDI</p>
         </div>
     </footer>
 

@@ -32,11 +32,9 @@ use yii\bootstrap5\ActiveForm;
 
             </div>
         </div>
-        <div class="form-group mt-4">
-            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-        </div>
-
-        <?php ActiveForm::end(); ?>
     </div>
-
+    <div class="form-group mt-2 card-footer text-center">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-createcust']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>

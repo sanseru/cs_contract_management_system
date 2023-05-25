@@ -10,11 +10,12 @@ $this->params['breadcrumbs'][] = ['label' => 'Master Activities', 'url' => ['ind
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-activity-create">
+    <div class="card">
+        <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <?= $this->render('_form', [
+            'model' => $model,
+        ]) ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+    </div>
 </div>

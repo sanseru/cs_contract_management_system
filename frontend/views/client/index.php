@@ -25,28 +25,28 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 
             ?>
-
-            <?= GridView::widget([
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'name',
-                    'address:ntext',
-                    'phone_number',
-                    'email:email',
-                    //'created_at',
-                    //'updated_at',
-                    [
-                        'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, Client $model, $key, $index, $column) {
-                            return Url::toRoute([$action, 'id' => $model->id]);
-                        }
+            <div class="table-responsive">
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        'name',
+                        'address:ntext',
+                        'phone_number',
+                        'email:email',
+                        [
+                            'class' => ActionColumn::className(),
+                            'urlCreator' => function ($action, Client $model, $key, $index, $column) {
+                                return Url::toRoute([$action, 'id' => $model->id]);
+                            }
+                        ],
                     ],
-                ],
-            ]); ?>
+                ]); ?>
 
 
+            </div>
         </div>
+
     </div>
 </div>

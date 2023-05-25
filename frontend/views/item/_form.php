@@ -13,6 +13,17 @@ use yii\helpers\ArrayHelper;
 
 
 
+$this->registerCss("
+.select2-container .select2-selection--single {
+    height: 36px;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+");
+
+
 $this->registerJs(
     <<<JS
         $('#acivity').select2();
@@ -31,17 +42,6 @@ if (!$model->isNewRecord) {
     JS;
 $this->registerJs($script);
 }
-
-
-$this->registerCss("
-.select2-container .select2-selection--single {
-    height: 36px;
-}
-.form-control:disabled, .form-control[readonly] {
-    background-color: #e9ecef;
-    opacity: 1;
-}
-");
 ?>
 
 <div class="item-form">
@@ -59,6 +59,9 @@ $this->registerCss("
     JS;
     $this->registerJs($script);
     ?>
+
+
+
     <div class="row">
         <div class="col-md-6">
             <?= $form->field($model, 'master_activity_code')->dropDownList(
@@ -73,8 +76,6 @@ $this->registerCss("
             ) ?>
         </div>
     </div>
-
-
 
     <?= $form->field($model, 'size')->textInput(['maxlength' => true]) ?>
 

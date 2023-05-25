@@ -11,6 +11,7 @@ use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\View;
 use yii\widgets\DetailView;
 use yii\widgets\Pjax;
 
@@ -133,10 +134,12 @@ Modal::begin([
 
         $script = <<< JS
     $('#contract_id').change(function(){
-        var contractId = $(this).val();
+        // var contractId = $(this).val();
+        var client_id = $model->client_id;
+
         $.ajax({
             url: '/client/get-client',
-            data: { id: contractId },
+            data: { id: client_id },
             method: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -174,24 +177,13 @@ JS;
         </div>
         <div class="row">
             <div class="col-md-10">
-                <?= $form->field($costing, 'item_id')->dropDownList(
-                    ArrayHelper::map(
-                        Item::find()->all(),
-                        'id',
-                        function ($item) {
-                            return $item->masterActivityCode->activity_name . ' - ' . $item->itemType->type_name . ' (' . $item->size . ')';
-                        }
-                    ),
-                    ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Contract ...', 'style' => 'width:100%',]
-                )->label('Item') ?>
+                <?= $form->field($costing, 'item_id')->dropDownList([], ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Item ...', 'style' => 'width:100%',])->label('Item') ?>
             </div>
-            <div class="col-md-2">
-                <br>
-                <?= Html::a('Create Item', ['item/create'], ['target' => '_blank', 'class' => 'mt-2 form-control form-label  btn-sm btn btn-secondary', 'title' => 'Create a new item if Not Found']) ?>
-
+            <div class="col-md-2 mt-4">
+                <?= Html::a('Create Item', ['item/create', 'next_url' => 'close_tab'], ['target' => '_blank', 'class' => 'mt-2 form-control form-label  btn-sm btn btn-secondary', 'title' => 'Create a new item if Not Found']) ?>
             </div>
             <div class="col-md-12">
-                <?= $form->field($costing, 'unit_rate_id')->dropDownList(ArrayHelper::map(UnitRate::find()->all(), 'id', 'rate_name'), ['id' => 'rate_id', 'prompt' => 'Select unit Rate...']) ?>
+                <?= $form->field($costing, 'unit_rate_id')->dropDownList([], ['id' => 'rate_id', 'prompt' => 'Select unit Rate...', 'style' => 'width:100%']) ?>
             </div>
         </div>
         <div class="row">
@@ -239,20 +231,21 @@ Modal::end();
 
 <?php
 $this->registerCss("
-.select2-container .select2-selection--single {
-    height: 36px;
-}
-.form-control:disabled, .form-control[readonly] {
-    background-color: #e9ecef;
-    opacity: 1;
-}
-");
+        .select2-container .select2-selection--single {
+            height: 36px;
+        }
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+    ");
 
 $this->registerJs(
     <<<JS
         $(document).on('click', '.btn-modal', function (e) {
             $('#consting_client_contract').modal('show');
             $('#contract_id').trigger('change');
+
 
         });
 
@@ -265,7 +258,8 @@ $this->registerJs(
                 dataType: 'json',
                 success: function(data) {
                     $('#my-form')[0].reset();
-                    $('#myModal').modal('hide');
+                    $("#item_id").val(null).trigger("change"); // reset to empty state
+                    $('#consting_client_contract').modal('hide');
                     $.pjax.reload({container:'#my_pjax'});
                     alert('Berhasil Di Tambahkan');
                 },
@@ -274,23 +268,94 @@ $this->registerJs(
                 }
             });
         });
+
+        $('#item_id').select2({
+            dropdownParent: $("#consting_client_contract"),
+            // minimumInputLength: 2,
+            ajax: {
+                url: '/item/select2-get',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function(data, params) {
+
+                    return {
+                    results: $.map(data.results, function (obj) {
+                        return {id: obj.id, text: obj.activity_name, type_name: obj.type_name, size: obj.size,class: obj.class, 'data-customer': obj.id};
+                    }),
+
+                    };
+                },      
+                cache: true
+            },
+            templateResult: templateResult,
+            placeholder: 'Select a client ...',
+            allowClear: true,
+            templateSelection: function (data, container) {
+                // Add custom attributes to the <option> tag for the selected option
+                $(data.element).attr('data-customer', data.customer);
+                if(data.type_name){
+                    return data.text + ' - ' + data.type_name + ' - ' + data.size + ' - ' + data.class;
+
+                }else{
+
+                return data.text;
+
+                }
+            }
+        }).on('change', function() {
+            var itemId = $(this).val();
+            // Make an AJAX request to fetch select options based on item_id
+            $.ajax({
+                url: '/costing/fetch-options-unit-rate', // Replace with the actual URL to fetch select options
+                type: 'GET',
+                data: {item_id: itemId},
+                dataType: 'json',
+                success: function(response) {
+                    // Clear existing options
+                    $('#rate_id').empty();
+
+                    $('#rate_id').append($('<option></option>').attr('value', '').text('Select unit Rate...'));
+
+                    // Add new options based on the response
+                    $.each(response, function(key, value) {
+                        $('#rate_id').append($('<option></option>').attr('value', key).text(value));
+                    });
+
+                    // Refresh Select2 to reflect the updated options
+                    $('#rate_id').trigger('change');
+                },
+                error: function() {
+                    console.log('Error occurred while fetching select options.');
+                }
+            });
+        });
+
+        function templateResult(option) {
+            var \$option = $(
+                '<div><strong style=\"font-size:14px;\"> Activity : ' + 
+                    option.text 
+                + '</strong></div><div class=\"row\"><i style=\"font-size:11px\"><div class=\"col\"><b> Type: '+ option.type_name +'</b></div><div class=\"col\"><b> Size: '+option.size+'</b></div><div class=\"col\"><b> Class: '+option.class+'</b></div></i></div>'
+            );
+            return \$option;
+        }
     JS
 );
+
 
 
 $this->registerJs(
     <<<JS
         $('#contract_id').select2({
             dropdownParent: $("#consting_client_contract")
-
         });
-        $('#item_id').select2({
-            dropdownParent: $("#consting_client_contract")
-
-        });
-
-
-
+        // $('#item_id').select2({
+        //     dropdownParent: $("#consting_client_contract")
+        // });
         $("#costing-price").keyup(function(){   // 1st way
             var currency = $('#costing-price').val();
             var myFieldValue = $('#costing-price').inputmask('unmaskedvalue');
@@ -303,13 +368,22 @@ $this->registerJs(
             resultField.innerHTML = text.toUpperCase();
             const priceTextDiv = document.getElementById('price_text_div');
             priceTextDiv.style.display = 'block';
-
         });
-
-
     JS
 );
 
+
+// JS code to update select options based on item_id
+$js = <<< JS
+        $(document).ready(function() {
+            // Initialize Select2
+            $('#rate_id').select2({
+                dropdownParent: $("#consting_client_contract"),
+            });
+        });
+    JS;
+// Register the JS code
+$this->registerJs($js, View::POS_END);
 ?>
 
 
@@ -412,9 +486,6 @@ $this->registerJs(
 
                 return result;
             }
-
-
-
     JS
 );
 

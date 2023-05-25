@@ -22,6 +22,15 @@ class ActivityContractController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -162,7 +171,7 @@ class ActivityContractController extends Controller
             //     return json_encode(['success' => true]); // return a JSON response
             return json_encode([
                 'success' => true,
-                'url' => \Yii::$app->urlManager->createUrl(['uploads/'. $filename])
+                'url' => \Yii::$app->urlManager->createUrl(['uploads/' . $filename])
             ]); // return a JSON response
 
         } else {

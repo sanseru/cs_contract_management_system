@@ -10,6 +10,8 @@ use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use frontend\models\ClientContract;
 use frontend\models\ClientContractSearch;
+use Yii;
+use yii\filters\AccessControl;
 
 /**
  * ClientController implements the CRUD actions for Client model.
@@ -24,6 +26,15 @@ class ClientController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -88,6 +99,7 @@ class ClientController extends Controller
                 $model->created_at = date('Y-m-d H:i:s');
                 $model->updated_at = date('Y-m-d H:i:s');
                 $model->save();
+                Yii::$app->session->setFlash('success', "Client Created.");
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -111,6 +123,7 @@ class ClientController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', "Client Created.");
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -129,6 +142,7 @@ class ClientController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        Yii::$app->session->setFlash('success', "Client Delete Success.");
 
         return $this->redirect(['index']);
     }

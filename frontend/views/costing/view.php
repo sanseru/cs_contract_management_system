@@ -13,30 +13,33 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="costing-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="card">
+        <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
+        <div class="card-body">
+            <p>
+                <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            </p>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    // 'id',
+                    'client.name',
+                    'clientContract.contract_number',
+                    'unitRate.rate_name',
+                    'price',
+                    'created_at',
+                    'updated_at',
+                ],
+            ]) ?>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'client.name',
-            'clientContract.contract_number',
-            'unitRate.rate_name',
-            'price',
-            'created_at',
-            'updated_at',
-        ],
-    ]) ?>
-
+        </div>
+    </div>
 </div>

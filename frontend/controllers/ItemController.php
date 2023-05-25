@@ -4,9 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\Item;
 use frontend\models\ItemSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -21,6 +23,15 @@ class ItemController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -71,7 +82,16 @@ class ItemController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                $url = \Yii::$app->request->get('next_url');
+                var_dump($url);
+                if (!empty($url)) {
+                    $script = <<<JS
+                        window.close();
+                    JS;
+                    $this->getView()->registerJs($script, \yii\web\View::POS_HEAD);
+                } else {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -114,6 +134,44 @@ class ItemController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionSelect2Get()
+    {
+        // $clients =  Costing::find()->asArray()->all();
+        // $clients =  Item::find()->all();
+        $search = \Yii::$app->request->get('q');
+
+        if (!empty($search)) {
+            $clients = Item::find()
+                ->joinWith(['masterActivityCode', 'itemType'])
+                ->where(['like', 'activity_name', $search])
+                ->orWhere(['like', 'type_name', $search])
+                ->orWhere(['like', 'size', $search])
+                ->orWhere(['like', 'class', $search])
+                ->all();
+        } else {
+            $clients =  Item::find()->all();
+        }
+
+        // Format the data as required by Select2
+        $data = [];
+        foreach ($clients as $client) {
+
+            $data[] = [
+                'id' => $client['id'],
+                'activity_name' => $client->masterActivityCode->activity_name,
+                'type_name' => $client->itemType->type_name,
+                'size' => $client->size,
+                'class' => $client->class,
+            ];
+        }
+
+        // Output the data as JSON
+        return Json::encode([
+            'results' => $data,
+            'pagination' => ['more' => false], // Pagination not implemented in this example
+        ]);
     }
 
     /**

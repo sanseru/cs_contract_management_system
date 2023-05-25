@@ -2,8 +2,11 @@
 
 namespace frontend\controllers;
 
+use frontend\models\ActivityUnitRate;
 use frontend\models\MasterActivity;
 use frontend\models\MasterActivitySearch;
+use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +24,15 @@ class MasterActivityController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -70,8 +82,22 @@ class MasterActivityController extends Controller
         $model = new MasterActivity();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $existingActivity = MasterActivity::findOne(['activity_code' => $model->activity_code]);
+
+                if ($existingActivity) {
+                    Yii::$app->session->setFlash('error', 'Activity code already exists. Please choose a different code.');
+                    return $this->refresh();
+                }
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->save(false);
+                foreach ($model->unitrate_activity as $activity_code) {
+                    $ac_unit = new ActivityUnitRate();
+                    $ac_unit->activity_code = $model->activity_code;
+                    $ac_unit->unit_rate_id = $activity_code;
+                    $ac_unit->save();
+                }
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -93,10 +119,41 @@ class MasterActivityController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save();
+            // Clear existing activity unit rates for the model
+            ActivityUnitRate::deleteAll(['activity_code' => $model->activity_code]);
+
+            if ($model->unitrate_activity) {
+                foreach ($model->unitrate_activity as $activity_code) {
+                    // Check if the activity unit rate already exists for the model
+                    $existingUnitRate = ActivityUnitRate::findOne([
+                        'activity_code' => $model->activity_code,
+                        'unit_rate_id' => $activity_code,
+                    ]);
+
+                    if (!$existingUnitRate) {
+                        $ac_unit = new ActivityUnitRate();
+                        $ac_unit->activity_code = $model->activity_code;
+                        $ac_unit->unit_rate_id = $activity_code;
+                        $ac_unit->save();
+                    }
+                }
+            }
+
+            return $this->redirect(['index']);
         }
 
+
+        $selectedUnitRate = $model->activityUnitRates; // assuming attribute name is activityCodes
+        $activityUnitRate = [];
+
+        foreach ($selectedUnitRate as $item) {
+            $activityUnitRate[] = $item->unit_rate_id;
+        }
+
+        $model->unitrate_activity = json_encode($activityUnitRate);
         return $this->render('update', [
             'model' => $model,
         ]);

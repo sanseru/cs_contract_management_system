@@ -10,6 +10,7 @@ use yii\helpers\Url;
 use yii\bootstrap5\Modal;
 use yii\bootstrap5\ActiveForm;
 use yii\jui\DatePicker;
+use yii\web\View;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\Client $model */
@@ -18,7 +19,9 @@ $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$this->registerJsFile('@web/js/client/script.js', ['depends' => [\yii\web\JqueryAsset::class], 'position' => \yii\web\View::POS_END]);
 ?>
+
 <div class="client-view">
     <div class="card">
         <h5 class="card-header bg-secondary text-white">#<?= Html::encode($this->title) ?></h5>
@@ -59,48 +62,46 @@ $this->params['breadcrumbs'][] = $this->title;
             <!-- <a href="<?= Url::toRoute(['activity-contract/create', 'id' => $model->id]); ?>"><button class="btn btn-sm btn-primary">Add Contract</button></a> -->
         </div>
         <div class="card-body">
-            <?php Pjax::begin([
-                'id' => 'my-pjax',
-            ]); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); 
-            ?>
+            <div class="table-responsive">
+                <?php Pjax::begin([
+                    'id' => 'my-pjax',
+                ]); ?>
+                <?php // echo $this->render('_search', ['model' => $searchModel]); 
+                ?>
 
-            <?= GridView::widget([
-                'dataProvider' => $dataProviderClientContract,
-                'filterModel' => $searchModelClientContract,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'contract_number',
-                    [
-                        'label' => 'Client Name',
-                        'attribute' => 'clientName',
-                        'value' => 'client.name'
+                <?= GridView::widget([
+                    'dataProvider' => $dataProviderClientContract,
+                    'filterModel' => $searchModelClientContract,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        'contract_number',
+                        [
+                            'label' => 'Client Name',
+                            'attribute' => 'clientName',
+                            'value' => 'client.name'
+                        ],
+                        'start_date',
+                        'end_date',
+                        [
+                            'class' => ActionColumn::className(),
+                            'template' => '{view} {update} {delete}', // Show only Update and Delete buttons
+                            'urlCreator' => function ($action, ClientContract $modelClientContract, $key, $index, $column) {
+                                if ($action === 'view') {
+                                    return Url::to(['client-contract/view', 'id' => $modelClientContract->id]);
+                                } elseif ($action === 'update') {
+                                    return Url::to(['client-contract/update', 'id' => $modelClientContract->id]);
+                                } elseif ($action === 'delete') {
+                                    return Url::to(['client-contract/delete', 'id' => $modelClientContract->id, 'client' => $modelClientContract->client_id]);
+                                }
+                                // return Url::toRoute([$action, 'id' => $model->id]);
+                            },
+                            'contentOptions' => ['style' => 'width:100px']
+                        ],
                     ],
-                    'start_date',
-                    'end_date',
-                    //'created_by',
-                    //'created_at',
-                    //'updated_by',
-                    //'updated_at',
-                    [
-                        'class' => ActionColumn::className(),
-                        'template' => '{view} {update} {delete}', // Show only Update and Delete buttons
-                        'urlCreator' => function ($action, ClientContract $modelClientContract, $key, $index, $column) {
-                            if ($action === 'view') {
-                                return Url::to(['client-contract/view', 'id' => $modelClientContract->id]);
-                            } elseif ($action === 'update') {
-                                return Url::to(['client-contract/update', 'id' => $modelClientContract->id]);
-                            } elseif ($action === 'delete') {
-                                return Url::to(['client-contract/delete', 'id' => $modelClientContract->id, 'client' => $modelClientContract->client_id]);
-                            }
-                            // return Url::toRoute([$action, 'id' => $model->id]);
-                        },
-                        'contentOptions' => ['style' => 'width:100px']
-                    ],
-                ],
-            ]); ?>
+                ]); ?>
 
-            <?php Pjax::end(); ?>
+                <?php Pjax::end(); ?>
+            </div>
         </div>
     </div>
 
@@ -145,39 +146,4 @@ Modal::begin([
 
 <?php
 Modal::end();
-?>
-
-<?php
-$this->registerJs(
-    <<<JS
-        $(document).on('click', '.btn-modal', function (e) {
-            $('#myModal').modal('show');
-        });
-
-        $(document).on('submit', '#my-form', function(e) {
-            e.preventDefault();
-            console.log($(this).serialize());
-            $.ajax({
-                type: 'post',
-                url: '/client-contract/create',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(data) {
-                    if(data.status == 'success' ){
-                        $('#my-form')[0].reset();
-                        $('#myModal').modal('hide');
-                        $.pjax.reload({container:'#my-pjax'});
-                        alert('Berhasil Di Tambahkan');
-                    }else{
-                        alert('Failed Save To Server');
-                    }
-                    // do something with the response data
-                },
-                error: function() {
-                    alert('An error occurred while submitting the form.');
-                }
-            });
-        });
-    JS
-);
 ?>

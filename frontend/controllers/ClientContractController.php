@@ -6,6 +6,7 @@ use frontend\models\ClientContract;
 use frontend\models\ClientContractSearch;
 use frontend\models\Costing;
 use frontend\models\CostingSerach;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -23,6 +24,15 @@ class ClientContractController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -59,7 +69,7 @@ class ClientContractController extends Controller
     {
         $data = $this->findModel($id);
 
-        $searchModelCosting = new CostingSerach(['client_id'=> $data->client_id]);
+        $searchModelCosting = new CostingSerach(['client_id' => $data->client_id]);
         $dataCostingProvider = $searchModelCosting->search($this->request->queryParams);
         $costing = new Costing();
         return $this->render('view', [
@@ -81,9 +91,7 @@ class ClientContractController extends Controller
         $model = new ClientContract();
 
         if ($this->request->isAjax && $this->request->isPost) {
-
             if ($model->load($this->request->post())) {
-
                 $model->start_date = date('Y-m-d', strtotime($model->start_date));
                 $model->end_date = date('Y-m-d', strtotime($model->end_date));
                 $model->created_at = date('Y-m-d H:i:s');
@@ -142,7 +150,7 @@ class ClientContractController extends Controller
         } else {
             \Yii::$app->session->setFlash('error', 'Failed Delete Data');
         }
-    
+
         return $this->redirect(['index']);
     }
 

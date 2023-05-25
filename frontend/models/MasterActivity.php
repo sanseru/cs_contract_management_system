@@ -30,10 +30,12 @@ class MasterActivity extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $unitrate_activity;
     public function rules()
     {
         return [
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at','unitrate_activity'], 'safe'],
+            [['activity_code'], 'unique'],
             [['activity_code'], 'string', 'max' => 10],
             [['activity_name'], 'string', 'max' => 50],
         ];
@@ -82,4 +84,16 @@ class MasterActivity extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RequestOrderActivity::class, ['activity_code' => 'activity_code']);
     }
+
+    
+    /**
+    * Gets query for [[ActivityUnitRates]]. 
+    * 
+    * @return \yii\db\ActiveQuery 
+    */ 
+   public function getActivityUnitRates() 
+   { 
+       return $this->hasMany(ActivityUnitRate::class, ['activity_code' => 'activity_code']); 
+   } 
+ 
 }

@@ -34,11 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'activityBy',
             'description:ntext',
             'status',
-            //'created_by',
-            //'created_date',
-            //'updated_by',
-            //'updated_date',
-            //'contract_id',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, ActivityContract $model, $key, $index, $column) {

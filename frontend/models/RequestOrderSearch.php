@@ -18,7 +18,7 @@ class RequestOrderSearch extends RequestOrder
     {
         return [
             [['id', 'contract_id', 'client_id', 'status', 'created_by', 'updated_by'], 'integer'],
-            [['activity_code', 'so_number', 'ro_number', 'contract_type', 'start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
+            [['activity_code', 'clientName' , 'so_number', 'ro_number', 'contract_type', 'start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class RequestOrderSearch extends RequestOrder
      */
     public function search($params)
     {
-        $query = RequestOrder::find();
+        $query = RequestOrder::find()->joinWith('client');
 
         // add conditions that should always apply here
 
@@ -48,6 +48,13 @@ class RequestOrderSearch extends RequestOrder
             'query' => $query,
         ]);
 
+
+        
+    $dataProvider->sort->attributes['clientName'] = [
+        'asc' => ['client.name' => SORT_ASC],
+        'desc' => ['client.name' => SORT_DESC],
+    ];
+    
         $this->load($params);
 
         if (!$this->validate()) {
@@ -73,7 +80,8 @@ class RequestOrderSearch extends RequestOrder
         $query->andFilterWhere(['like', 'activity_code', $this->activity_code])
             ->andFilterWhere(['like', 'so_number', $this->so_number])
             ->andFilterWhere(['like', 'ro_number', $this->ro_number])
-            ->andFilterWhere(['like', 'contract_type', $this->contract_type]);
+            ->andFilterWhere(['like', 'contract_type', $this->contract_type])
+            ->andFilterWhere(['like', 'client.name', $this->clientName]);
 
         return $dataProvider;
     }

@@ -5,7 +5,10 @@ namespace frontend\controllers;
 use frontend\models\Client;
 use frontend\models\Costing;
 use frontend\models\CostingSerach;
+use frontend\models\Item;
+use frontend\models\UnitRate;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -24,6 +27,15 @@ class CostingController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -137,15 +149,13 @@ class CostingController extends Controller
     {
         $this->findModel($id)->delete();
 
-        if(\Yii::$app->getRequest()->get('url_back')){
+        if (\Yii::$app->getRequest()->get('url_back')) {
             Yii::$app->session->setFlash('success', 'Costing Record deleted successfully.');
-            return $this->redirect(['client-contract/view', 'id'=> \Yii::$app->getRequest()->get('contract_id')]);
-
-        }else{
+            return $this->redirect(['client-contract/view', 'id' => \Yii::$app->getRequest()->get('contract_id')]);
+        } else {
             Yii::$app->session->setFlash('success', 'Record deleted successfully.');
 
             return $this->redirect(['index']);
-
         }
     }
 
@@ -199,5 +209,35 @@ class CostingController extends Controller
         return [
             'price' => $price
         ];
+    }
+
+    public function actionFetchOptionsUnitRate($item_id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $item = Item::find()
+            ->joinWith('masterActivityCode')
+            ->where(['item.id' => $item_id])->one();
+
+        $masterActivity = $item->masterActivityCode; // Accessing the related MasterActivity object
+
+
+
+        $unitRateIds = [];
+        foreach ($masterActivity->activityUnitRates as $activityUnitRate) {
+            $unitRateIds[] = $activityUnitRate->unit_rate_id;
+        }
+
+        // Fetch the options based on the $item_id
+        $options = UnitRate::find()
+            ->where(['IN', 'id', $unitRateIds])
+            ->all();
+
+        $data = [];
+        foreach ($options as $option) {
+            $data[$option->id] = $option->rate_name;
+        }
+
+        return $data;
     }
 }

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use frontend\models\Client;
 use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -22,6 +23,15 @@ class RequestOrderTransController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -75,11 +85,11 @@ class RequestOrderTransController extends Controller
             if ($model->load($this->request->post())) {
                 $model->save();
                 \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return ['success' => true];  
+                return ['success' => true];
             }
         } else {
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            return ['success' => false, 'errors' => $model->getErrors()];    
+            return ['success' => false, 'errors' => $model->getErrors()];
         }
     }
 
@@ -110,11 +120,11 @@ class RequestOrderTransController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id,$ro)
+    public function actionDelete($id, $ro)
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['/request-order/view', 'id'=>$ro]);
+        return $this->redirect(['/request-order/view', 'id' => $ro]);
     }
 
     /**

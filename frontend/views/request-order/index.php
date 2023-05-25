@@ -9,7 +9,7 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var frontend\models\ContractSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-$this->title = 'Contracts';
+$this->title = 'Orders';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contract-index">
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
 
             <p>
-                <?= Html::a(Html::tag('i', '', ['class' => 'fa-solid fa-plus']) . ' Create Contract', ['create'], ['class' => 'btn btn-success btn-sm ml-5']) ?>
+                <?= Html::a(Html::tag('i', '', ['class' => 'fa-solid fa-plus']) . ' Create Order', ['create'], ['class' => 'btn btn-success btn-sm ml-5']) ?>
             </p>
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -28,10 +28,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'options' => ['class' => 'table table-striped table-bordered text-sm text-center font-monospace table-responsive'],
+                'filterRowOptions' => ['class' => 'input-group-sm'],
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     'ro_number',
-                    // 'contract.contract_number',
                     [
                         'label' => 'Client Name',
                         'attribute' => 'clientName',

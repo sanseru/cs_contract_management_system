@@ -44,7 +44,6 @@ $this->registerCssFile("@web/css/login.css", [
             <span>Login with your credentials</span>
             <div class="mt-3 inputbox">
                 <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder' => "username"])->label(false) ?>
-
                 <!-- <input type="text" class="form-control" name="" placeholder="Email"> -->
                 <i class="fa fa-user"></i>
             </div>
@@ -55,6 +54,8 @@ $this->registerCssFile("@web/css/login.css", [
                 <i class="fa fa-lock"></i>
             </div>
         </div>
+        <?= $form->field($model, 'rememberMe')->checkbox() ?>
+
         <!-- <div class="d-flex justify-content-between">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
@@ -66,7 +67,7 @@ $this->registerCssFile("@web/css/login.css", [
                 <a href="#" class="forgot">Forgot Password?</a>
             </div>
         </div> -->
-        <div class="mt-2">
+        <div class="mt-2 text-center">
             <button class="btn btn-primary btn-block">Log In</button>
         </div>
         <?php ActiveForm::end(); ?>
