@@ -16,6 +16,8 @@ use yii\web\View;
 /** @var frontend\models\Client $model */
 
 $this->title = $model->name;
+$req_id = $model->id;
+
 $this->params['breadcrumbs'][] = ['label' => 'Clients', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -85,11 +87,11 @@ $this->registerJsFile('@web/js/client/script.js', ['depends' => [\yii\web\Jquery
                         [
                             'class' => ActionColumn::className(),
                             'template' => '{view} {update} {delete}', // Show only Update and Delete buttons
-                            'urlCreator' => function ($action, ClientContract $modelClientContract, $key, $index, $column) {
+                            'urlCreator' => function ($action, ClientContract $modelClientContract, $key, $index, $column) use ($model) {
                                 if ($action === 'view') {
-                                    return Url::to(['client-contract/view', 'id' => $modelClientContract->id]);
+                                    return Url::to(['client-contract/view', 'id' => $modelClientContract->id,'req_order' => $model->id]);
                                 } elseif ($action === 'update') {
-                                    return Url::to(['client-contract/update', 'id' => $modelClientContract->id]);
+                                    return Url::to(['client-contract/update', 'id' => $modelClientContract->id,'req_order' => $model->id]);
                                 } elseif ($action === 'delete') {
                                     return Url::to(['client-contract/delete', 'id' => $modelClientContract->id, 'client' => $modelClientContract->client_id]);
                                 }

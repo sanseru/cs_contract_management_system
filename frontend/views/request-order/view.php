@@ -485,9 +485,13 @@ $this->registerCss("
                         console.log(response);
                         if(response.success){
                             $('#myModal').modal('hide');
-                            alert('Saved Success');
+                            Swal.fire({
+                            icon: 'success',
+                            title: 'Data has been saved',
+                            showConfirmButton: true,
+                            timer: 1500
+                            });
                         $.pjax.reload({container:'#my-pjax'});
-
                         }else{
                             alert('Failed Saved');
 

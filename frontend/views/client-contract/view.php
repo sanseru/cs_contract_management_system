@@ -17,10 +17,18 @@ use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\ClientContract $model */
+$reqOrder = isset($_GET['req_order']) ? $_GET['req_order'] : null;
 
 $this->title = $model->contract_number;
-$this->params['breadcrumbs'][] = ['label' => 'Client Contracts', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+if($reqOrder){
+    $this->params['breadcrumbs'][] = ['label' => 'Client', 'url' => ['/client/view', 'id'=>$reqOrder]];
+    // $this->params['breadcrumbs'][] = ['label' => 'Client Contracts', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = 'Client Contract '.$this->title;
+}else{
+    $this->params['breadcrumbs'][] = ['label' => 'Client Contracts', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = $this->title;
+}
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="client-contract-view">

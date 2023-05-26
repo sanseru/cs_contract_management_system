@@ -107,9 +107,9 @@ class ClientContractController extends Controller
             $model->loadDefaultValues();
         }
 
-        // return $this->render('create', [
-        //     'model' => $model,
-        // ]);
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**

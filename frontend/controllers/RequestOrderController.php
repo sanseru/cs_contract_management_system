@@ -197,21 +197,20 @@ class RequestOrderController extends Controller
         $activityArray = explode(', ', $activityx);
 
         if (!empty($search)) {
-            // $clients = Item::find()
-            //     ->joinWith(['masterActivityCode', 'itemType'])
-            //     ->where(['like', 'activity_name', $search])
-            //     ->orWhere(['like', 'type_name', $search])
-            //     ->orWhere(['like', 'size', $search])
-            //     ->orWhere(['like', 'class', $search])
-            //     ->all();
+
             $costings = Costing::find()
                 ->joinWith('item')
+                ->joinWith('item.itemType')
+                ->joinWith('item.masterActivityCode')
                 ->where(['client_id' => $data->client_id])
                 ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
-                ->where(['like', 'activity_name', $search])
-                ->orWhere(['like', 'type_name', $search])
-                ->orWhere(['like', 'size', $search])
-                ->orWhere(['like', 'class', $search])
+                ->andWhere([
+                    'or',
+                    ['like', 'activity_name', $search],
+                    ['like', 'type_name', $search],
+                    ['like', 'item.class', $search],
+                    ['like', 'price', $search],
+                ])
                 ->all();
         } else {
             $costings = Costing::find()
@@ -220,7 +219,6 @@ class RequestOrderController extends Controller
                 ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
                 ->all();
         }
-
 
 
         // Format the data as required by Select2
