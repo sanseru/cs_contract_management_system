@@ -131,11 +131,10 @@ class CostingController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             if (\Yii::$app->getRequest()->get('url_back')) {
-                Yii::$app->session->setFlash('success', 'Costing Record deleted successfully.');
+                Yii::$app->session->setFlash('success', 'Costing Record Update successfully.');
                 return $this->redirect(['client-contract/view', 'id' => \Yii::$app->getRequest()->get('contract_id')]);
             } else {
-                Yii::$app->session->setFlash('success', 'Record deleted successfully.');
-
+                Yii::$app->session->setFlash('success', 'Record Update successfully.');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
