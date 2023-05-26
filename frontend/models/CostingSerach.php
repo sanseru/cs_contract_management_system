@@ -73,7 +73,7 @@ class CostingSerach extends Costing
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'client_id' => $this->client_id,
+            'costing.client_id' => $this->client_id,
             'contract_id' => $this->contract_id,
             'unit_rate_id' => $this->unit_rate_id,
             'price' => $this->price,

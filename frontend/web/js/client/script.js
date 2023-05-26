@@ -15,7 +15,12 @@ $(document).on("submit", "#my-form", function (e) {
         $("#my-form")[0].reset();
         $("#myModal").modal("hide");
         $.pjax.reload({ container: "#my-pjax" });
-        alert("Berhasil Di Tambahkan");
+        Swal.fire({
+          icon: 'success',
+          title: 'Data has been saved',
+          showConfirmButton: true,
+          timer: 1500
+        })
       } else {
         alert("Failed Save To Server");
       }

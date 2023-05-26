@@ -78,9 +78,37 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filterModel' => $searchModelCosting,
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
-                        'client.name',
-                        'clientContract.contract_number',
-                        'unitRate.rate_name',
+                        [
+                            'label' => 'Client Name',
+                            'attribute' => 'clientName',
+                            'value' => 'client.name'
+                        ],
+                        [
+                            'label' => 'Contract Number',
+                            'attribute' => 'contractNumber',
+                            'value' => 'clientContract.contract_number',
+                            'contentOptions' => ['class' => 'text-center'],
+                            'headerOptions' => ['class' => 'text-center'],
+                        ],
+                        [
+                            'label' => 'Rate Name',
+                            'attribute' => 'rateName',
+                            'value' => 'unitRate.rate_name'
+                        ],
+                        [
+                            'label' => 'Item Detail',
+                            'attribute' => 'itemDetail',
+                            'contentOptions' => ['class' => 'fw-lighter', 'style'=> 'font-size:10px'],
+                            'format' => 'raw', // Set the format to 'raw'
+                            'value' => function ($model) {   
+
+                                return 
+                                'Activity : '.$model->item->masterActivityCode->activity_name.'<br>'
+                                .'Type name : '.$model->item->itemType->type_name.'<br>'
+                                .'Size : '.$model->item->size.'<br>'
+                                .'Class : '.$model->item->class;
+                            }
+                        ],
                         [
                             'attribute' => 'price',
                             'value' => function ($model) {
@@ -261,7 +289,12 @@ $this->registerJs(
                     $("#item_id").val(null).trigger("change"); // reset to empty state
                     $('#consting_client_contract').modal('hide');
                     $.pjax.reload({container:'#my_pjax'});
-                    alert('Berhasil Di Tambahkan');
+                    Swal.fire({
+                    icon: 'success',
+                    title: 'Data has been saved',
+                    showConfirmButton: true,
+                    timer: 1500
+                    })
                 },
                 error: function() {
                     alert('An error occurred while submitting the form.');
