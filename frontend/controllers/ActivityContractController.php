@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\ActivityContract;
 use frontend\models\ActivityContractSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
