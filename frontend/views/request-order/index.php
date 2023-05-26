@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
 
             <p>
-                <?= Html::a(Html::tag('i', '', ['class' => 'fa-solid fa-plus']) . ' Create Order', ['create'], ['class' => 'btn btn-success btn-sm ml-5']) ?>
+                <?= Html::a(Html::tag('i', '', ['class' => 'fa-solid fa-plus']) . ' Create Order', ['create'], ['class' => 'btn btn-info btn-sm ml-5']) ?>
             </p>
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 
