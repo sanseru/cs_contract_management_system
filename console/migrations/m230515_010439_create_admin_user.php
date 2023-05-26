@@ -21,6 +21,16 @@ class m230515_010439_create_admin_user extends Migration
             'created_at' => time(),
             'updated_at' => time(),
         ]);
+
+        $this->insert('user', [
+            'username' => 'demo',
+            'email' => 'demo@demo.com',
+            'password_hash' => Yii::$app->security->generatePasswordHash('12345678'),
+            'auth_key' => Yii::$app->security->generateRandomString(),
+            'status' => 10,
+            'created_at' => time(),
+            'updated_at' => time(),
+        ]);
     }
 
     /**
