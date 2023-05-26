@@ -226,8 +226,6 @@ class CostingController extends Controller
 
         $masterActivity = $item->masterActivityCode; // Accessing the related MasterActivity object
 
-
-
         $unitRateIds = [];
         foreach ($masterActivity->activityUnitRates as $activityUnitRate) {
             $unitRateIds[] = $activityUnitRate->unit_rate_id;

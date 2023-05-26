@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 \yii\web\YiiAsset::register($this);
+
 $this->registerJs(<<<JS
     $('#costing_idx').select2({
         dropdownParent: $('#myModal')
@@ -65,6 +66,83 @@ $this->registerJs(<<<JS
         total_curency_format.val(new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice));
         
     });
+
+    $('#costing_idx').select2({
+            dropdownParent: $("#modalHeader"),
+            // minimumInputLength: 2,
+            ajax: {
+                url: 'select2-get',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term,
+                        id: $model->id,
+
+                    };
+                },
+                processResults: function(data, params) {
+
+                    return {
+                    results: $.map(data.results, function (obj) {
+                        return {id: obj.id, text: obj.activity_name, type_name: obj.type_name, size: obj.size,class: obj.class,price: obj.price, 'data-customer': obj.id};
+                    }),
+
+                    };
+                },      
+                cache: true
+            },
+            templateResult: templateResult,
+            placeholder: 'Select a client ...',
+            allowClear: true,
+            templateSelection: function (data, container) {
+                // Add custom attributes to the <option> tag for the selected option
+                $(data.element).attr('data-customer', data.customer);
+                if(data.type_name){
+                    return data.text + ' - ' + data.type_name + ' - ' + data.size + ' - ' + data.class;
+
+                }else{
+
+                return data.text;
+
+                }
+            }
+        }).on('change', function() {
+            // var itemId = $(this).val();
+            // // Make an AJAX request to fetch select options based on item_id
+            // $.ajax({
+            //     url: '/costing/fetch-options-unit-rate', // Replace with the actual URL to fetch select options
+            //     type: 'GET',
+            //     data: {item_id: itemId},
+            //     dataType: 'json',
+            //     success: function(response) {
+            //         // Clear existing options
+            //         $('#rate_id').empty();
+
+            //         $('#rate_id').append($('<option></option>').attr('value', '').text('Select unit Rate...'));
+
+            //         // Add new options based on the response
+            //         $.each(response, function(key, value) {
+            //             $('#rate_id').append($('<option></option>').attr('value', key).text(value));
+            //         });
+
+            //         // Refresh Select2 to reflect the updated options
+            //         $('#rate_id').trigger('change');
+            //     },
+            //     error: function() {
+            //         console.log('Error occurred while fetching select options.');
+            //     }
+            // });
+        });
+
+        function templateResult(option) {
+            var \$option = $(
+                '<div><strong style=\"font-size:14px;\"> Activity : ' + 
+                    option.text 
+                + '</strong></div><div class=\"row\"><i style=\"font-size:11px\"><div class=\"col\"><b> Type: '+ option.type_name +'</b></div><div class=\"col\"><b> Size: '+option.size+'</b></div><div class=\"col\"><b> Class: '+option.class+'</b></div><div class=\"col\"><b> Price: '+option.price+'</b></div></i></div>'
+            );
+            return \$option;
+        }
 JS);
 
 $this->registerCss("
@@ -76,13 +154,6 @@ $this->registerCss("
     opacity: 1;
 }
 ");
-
-$activitiex = array_map(function ($activity) {
-    return $activity->activityCode->activity_code;
-}, $model->requestOrderActivities);
-$activityx =  implode(', ', $activitiex);
-$activityArray = explode(', ', $activityx);
-
 
 ?>
 <div class="contract-view">
@@ -197,6 +268,7 @@ $activityArray = explode(', ', $activityx);
                             'attribute' => 'costing_id',
                             'label' => 'Costing',
                             'filter' => false,
+                            'format' => 'raw',
                             'value' => function ($model) {
                                 $activityName = strtoupper($model->costing->item->masterActivityCode->activity_name);
                                 $typeName = strtoupper($model->costing->item->itemType->type_name);
@@ -206,7 +278,7 @@ $activityArray = explode(', ', $activityx);
                                 $rateName = strtoupper($model->costing->unitRate->rate_name);
                                 // $price = number_format($model->price, 0, ',', '.');
                                 // return "{$activityName} - {$typeName} - {$rateName} (Rp {$price})";;
-                                return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName}";
+                                return "- Activity : {$activityName}<br> - Type : {$typeName}<br> - Class: {$class}<br> - Size: {$size}<br> - Rate: {$rateName}";
                             }
                         ],
                         // 'requestOrder.ro_number',
@@ -236,7 +308,7 @@ $activityArray = explode(', ', $activityx);
                             'class' => ActionColumn::className(),
                             'template' => '{delete}',
                             'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
-                                return Url::toRoute(['/request-order-trans/delete', 'id' => $model->id, 'ro'=> \Yii::$app->request->get('id')]);
+                                return Url::toRoute(['/request-order-trans/delete', 'id' => $model->id, 'ro' => \Yii::$app->request->get('id')]);
                             }
                         ],
                     ],
@@ -345,30 +417,31 @@ $activityArray = explode(', ', $activityx);
             <?= $form->field($dataRequestOrderTransModel, 'contract_number')->textInput(['value' => $model->contract->contract_number, 'disabled' => true]) ?>
             <?php // $form->field($dataRequestOrderTransModel, 'costing_name')->dropDownList(['1' => 1], ['id' => 'costing_name', 'class' => "costings", 'prompt' => 'Select unit Rate...']) 
             ?>
+            <?= $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList([], ['id' => 'costing_idx', 'class' => 'form-control form-select', 'prompt' => 'Select a Costing ...', 'style' => 'width:100%',])->label('Costing') ?>
 
-            <?=
-            $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList(
-                ArrayHelper::map(
-                    Costing::find()
-                        ->joinWith('item')
-                        ->where(['client_id' => $model->client_id])
-                        ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
-                        ->all(),
-                    'id',
-                    function ($costing) {
-                        $activityName = strtoupper($costing->item->masterActivityCode->activity_name);
-                        $typeName = strtoupper($costing->item->itemType->type_name);
-                        $size = strtoupper($costing->item->size);
-                        $class = strtoupper($costing->item->class);
+            <?php
+            // $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList(
+            //     ArrayHelper::map(
+            //         Costing::find()
+            //             ->joinWith('item')
+            //             ->where(['client_id' => $model->client_id])
+            //             ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
+            //             ->all(),
+            //         'id',
+            //         function ($costing) {
+            //             $activityName = strtoupper($costing->item->masterActivityCode->activity_name);
+            //             $typeName = strtoupper($costing->item->itemType->type_name);
+            //             $size = strtoupper($costing->item->size);
+            //             $class = strtoupper($costing->item->class);
 
-                        $rateName = strtoupper($costing->unitRate->rate_name);
-                        $price = number_format($costing->price, 0, ',', '.');
+            //             $rateName = strtoupper($costing->unitRate->rate_name);
+            //             $price = number_format($costing->price, 0, ',', '.');
 
-                        return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName} (Rp {$price})";
-                    }
-                ),
-                ['id' => 'costing_idx', 'class' => 'form-control form-select', 'style' => 'width: 100%"', 'prompt' => 'Select a Costing ...']
-            )->label('Costing');
+            //             return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName} (Rp {$price})";
+            //         }
+            //     ),
+            //     ['id' => 'costing_idx', 'class' => 'form-control form-select', 'style' => 'width: 100%"', 'prompt' => 'Select a Costing ...']
+            // )->label('Costing');
             ?>
 
             <?= $form->field($dataRequestOrderTransModel, 'curency_format')->textInput(['id' => 'curency_format', 'maxlength' => true, 'readonly' => true]) ?>

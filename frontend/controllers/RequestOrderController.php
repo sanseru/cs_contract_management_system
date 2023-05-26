@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Costing;
 use frontend\models\RequestOrder;
 use frontend\models\RequestOrderActivity;
 use frontend\models\RequestOrderSearch;
@@ -11,6 +12,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * RequestOrderController implements the CRUD actions for RequestOrder model.
@@ -178,5 +180,68 @@ class RequestOrderController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionSelect2Get()
+    {
+
+        $search = \Yii::$app->request->get('q');
+        $id = \Yii::$app->request->get('id');
+
+        $data = $this->findModel($id);
+        $activitiex = array_map(function ($activity) {
+            return $activity->activityCode->activity_code;
+        }, $data->requestOrderActivities);
+        $activityx =  implode(', ', $activitiex);
+        $activityArray = explode(', ', $activityx);
+
+        if (!empty($search)) {
+            // $clients = Item::find()
+            //     ->joinWith(['masterActivityCode', 'itemType'])
+            //     ->where(['like', 'activity_name', $search])
+            //     ->orWhere(['like', 'type_name', $search])
+            //     ->orWhere(['like', 'size', $search])
+            //     ->orWhere(['like', 'class', $search])
+            //     ->all();
+            $costings = Costing::find()
+                ->joinWith('item')
+                ->where(['client_id' => $data->client_id])
+                ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
+                ->where(['like', 'activity_name', $search])
+                ->orWhere(['like', 'type_name', $search])
+                ->orWhere(['like', 'size', $search])
+                ->orWhere(['like', 'class', $search])
+                ->all();
+        } else {
+            $costings = Costing::find()
+                ->joinWith('item')
+                ->where(['client_id' => $data->client_id])
+                ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
+                ->all();
+        }
+
+
+
+        // Format the data as required by Select2
+        $data = [];
+        foreach ($costings as $cost) {
+
+            $data[] = [
+                'id' => $cost->id,
+                'activity_name' => strtoupper($cost->item->masterActivityCode->activity_name),
+                'type_name' => strtoupper($cost->item->itemType->type_name),
+                'size' => strtoupper($cost->item->size),
+                'class' => strtoupper($cost->item->class),
+                'price' => number_format($cost->price, 0, ',', '.'),
+
+            ];
+        }
+
+        // Output the data as JSON
+        return Json::encode([
+            'results' => $data,
+            'pagination' => ['more' => false], // Pagination not implemented in this example
+        ]);
     }
 }
