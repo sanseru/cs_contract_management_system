@@ -26,10 +26,13 @@ if (!$model->isNewRecord) {
         <<<JS
             $(document).ready(function() {
                 $('#contract_id').trigger('change');
-                $('#item_id').val($model->item_id).change();
+                // $('#item_id').val($model->item_id).change();
                 var option = new Option($combine, $model->item_id, true, true);
                 $('#item_id').append(option).trigger('change');
-                $('#item_id').trigger('change');
+                // var option2 = new Option(1, $model->unit_rate_id, true, true);
+                // $('#rate_id').append(option).trigger('change');
+                // $('#item_id').trigger('change');
+                // $('#rate_id').val($model->unit_rate_id);
             });
         JS
     );

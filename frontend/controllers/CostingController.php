@@ -130,9 +130,15 @@ class CostingController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
+            if (\Yii::$app->getRequest()->get('url_back')) {
+                Yii::$app->session->setFlash('success', 'Costing Record deleted successfully.');
+                return $this->redirect(['client-contract/view', 'id' => \Yii::$app->getRequest()->get('contract_id')]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Record deleted successfully.');
 
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
         return $this->render('update', [
             'model' => $model,
         ]);

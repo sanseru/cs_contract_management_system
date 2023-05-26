@@ -131,60 +131,59 @@ function currencyToWords(currency) {
   return result;
 }
 
-
-$('#contract_id').change(function(){
-    var contractId = $(this).val();
-        $.ajax({
-        url: '/client/get-client',
-        data: { id: contractId },
-        method: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            // handle success response here
-            console.log(response);
-            $('#client_name').val(response.name)
-            $('#client_id').val(response.id)
-        },
-        error: function(error) {
-            // handle error response here
-            alert(error.responseText);
-
-        }
-    });
-
+$("#contract_id").change(function () {
+  var contractId = $(this).val();
+  $.ajax({
+    url: "/client/get-client",
+    data: { id: contractId },
+    method: "GET",
+    dataType: "json",
+    success: function (response) {
+      // handle success response here
+      $("#client_name").val(response.name);
+      $("#client_id").val(response.id);
+    },
+    error: function (error) {
+      // handle error response here
+      alert(error.responseText);
+    },
+  });
 });
 
-$(document).ready(function() {
-    // Initialize Select2
-    $('#rate_id').select2();
+$(document).ready(function () {
+  // Initialize Select2
+  $("#rate_id").select2();
 
-    // Handle item_id change event
-    $('#item_id').on('change', function() {
-        var itemId = $(this).val();
+  // Handle item_id change event
+  $("#item_id").on("change", function () {
+    var itemId = $(this).val();
+    console.log(itemId);
+    // Make an AJAX request to fetch select options based on item_id
+    $.ajax({
+      url: "/costing/fetch-options-unit-rate", // Replace with the actual URL to fetch select options
+      type: "GET",
+      data: { item_id: itemId },
+      dataType: "json",
+      success: function (response) {
+        // Clear existing options
+        $("#rate_id").empty();
 
-        // Make an AJAX request to fetch select options based on item_id
-        $.ajax({
-            url: 'fetch-options-unit-rate', // Replace with the actual URL to fetch select options
-            type: 'GET',
-            data: {item_id: itemId},
-            dataType: 'json',
-            success: function(response) {
-                // Clear existing options
-                $('#rate_id').empty();
+        $("#rate_id").append(
+          $("<option></option>").attr("value", "").text("Select unit Rate...")
+        );
 
-                $('#rate_id').append($('<option></option>').attr('value', '').text('Select unit Rate...'));
-
-                // Add new options based on the response
-                $.each(response, function(key, value) {
-                    $('#rate_id').append($('<option></option>').attr('value', key).text(value));
-                });
-
-                // Refresh Select2 to reflect the updated options
-                $('#rate_id').trigger('change');
-            },
-            error: function() {
-                console.log('Error occurred while fetching select options.');
-            }
+        // Add new options based on the response
+        $.each(response, function (key, value) {
+          $("#rate_id").append(
+            $("<option></option>").attr("value", key).text(value)
+          );
         });
+        // Refresh Select2 to reflect the updated options
+        $("#rate_id").trigger("change");
+      },
+      error: function () {
+        console.log("Error occurred while fetching select options.");
+      },
     });
+  });
 });

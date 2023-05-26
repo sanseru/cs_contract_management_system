@@ -123,7 +123,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 if ($action === 'view') {
                                     return Url::to(['costing/view', 'id' => $model->id]);
                                 } elseif ($action === 'update') {
-                                    return Url::to(['costing/update', 'id' => $model->id]);
+                                    return Url::to(['costing/update', 'id' => $model->id, 'contract_id' => $model->contract_id,'url_back' => true]);
                                 } elseif ($action === 'delete') {
                                     return Url::to(['costing/delete', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
                                 }
