@@ -90,7 +90,7 @@ class ItemController extends Controller
                     JS;
                     $this->getView()->registerJs($script, \yii\web\View::POS_HEAD);
                 } else {
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
                 }
             }
         } else {
