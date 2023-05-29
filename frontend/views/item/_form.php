@@ -65,7 +65,7 @@ $this->registerJs($script);
     <div class="row">
         <div class="col-md-6">
             <?= $form->field($model, 'master_activity_code')->dropDownList(
-                ArrayHelper::map(MasterActivity::find()->all(), 'activity_code', 'activity_name'),
+                ArrayHelper::map(MasterActivity::find()->all(), 'id', 'activity_name'),
                 ['id' => 'activity', 'class' => 'form-control', 'prompt' => 'Select a Activity Name ...']
             )->label('Activity') ?>
         </div>

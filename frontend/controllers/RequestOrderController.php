@@ -191,7 +191,7 @@ class RequestOrderController extends Controller
 
         $data = $this->findModel($id);
         $activitiex = array_map(function ($activity) {
-            return $activity->activityCode->activity_code;
+            return $activity->activityCode->id;
         }, $data->requestOrderActivities);
         $activityx =  implode(', ', $activitiex);
         $activityArray = explode(', ', $activityx);

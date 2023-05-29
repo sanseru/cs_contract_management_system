@@ -225,7 +225,7 @@ class CostingController extends Controller
             ->where(['item.id' => $item_id])->one();
 
         $masterActivity = $item->masterActivityCode; // Accessing the related MasterActivity object
-
+        
         $unitRateIds = [];
         foreach ($masterActivity->activityUnitRates as $activityUnitRate) {
             $unitRateIds[] = $activityUnitRate->unit_rate_id;

@@ -83,7 +83,7 @@ class MasterActivityController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $existingActivity = MasterActivity::findOne(['activity_code' => $model->activity_code]);
+                $existingActivity = MasterActivity::findOne(['id' => $model->activity_code]);
 
                 if ($existingActivity) {
                     Yii::$app->session->setFlash('error', 'Activity code already exists. Please choose a different code.');
@@ -93,7 +93,7 @@ class MasterActivityController extends Controller
                 $model->save(false);
                 foreach ($model->unitrate_activity as $activity_code) {
                     $ac_unit = new ActivityUnitRate();
-                    $ac_unit->activity_code = $model->activity_code;
+                    $ac_unit->activity_code = $model->id;
                     $ac_unit->unit_rate_id = $activity_code;
                     $ac_unit->save();
                 }
@@ -123,25 +123,23 @@ class MasterActivityController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save();
             // Clear existing activity unit rates for the model
-            ActivityUnitRate::deleteAll(['activity_code' => $model->activity_code]);
-
+            ActivityUnitRate::deleteAll(['id' => $model->id]);
             if ($model->unitrate_activity) {
                 foreach ($model->unitrate_activity as $activity_code) {
                     // Check if the activity unit rate already exists for the model
                     $existingUnitRate = ActivityUnitRate::findOne([
-                        'activity_code' => $model->activity_code,
+                        'activity_code' => $model->id,
                         'unit_rate_id' => $activity_code,
                     ]);
 
                     if (!$existingUnitRate) {
                         $ac_unit = new ActivityUnitRate();
-                        $ac_unit->activity_code = $model->activity_code;
+                        $ac_unit->activity_code = $model->id;
                         $ac_unit->unit_rate_id = $activity_code;
-                        $ac_unit->save();
+                        $ac_unit->save(false);
                     }
                 }
             }
-
             return $this->redirect(['index']);
         }
 
