@@ -199,6 +199,7 @@ class RequestOrderController extends Controller
         if (!empty($search)) {
             $costings = Costing::find()
                 ->joinWith('item')
+                ->joinWith('unitRate')
                 ->joinWith('item.itemType')
                 ->joinWith('item.masterActivityCode')
                 ->where(['client_id' => $data->client_id])
@@ -210,11 +211,13 @@ class RequestOrderController extends Controller
                     ['like', 'item.class', $search],
                     ['like', 'price', $search],
                     ['like', 'size', $search],
+                    ['like', 'unitRate.rate_name', $search],
                 ])
                 ->all();
         } else {
             $costings = Costing::find()
                 ->joinWith('item')
+                ->joinWith('unitRate')
                 ->where(['client_id' => $data->client_id])
                 ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
                 ->all();
@@ -232,6 +235,8 @@ class RequestOrderController extends Controller
                 'size' => strtoupper($cost->item->size),
                 'class' => strtoupper($cost->item->class),
                 'price' => number_format($cost->price, 0, ',', '.'),
+                'unitrate' => strtoupper($cost->unitRate->rate_name),
+
 
             ];
         }
