@@ -192,6 +192,7 @@ if ($reqOrder) {
                                 },
                                 'footer' => ContractActivityValue::getTotal($dataProvidercav->models, 'value'),
                                 'contentOptions' => ['class' => 'text-end'],
+                                'footerOptions' => ['class' => 'text-end'],
 
                             ],
                             [
