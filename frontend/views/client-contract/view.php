@@ -20,11 +20,11 @@ use yii\widgets\Pjax;
 $reqOrder = isset($_GET['req_order']) ? $_GET['req_order'] : null;
 
 $this->title = $model->contract_number;
-if($reqOrder){
-    $this->params['breadcrumbs'][] = ['label' => 'Client', 'url' => ['/client/view', 'id'=>$reqOrder]];
+if ($reqOrder) {
+    $this->params['breadcrumbs'][] = ['label' => 'Client', 'url' => ['/client/view', 'id' => $reqOrder]];
     // $this->params['breadcrumbs'][] = ['label' => 'Client Contracts', 'url' => ['index']];
-    $this->params['breadcrumbs'][] = 'Client Contract '.$this->title;
-}else{
+    $this->params['breadcrumbs'][] = 'Client Contract ' . $this->title;
+} else {
     $this->params['breadcrumbs'][] = ['label' => 'Client Contracts', 'url' => ['index']];
     $this->params['breadcrumbs'][] = $this->title;
 }
@@ -65,88 +65,105 @@ if($reqOrder){
 
         </div>
     </div>
-
-
-    <?php Pjax::begin(['id' => 'my_pjax']); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); 
-    ?>
-    <div class="card mt-3">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h5 class="text-white">#Costing for Contract Number <?= Html::encode($this->title) ?></h5>
-            <?= Html::button('Add Costing', [
-                'class' => 'btn btn-info btn-sm btn-modal',
-                'data-target' => '#consting_client_contract', 'data-toggle' => 'modal'
-            ]) ?>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-
-                <?= GridView::widget([
-                    'dataProvider' => $dataCostingProvider,
-                    'filterModel' => $searchModelCosting,
-                    'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
-                        [
-                            'label' => 'Client Name',
-                            'attribute' => 'clientName',
-                            'value' => 'client.name'
-                        ],
-                        [
-                            'label' => 'Contract Number',
-                            'attribute' => 'contractNumber',
-                            'value' => 'clientContract.contract_number',
-                            'contentOptions' => ['class' => 'text-center'],
-                            'headerOptions' => ['class' => 'text-center'],
-                        ],
-                        [
-                            'label' => 'Rate Name',
-                            'attribute' => 'rateName',
-                            'value' => 'unitRate.rate_name'
-                        ],
-                        [
-                            'label' => 'Item Detail',
-                            'attribute' => 'itemDetail',
-                            'contentOptions' => ['class' => 'fw-lighter', 'style'=> 'font-size:10px'],
-                            'format' => 'raw', // Set the format to 'raw'
-                            'value' => function ($model) {   
-
-                                return 
-                                'Activity : '.$model->item->masterActivityCode->activity_name.'<br>'
-                                .'Type name : '.$model->item->itemType->type_name.'<br>'
-                                .'Size : '.$model->item->size.'<br>'
-                                .'Class : '.$model->item->class;
-                            }
-                        ],
-                        [
-                            'attribute' => 'price',
-                            'value' => function ($model) {
-                                return Yii::$app->formatter->asCurrency($model->price, 'IDR');
-                            }
-                        ],
-                        //'created_at',
-                        //'updated_at',
-                        [
-                            'class' => ActionColumn::className(),
-                            'urlCreator' => function ($action, Costing $model, $key, $index, $column) {
-                                if ($action === 'view') {
-                                    return Url::to(['costing/view', 'id' => $model->id]);
-                                } elseif ($action === 'update') {
-                                    return Url::to(['costing/update', 'id' => $model->id, 'contract_id' => $model->contract_id,'url_back' => true]);
-                                } elseif ($action === 'delete') {
-                                    return Url::to(['costing/delete', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
-                                }
-                            }
-                        ],
-                    ],
-                ]); ?>
-            </div>
-
-            <?php Pjax::end(); ?>
-        </div>
-    </div>
-
 </div>
 
+<div class="row">
+    <ul class="nav nav-tabs nav-justified mt-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold" id="costing-tab" data-bs-toggle="tab" data-bs-target="#costing-tab-pane" type="button" role="tab" aria-controls="costing-tab-pane" aria-selected="true">Costing</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold" id="kpi-tab" data-bs-toggle="tab" data-bs-target="#kpi-tab-pane" type="button" role="tab" aria-controls="kpi-tab-pane" aria-selected="false">KPI</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="costing-tab-pane" role="tabpanel" aria-labelledby="costing-tab" tabindex="0">
+            <?php Pjax::begin(['id' => 'my_pjax']); ?>
+            <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            ?>
+            <div class="card mt-3">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="text-white">#Costing for Contract Number <?= Html::encode($this->title) ?></h5>
+                    <?= Html::button('Add Costing', [
+                        'class' => 'btn btn-info btn-sm btn-modal',
+                        'data-target' => '#consting_client_contract', 'data-toggle' => 'modal'
+                    ]) ?>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+
+                        <?= GridView::widget([
+                            'dataProvider' => $dataCostingProvider,
+                            'filterModel' => $searchModelCosting,
+                            'columns' => [
+                                ['class' => 'yii\grid\SerialColumn'],
+                                [
+                                    'label' => 'Client Name',
+                                    'attribute' => 'clientName',
+                                    'value' => 'client.name'
+                                ],
+                                [
+                                    'label' => 'Contract Number',
+                                    'attribute' => 'contractNumber',
+                                    'value' => 'clientContract.contract_number',
+                                    'contentOptions' => ['class' => 'text-center'],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                ],
+                                [
+                                    'label' => 'Rate Name',
+                                    'attribute' => 'rateName',
+                                    'value' => 'unitRate.rate_name'
+                                ],
+                                [
+                                    'label' => 'Item Detail',
+                                    'attribute' => 'itemDetail',
+                                    'contentOptions' => ['class' => 'fw-lighter', 'style' => 'font-size:10px'],
+                                    'format' => 'raw', // Set the format to 'raw'
+                                    'value' => function ($model) {
+
+                                        return
+                                            'Activity : ' . $model->item->masterActivityCode->activity_name . '<br>'
+                                            . 'Type name : ' . $model->item->itemType->type_name . '<br>'
+                                            . 'Size : ' . $model->item->size . '<br>'
+                                            . 'Class : ' . $model->item->class;
+                                    }
+                                ],
+                                [
+                                    'attribute' => 'price',
+                                    'value' => function ($model) {
+                                        return Yii::$app->formatter->asCurrency($model->price, 'IDR');
+                                    }
+                                ],
+                                //'created_at',
+                                //'updated_at',
+                                [
+                                    'class' => ActionColumn::className(),
+                                    'urlCreator' => function ($action, Costing $model, $key, $index, $column) {
+                                        if ($action === 'view') {
+                                            return Url::to(['costing/view', 'id' => $model->id]);
+                                        } elseif ($action === 'update') {
+                                            return Url::to(['costing/update', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
+                                        } elseif ($action === 'delete') {
+                                            return Url::to(['costing/delete', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
+                                        }
+                                    }
+                                ],
+                            ],
+                        ]); ?>
+                    </div>
+
+                    <?php Pjax::end(); ?>
+                </div>
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="kpi-tab-pane" role="tabpanel" aria-labelledby="kpi-tab" tabindex="0">
+            <div class="mt-5">
+            Ini untuk KPI
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php
 Modal::begin([
