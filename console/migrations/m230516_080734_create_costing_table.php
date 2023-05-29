@@ -18,7 +18,7 @@ class m230516_080734_create_costing_table extends Migration
             'contract_id' => $this->integer()->notNull(),
             'item_id' => $this->integer()->notNull(),
             'unit_rate_id' => $this->integer()->notNull(),
-            'price' => $this->decimal(10, 2)->notNull(),
+            'price' => $this->decimal(16, 2)->notNull(),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
         ]);

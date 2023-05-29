@@ -2,20 +2,17 @@
 
 namespace frontend\controllers;
 
-use frontend\models\ClientContract;
-use frontend\models\ClientContractSearch;
+use frontend\models\ContractActivityValue;
 use frontend\models\ContractActivityValueSearch;
-use frontend\models\Costing;
-use frontend\models\CostingSerach;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ClientContractController implements the CRUD actions for ClientContract model.
+ * ContractActivityValueController implements the CRUD actions for ContractActivityValue model.
  */
-class ClientContractController extends Controller
+class ContractActivityValueController extends Controller
 {
     /**
      * @inheritDoc
@@ -45,13 +42,13 @@ class ClientContractController extends Controller
     }
 
     /**
-     * Lists all ClientContract models.
+     * Lists all ContractActivityValue models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ClientContractSearch();
+        $searchModel = new ContractActivityValueSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -61,52 +58,33 @@ class ClientContractController extends Controller
     }
 
     /**
-     * Displays a single ClientContract model.
+     * Displays a single ContractActivityValue model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $data = $this->findModel($id);
-
-        $searchModelCosting = new CostingSerach(['client_id' => $data->client_id]);
-        $dataCostingProvider = $searchModelCosting->search($this->request->queryParams);
-        $searchModelcav = new ContractActivityValueSearch(['contract_id' => $data->id]);
-        $dataProvidercav = $searchModelcav->search($this->request->queryParams);
-        $costing = new Costing();
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'searchModelCosting' => $searchModelCosting,
-            'dataCostingProvider' => $dataCostingProvider,
-            'searchModelcav' => $searchModelcav,
-            'dataProvidercav' => $dataProvidercav,
-            'costing' => $costing
-
         ]);
     }
 
     /**
-     * Creates a new ClientContract model.
+     * Creates a new ContractActivityValue model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id,$req_order)
     {
-        $model = new ClientContract();
+        $model = new ContractActivityValue();
 
-        if ($this->request->isAjax && $this->request->isPost) {
+        if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->start_date = date('Y-m-d', strtotime($model->start_date));
-                $model->end_date = date('Y-m-d', strtotime($model->end_date));
-                $model->created_at = date('Y-m-d H:i:s');
-                $model->created_by = \Yii::$app->user->identity->id;
-
-                if ($model->save()) {
-                    return json_encode(['status' => 'success']);
-                } else {
-                    return json_encode(['status' => 'error']);
-                }
+                
+                $model->save();
+                \Yii::$app->session->setFlash('success', "Add KPI Activity Success.");
+                return $this->redirect(['/client-contract/view', 'id' => $id, 'req_order' => $req_order, 'kpi'=>true]);
             }
         } else {
             $model->loadDefaultValues();
@@ -114,11 +92,13 @@ class ClientContractController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'contract_id' => $id,
+            'req_order' => $req_order,
         ]);
     }
 
     /**
-     * Updates an existing ClientContract model.
+     * Updates an existing ContractActivityValue model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -138,7 +118,7 @@ class ClientContractController extends Controller
     }
 
     /**
-     * Deletes an existing ClientContract model.
+     * Deletes an existing ContractActivityValue model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -146,29 +126,21 @@ class ClientContractController extends Controller
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
-        $clientId = \Yii::$app->request->get('client');
-
-        if ($model->delete()) {
-            \Yii::$app->session->setFlash('success', 'Delete Success');
-            return $this->redirect(['client/view', 'id' => $clientId]);
-        } else {
-            \Yii::$app->session->setFlash('error', 'Failed Delete Data');
-        }
+        $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the ClientContract model based on its primary key value.
+     * Finds the ContractActivityValue model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return ClientContract the loaded model
+     * @return ContractActivityValue the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = ClientContract::findOne(['id' => $id])) !== null) {
+        if (($model = ContractActivityValue::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

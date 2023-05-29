@@ -1,6 +1,7 @@
 <?php
 
 use frontend\models\ClientContract;
+use frontend\models\ContractActivityValue;
 use frontend\models\Costing;
 use frontend\models\Item;
 use frontend\models\UnitRate;
@@ -67,101 +68,145 @@ if ($reqOrder) {
     </div>
 </div>
 
-<div class="row">
-    <ul class="nav nav-tabs nav-justified mt-3" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold" id="costing-tab" data-bs-toggle="tab" data-bs-target="#costing-tab-pane" type="button" role="tab" aria-controls="costing-tab-pane" aria-selected="true">Costing</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold" id="kpi-tab" data-bs-toggle="tab" data-bs-target="#kpi-tab-pane" type="button" role="tab" aria-controls="kpi-tab-pane" aria-selected="false">KPI</button>
-        </li>
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="costing-tab-pane" role="tabpanel" aria-labelledby="costing-tab" tabindex="0">
-            <?php Pjax::begin(['id' => 'my_pjax']); ?>
-            <?php // echo $this->render('_search', ['model' => $searchModel]); 
-            ?>
-            <div class="card mt-3">
-                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="text-white">#Costing for Contract Number <?= Html::encode($this->title) ?></h5>
-                    <?= Html::button('Add Costing', [
-                        'class' => 'btn btn-info btn-sm btn-modal',
-                        'data-target' => '#consting_client_contract', 'data-toggle' => 'modal'
-                    ]) ?>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
+<ul class="nav nav-tabs nav-justified mt-3" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold" id="costing-tab" data-bs-toggle="tab" data-bs-target="#costing-tab-pane" type="button" role="tab" aria-controls="costing-tab-pane" aria-selected="true">Costing</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="kpi-tab" data-bs-toggle="tab" data-bs-target="#kpi-tab-pane" type="button" role="tab" aria-controls="kpi-tab-pane" aria-selected="false">KPI</button>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="costing-tab-pane" role="tabpanel" aria-labelledby="costing-tab" tabindex="0">
+        <?php Pjax::begin(['id' => 'my_pjax']); ?>
+        <?php // echo $this->render('_search', ['model' => $searchModel]); 
+        ?>
+        <div class="card mt-3">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                <h5 class="text-white">#Costing for Contract Number <?= Html::encode($this->title) ?></h5>
+                <?= Html::button('Add Costing', [
+                    'class' => 'btn btn-info btn-sm btn-modal',
+                    'data-target' => '#consting_client_contract', 'data-toggle' => 'modal'
+                ]) ?>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
 
-                        <?= GridView::widget([
-                            'dataProvider' => $dataCostingProvider,
-                            'filterModel' => $searchModelCosting,
-                            'columns' => [
-                                ['class' => 'yii\grid\SerialColumn'],
-                                [
-                                    'label' => 'Client Name',
-                                    'attribute' => 'clientName',
-                                    'value' => 'client.name'
-                                ],
-                                [
-                                    'label' => 'Contract Number',
-                                    'attribute' => 'contractNumber',
-                                    'value' => 'clientContract.contract_number',
-                                    'contentOptions' => ['class' => 'text-center'],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                ],
-                                [
-                                    'label' => 'Rate Name',
-                                    'attribute' => 'rateName',
-                                    'value' => 'unitRate.rate_name'
-                                ],
-                                [
-                                    'label' => 'Item Detail',
-                                    'attribute' => 'itemDetail',
-                                    'contentOptions' => ['class' => 'fw-lighter', 'style' => 'font-size:10px'],
-                                    'format' => 'raw', // Set the format to 'raw'
-                                    'value' => function ($model) {
-
-                                        return
-                                            'Activity : ' . $model->item->masterActivityCode->activity_name . '<br>'
-                                            . 'Type name : ' . $model->item->itemType->type_name . '<br>'
-                                            . 'Size : ' . $model->item->size . '<br>'
-                                            . 'Class : ' . $model->item->class;
-                                    }
-                                ],
-                                [
-                                    'attribute' => 'price',
-                                    'value' => function ($model) {
-                                        return Yii::$app->formatter->asCurrency($model->price, 'IDR');
-                                    }
-                                ],
-                                //'created_at',
-                                //'updated_at',
-                                [
-                                    'class' => ActionColumn::className(),
-                                    'urlCreator' => function ($action, Costing $model, $key, $index, $column) {
-                                        if ($action === 'view') {
-                                            return Url::to(['costing/view', 'id' => $model->id]);
-                                        } elseif ($action === 'update') {
-                                            return Url::to(['costing/update', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
-                                        } elseif ($action === 'delete') {
-                                            return Url::to(['costing/delete', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
-                                        }
-                                    }
-                                ],
+                    <?= GridView::widget([
+                        'dataProvider' => $dataCostingProvider,
+                        'filterModel' => $searchModelCosting,
+                        'columns' => [
+                            ['class' => 'yii\grid\SerialColumn'],
+                            [
+                                'label' => 'Client Name',
+                                'attribute' => 'clientName',
+                                'value' => 'client.name'
                             ],
-                        ]); ?>
-                    </div>
+                            [
+                                'label' => 'Contract Number',
+                                'attribute' => 'contractNumber',
+                                'value' => 'clientContract.contract_number',
+                                'contentOptions' => ['class' => 'text-center'],
+                                'headerOptions' => ['class' => 'text-center'],
+                            ],
+                            [
+                                'label' => 'Rate Name',
+                                'attribute' => 'rateName',
+                                'value' => 'unitRate.rate_name'
+                            ],
+                            [
+                                'label' => 'Item Detail',
+                                'attribute' => 'itemDetail',
+                                'contentOptions' => ['class' => 'fw-lighter', 'style' => 'font-size:10px'],
+                                'format' => 'raw', // Set the format to 'raw'
+                                'value' => function ($model) {
+
+                                    return
+                                        'Activity : ' . $model->item->masterActivityCode->activity_name . '<br>'
+                                        . 'Type name : ' . $model->item->itemType->type_name . '<br>'
+                                        . 'Size : ' . $model->item->size . '<br>'
+                                        . 'Class : ' . $model->item->class;
+                                }
+                            ],
+                            [
+                                'attribute' => 'price',
+                                'value' => function ($model) {
+                                    return Yii::$app->formatter->asCurrency($model->price, 'IDR');
+                                }
+                            ],
+                            //'created_at',
+                            //'updated_at',
+                            [
+                                'class' => ActionColumn::className(),
+                                'urlCreator' => function ($action, Costing $model, $key, $index, $column) {
+                                    if ($action === 'view') {
+                                        return Url::to(['costing/view', 'id' => $model->id]);
+                                    } elseif ($action === 'update') {
+                                        return Url::to(['costing/update', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
+                                    } elseif ($action === 'delete') {
+                                        return Url::to(['costing/delete', 'id' => $model->id, 'contract_id' => $model->contract_id, 'url_back' => true]);
+                                    }
+                                }
+                            ],
+                        ],
+                    ]); ?>
+                </div>
+
+                <?php Pjax::end(); ?>
+            </div>
+        </div>
+
+    </div>
+    <div class="tab-pane fade" id="kpi-tab-pane" role="tabpanel" aria-labelledby="kpi-tab" tabindex="0">
+        <div class="card mt-3">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="text-white">#KPI for Contract Number <?= Html::encode($this->title) ?></h5>
+                <?= Html::a('Add KPI Activity', ['contract-activity-value/create', 'id' => $model->id, 'url_back' => true, 'tab' => 'kpi', 'req_order' => Yii::$app->request->get('req_order')], [
+                    'class' => 'btn btn-warning btn-sm',
+                ]) ?>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <?php Pjax::begin(); ?>
+                    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+                    ?>
+
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvidercav,
+                        'filterModel' => $searchModelcav,
+                        'options' => ['class' => 'table table-striped table-bordered text-sm text-center font-monospace table-responsive'],
+                        'showFooter' => true, // this line enables the footer row
+                        'columns' => [
+                            ['class' => 'yii\grid\SerialColumn'],
+
+                            // 'id',
+                            // 'contract_id',
+                            [
+                                'attribute' => 'activity.activity_name',
+                                'footer' => 'Total'
+                            ],
+                            [
+                                'attribute' => 'value',
+                                'value' => function ($model) {
+                                    return Yii::$app->formatter->asCurrency($model->value, 'IDR');
+                                },
+                                'footer' => ContractActivityValue::getTotal($dataProvidercav->models, 'value'),
+
+                            ],
+                            [
+                                'class' => ActionColumn::className(),
+                                'urlCreator' => function ($action, ContractActivityValue $model, $key, $index, $column) {
+                                    return Url::toRoute([$action, 'id' => $model->id]);
+                                }
+                            ],
+                        ],
+                    ]); ?>
 
                     <?php Pjax::end(); ?>
                 </div>
             </div>
+        </div>
 
-        </div>
-        <div class="tab-pane fade" id="kpi-tab-pane" role="tabpanel" aria-labelledby="kpi-tab" tabindex="0">
-            <div class="mt-5">
-            Ini untuk KPI
-            </div>
-        </div>
     </div>
 </div>
 
@@ -432,12 +477,31 @@ $this->registerJs(
 
 
 // JS code to update select options based on item_id
+$kpi = Yii::$app->request->get("kpi", 0);
+if ($kpi !== 0) {
+    $kpi = 1;
+}
 $js = <<< JS
         $(document).ready(function() {
             // Initialize Select2
             $('#rate_id').select2({
                 dropdownParent: $("#consting_client_contract"),
             });
+
+         
+            if ($kpi === 1 && $('#kpi-tab').length) {
+                $('#kpi-tab').addClass('active');
+                $('#kpi-tab-pane').addClass('active');
+                $('#kpi-tab-pane').addClass('show');
+
+
+                $('#costing-tab').removeClass('active');
+                $('#costing-tab-pane').removeClass('active');
+                $('#costing-tab-pane').removeClass('show');
+
+                // remove active class from other tabs if needed
+            }
+
         });
     JS;
 // Register the JS code
