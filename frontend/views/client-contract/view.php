@@ -176,6 +176,8 @@ if ($reqOrder) {
                         'filterModel' => $searchModelcav,
                         'options' => ['class' => 'table table-striped table-bordered text-sm text-center font-monospace table-responsive'],
                         'showFooter' => true, // this line enables the footer row
+                        'filterPosition' => false, // this line removes the filter header\
+
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
 
