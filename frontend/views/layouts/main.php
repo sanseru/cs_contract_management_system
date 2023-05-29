@@ -19,6 +19,10 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Management Contract System adalah sebuah aplikasi manajemen kontrak yang dirancang untuk membantu perusahaan dalam mengatur dan melacak kontrak dari klien mereka. Dengan menggunakan aplikasi ini, perusahaan dapat dengan mudah mengelola kontrak dari awal hingga akhir, termasuk pengaturan kontrak, penandatanganan, dan pelacakan status kontrak.">
+    <meta name="author" content="PT. Control System">
+    <meta name="keywords" content="contract management system, ptcs, controlsystem">
+
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
