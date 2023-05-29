@@ -8,6 +8,7 @@ use frontend\models\RequestOrderActivity;
 use frontend\models\RequestOrderSearch;
 use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -92,34 +93,46 @@ class RequestOrderController extends Controller
     public function actionCreate()
     {
         $model = new RequestOrder();
-
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->start_date = date('Y-m-d', strtotime($model->start_date));
-                $model->end_date = date('Y-m-d', strtotime($model->end_date));
-                $model->created_at = date('Y-m-d H:i:s');
-                $model->created_by = \Yii::$app->user->identity->id;
-                $model->updated_at = date('Y-m-d H:i:s');
-                $model->activity_code = ' ';
-                $model->save(false);
-                foreach ($model->activityCodeArray as $activity_code) {
-                    $pivot = new RequestOrderActivity();
-                    $pivot->request_order_id = $model->id;
-                    $pivot->activity_code = $activity_code;
-                    $pivot->save(false);
+            $transaction = \Yii::$app->db->beginTransaction();
+            try {
+                if ($model->load($this->request->post())) {
+                    $model->start_date = date('Y-m-d', strtotime($model->start_date));
+                    $model->end_date = date('Y-m-d', strtotime($model->end_date));
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->created_by = \Yii::$app->user->identity->id;
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    $model->activity_code = '';
+                    if (!$model->save(false)) {
+                        $transaction->rollBack();
+                        throw new \Exception('Failed to save request order');
+                    }
+                    foreach ($model->activityCodeArray as $activity_code) {
+                        $pivot = new RequestOrderActivity();
+                        $pivot->request_order_id = $model->id;
+                        $pivot->activity_code = $activity_code;
+                        if (!$pivot->save(false)) {
+                            $transaction->rollBack();
+                            throw new \Exception('Failed to save request order activity');
+                        }
+                    }
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Data Created');
+                    return $this->redirect(['view', 'id' => $model->id]);
                 }
-
-                return $this->redirect(['view', 'id' => $model->id]);
-                // return $this->redirect(['create']);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                \Yii::error($e->getMessage());
+                \Yii::$app->session->setFlash('error', $e->getMessage());
             }
         } else {
             $model->loadDefaultValues();
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+
 
     /**
      * Updates an existing RequestOrder model.
@@ -133,15 +146,39 @@ class RequestOrderController extends Controller
         $model = $this->findModel($id);
 
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $transaction = \Yii::$app->db->beginTransaction();
+            try {
+                $model->start_date = date('Y-m-d', strtotime($model->start_date));
+                $model->end_date = date('Y-m-d', strtotime($model->end_date));
+                $model->updated_at = date('Y-m-d H:i:s');
+                $model->updated_by = \Yii::$app->user->identity->id;
+                $model->activity_code = '';
+                if (!$model->save(false)) {
+                    $transaction->rollBack();
+                    throw new \Exception('Failed to save request order');
+                }
+                foreach ($model->activityCodeArray as $activity_code) {
+                    $pivot = new RequestOrderActivity();
+                    $pivot->request_order_id = $model->id;
+                    $pivot->activity_code = $activity_code;
+                    if (!$pivot->save(false)) {
+                        $transaction->rollBack();
+                        throw new \Exception('Failed to save request order activity');
+                    }
+                }
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Data berhasil diupdate');
+                return $this->redirect(['view', 'id' => $model->id]);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                \Yii::error($e->getMessage());
+                \Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         $selectedCodes = $model->requestOrderActivities; // assuming attribute name is activityCodes
-
-
         $activityCodes = [];
-
         foreach ($selectedCodes as $item) {
             $activityCodes[] = $item->attributes['activity_code'];
         }

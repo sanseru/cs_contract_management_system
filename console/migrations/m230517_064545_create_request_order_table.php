@@ -31,6 +31,8 @@ class m230517_064545_create_request_order_table extends Migration
 
         $this->addForeignKey('fk-request_order-contract_id', '{{%request_order}}', 'contract_id', '{{%client_contract}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('fk-request_order-client_id', '{{%request_order}}', 'client_id', '{{%client}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('fk_activity_contract_request_order_id', '{{%activity_contract}}', 'contract_id', '{{%request_order}}', 'id', 'CASCADE', 'CASCADE');
+      
         // $this->addForeignKey('fk-request_order-activity_id', '{{%request_order}}', 'activity_code', '{{%master_activity}}', 'activity_code', 'CASCADE', 'CASCADE');
     }
 
@@ -39,6 +41,7 @@ class m230517_064545_create_request_order_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('fk_activity_contract_request_order_id', '{{%activity_contract}}');
         $this->dropTable('{{%request_order}}');
     }
 }
