@@ -83,7 +83,6 @@ class ItemController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 $url = \Yii::$app->request->get('next_url');
-                var_dump($url);
                 if (!empty($url)) {
                     $script = <<<JS
                         window.close();

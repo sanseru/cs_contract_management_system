@@ -93,7 +93,7 @@ class MasterActivity extends \yii\db\ActiveRecord
     */ 
    public function getActivityUnitRates() 
    { 
-       return $this->hasMany(ActivityUnitRate::class, ['activity_code' => 'activity_code']); 
+       return $this->hasMany(ActivityUnitRate::class, ['activity_code' => 'id']); 
    } 
  
 }

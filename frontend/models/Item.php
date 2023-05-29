@@ -34,10 +34,10 @@ class Item extends \yii\db\ActiveRecord
     {
         return [
             [['description'], 'string'],
-            [['item_type_id'], 'integer'],
-            [['size', 'class', 'master_activity_code'], 'string', 'max' => 255],
+            [['item_type_id','master_activity_code'], 'integer'],
+            [['size', 'class'], 'string', 'max' => 255],
             [['item_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemType::class, 'targetAttribute' => ['item_type_id' => 'id']],
-            [['master_activity_code'], 'exist', 'skipOnError' => true, 'targetClass' => MasterActivity::class, 'targetAttribute' => ['master_activity_code' => 'activity_code']],
+            [['master_activity_code'], 'exist', 'skipOnError' => true, 'targetClass' => MasterActivity::class, 'targetAttribute' => ['master_activity_code' => 'id']],
         ];
     }
 
@@ -73,6 +73,6 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getMasterActivityCode()
     {
-        return $this->hasOne(MasterActivity::class, ['activity_code' => 'master_activity_code']);
+        return $this->hasOne(MasterActivity::class, ['id' => 'master_activity_code']);
     }
 }

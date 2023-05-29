@@ -156,7 +156,7 @@ $this->registerCss("
         </div>
         <div class="col-md-4">
             <?= $form->field($model, 'activityCodeArray')->dropDownList(
-                ArrayHelper::map(MasterActivity::find()->all(), 'activity_code', 'activity_name'),
+                ArrayHelper::map(MasterActivity::find()->all(), 'id', 'activity_name'),
                 [
                     'multiple' => 'multiple',
                     'prompt' => 'Select an option...', 'id' => 'activity'

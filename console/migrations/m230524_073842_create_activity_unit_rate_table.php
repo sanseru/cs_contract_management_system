@@ -15,7 +15,7 @@ class m230524_073842_create_activity_unit_rate_table extends Migration
         $this->createTable('{{%activity_unit_rate}}', [
             'id' => $this->primaryKey(),
             'unit_rate_id' => $this->integer()->notNull(),
-            'activity_code' => $this->string()->notNull(),
+            'activity_code' => $this->integer()->notNull(),
         ]);
 
         // add foreign key for request_order_id
@@ -34,7 +34,7 @@ class m230524_073842_create_activity_unit_rate_table extends Migration
             'activity_unit_rate',
             'activity_code',
             'master_activity',
-            'activity_code',
+            'id',
             'CASCADE'
         );
     }

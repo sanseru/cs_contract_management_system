@@ -17,17 +17,18 @@ class m230516_010857_create_item_table extends Migration
             'size' => $this->string(),
             'class' => $this->string(),
             'description' => $this->text(),
-            'master_activity_code' => $this->string(),
+            'master_activity_code' => $this->integer(),
             'item_type_id' => $this->integer(),
         ]);
         $this->createIndex('idx-master_activity-code', 'master_activity', 'activity_code');
+        $this->createIndex('idx-master_activity-id', 'master_activity', 'id');
 
         $this->addForeignKey(
             'fk-item-master_activity_code',
             '{{%item}}',
             'master_activity_code',
             '{{%master_activity}}',
-            'activity_code',
+            'id',
             'CASCADE',
             'CASCADE'
         );

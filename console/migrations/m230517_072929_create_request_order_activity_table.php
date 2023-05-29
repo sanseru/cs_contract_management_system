@@ -15,7 +15,7 @@ class m230517_072929_create_request_order_activity_table extends Migration
         $this->createTable('{{%request_order_activity}}', [
             'id' => $this->primaryKey(),
             'request_order_id' => $this->integer()->notNull(),
-            'activity_code' => $this->string()->notNull(),
+            'activity_code' => $this->integer()->notNull(),
         ]);
 
             // add foreign key for request_order_id
@@ -34,7 +34,7 @@ class m230517_072929_create_request_order_activity_table extends Migration
             'request_order_activity',
             'activity_code',
             'master_activity',
-            'activity_code',
+            'id',
             'CASCADE'
         );
     }

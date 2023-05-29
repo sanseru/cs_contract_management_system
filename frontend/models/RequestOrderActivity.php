@@ -57,7 +57,7 @@ class RequestOrderActivity extends \yii\db\ActiveRecord
      */
     public function getActivityCode()
     {
-        return $this->hasOne(MasterActivity::class, ['activity_code' => 'activity_code']);
+        return $this->hasOne(MasterActivity::class, ['id' => 'activity_code']);
     }
 
     /**

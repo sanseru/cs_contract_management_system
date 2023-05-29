@@ -146,7 +146,7 @@ class ItemTypeController extends Controller
     {
         $itemTypes = ItemType::find()
             ->joinWith('activity')
-            ->where(['activity_code' => $activityCode])
+            ->where(['master_activity.id' => $activityCode])
             ->all();
 
         $options = '<option value="">Select</option>';

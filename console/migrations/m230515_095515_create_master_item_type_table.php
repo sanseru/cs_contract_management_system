@@ -29,8 +29,8 @@ class m230515_095515_create_master_item_type_table extends Migration
             'CASCADE'
         );
 
-        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE activity_code=:activity_code')
-        ->bindValue(':activity_code', 'PM')
+        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE id=:id')
+        ->bindValue(':id', '1')
         ->queryOne();
 
         $this->batchInsert(
@@ -41,8 +41,8 @@ class m230515_095515_create_master_item_type_table extends Migration
             ]
         );
 
-        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE activity_code=:activity_code')
-        ->bindValue(':activity_code', 'PS')
+        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE id=:id')
+        ->bindValue(':id', '2')
         ->queryOne();
 
         $this->batchInsert(
@@ -58,8 +58,8 @@ class m230515_095515_create_master_item_type_table extends Migration
         );
 
 
-        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE activity_code=:activity_code')
-        ->bindValue(':activity_code', 'VREPR')
+        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE id=:id')
+        ->bindValue(':id', '3')
         ->queryOne();
 
         $this->batchInsert(
@@ -85,8 +85,8 @@ class m230515_095515_create_master_item_type_table extends Migration
         );
 
 
-        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE activity_code=:activity_code')
-        ->bindValue(':activity_code', 'VREPL')
+        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE id=:id')
+        ->bindValue(':id', '4')
         ->queryOne();
 
         $this->batchInsert(
@@ -106,8 +106,8 @@ class m230515_095515_create_master_item_type_table extends Migration
 
 
         
-        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE activity_code=:activity_code')
-        ->bindValue(':activity_code', 'SPK')
+        $activity = $this->db->createCommand('SELECT * FROM {{%master_activity}} WHERE id=:id')
+        ->bindValue(':id', '5')
         ->queryOne();
 
         $this->batchInsert(
