@@ -197,7 +197,6 @@ class RequestOrderController extends Controller
         $activityArray = explode(', ', $activityx);
 
         if (!empty($search)) {
-
             $costings = Costing::find()
                 ->joinWith('item')
                 ->joinWith('item.itemType')
@@ -210,6 +209,8 @@ class RequestOrderController extends Controller
                     ['like', 'type_name', $search],
                     ['like', 'item.class', $search],
                     ['like', 'price', $search],
+                    ['like', 'size', $search],
+
                 ])
                 ->all();
         } else {
