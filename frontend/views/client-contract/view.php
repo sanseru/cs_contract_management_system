@@ -191,6 +191,7 @@ if ($reqOrder) {
                                     return Yii::$app->formatter->asCurrency($model->value, 'IDR');
                                 },
                                 'footer' => ContractActivityValue::getTotal($dataProvidercav->models, 'value'),
+                                'contentOptions' => ['class' => 'text-end'],
 
                             ],
                             [
