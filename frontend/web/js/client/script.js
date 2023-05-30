@@ -9,7 +9,7 @@ $(document).on("submit", "#my-form", function (e) {
   $submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
   $.ajax({
     type: "post",
-    url: "/client-contract/createss",
+    url: "/client-contract/create",
     data: $(this).serialize(),
     dataType: "json",
     success: function (data) {

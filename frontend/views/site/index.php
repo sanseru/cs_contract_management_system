@@ -16,7 +16,7 @@ $this->title = 'Contrack Management System';
                 </div>
                 <div class="content">
                     <div class="text text-white">ORDER OPEN</div>
-                    <div class="number text-white"><?=$requestOpen?></div>
+                    <div class="number text-white"><?= $requestOpen ?></div>
                 </div>
             </div>
         </div>
@@ -71,3 +71,6 @@ $this->title = 'Contrack Management System';
 
     </div>
 </div>
+
+
+

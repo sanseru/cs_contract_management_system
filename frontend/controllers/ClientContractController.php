@@ -66,11 +66,11 @@ class ClientContractController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id,$req_order)
     {
         $data = $this->findModel($id);
 
-        $searchModelCosting = new CostingSerach(['client_id' => $data->client_id]);
+        $searchModelCosting = new CostingSerach(['client_id' => $data->client_id,'contract_id'=> $data->id]);
         $dataCostingProvider = $searchModelCosting->search($this->request->queryParams);
         $searchModelcav = new ContractActivityValueSearch(['contract_id' => $data->id]);
         $dataProvidercav = $searchModelcav->search($this->request->queryParams);
