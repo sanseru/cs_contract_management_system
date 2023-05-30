@@ -16,7 +16,7 @@ $this->title = 'Contrack Management System';
                 </div>
                 <div class="content">
                     <div class="text text-white">ORDER OPEN</div>
-                    <div class="number text-white">7</div>
+                    <div class="number text-white"><?=$requestOpen?></div>
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@ $this->title = 'Contrack Management System';
                 </div>
                 <div class="content">
                     <div class="text text-white">ACTIVITY ORDER OPEN</div>
-                    <div class="number text-white">4</div>
+                    <div class="number text-white"><?= $activityOpen ?></div>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@ $this->title = 'Contrack Management System';
                 </div>
                 <div class="content">
                     <div class="text text-white">ACTIVITY ON PROCESS</div>
-                    <div class="number text-white">3</div>
+                    <div class="number text-white"><?= $activityProcess ?></div>
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@ $this->title = 'Contrack Management System';
                 </div>
                 <div class="content">
                     <div class="text text-white">ORDER CLOSED</div>
-                    <div class="number text-white">5</div>
+                    <div class="number text-white"><?= $requestClosed ?></div>
                 </div>
             </div>
         </div>
@@ -67,37 +67,6 @@ $this->title = 'Contrack Management System';
 
         <div class="row">
             <?= Html::img('@web/images/home.svg', ['alt' => 'Home', 'width' => 150, 'height' => 300]); ?>
-
-            <!-- <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div> -->
         </div>
 
     </div>

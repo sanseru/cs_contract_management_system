@@ -11,10 +11,12 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use frontend\models\ActivityContract;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use frontend\models\RequestOrder;
 
 /**
  * Site controller
@@ -84,7 +86,20 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
+        $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
+
+        $activityOpen = ActivityContract::find()->where(['status' => 1])->count();
+        $activityProcess= ActivityContract::find()->where(['status' => 2])->count();
+
+        return $this->render('index',[
+            'requestOpen' => $requestOpen,
+            'requestClosed' => $requestClosed,
+            'activityOpen' => $activityOpen,
+            'activityProcess' => $activityProcess,
+
+
+        ]);
     }
 
     /**
