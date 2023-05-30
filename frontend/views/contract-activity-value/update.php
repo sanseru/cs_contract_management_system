@@ -15,6 +15,8 @@ $this->params['breadcrumbs'][] = 'Update';
         <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
         <?= $this->render('_form', [
             'model' => $model,
+            'contract_id' => $contract_id,
+            'req_order' => $req_order,
         ]) ?>
     </div>
 </div>

@@ -104,16 +104,22 @@ class ContractActivityValueController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id,$contract_id,$req_order)
     {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+
+            \Yii::$app->session->setFlash('success', "Update KPI Activity Success.");
+            return $this->redirect(['/client-contract/view', 'id' => $contract_id, 'req_order' => $req_order, 'kpi'=>true]);
+
+            // return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'contract_id' => $contract_id,
+            'req_order' => $req_order,
         ]);
     }
 

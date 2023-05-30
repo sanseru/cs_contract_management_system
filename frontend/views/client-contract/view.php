@@ -11,7 +11,9 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 use yii\web\View;
 use yii\widgets\DetailView;
 use yii\widgets\Pjax;
@@ -31,41 +33,41 @@ if ($reqOrder) {
 }
 
 \yii\web\YiiAsset::register($this);
+
 ?>
 <div class="client-contract-view">
-    <div class="card">
-        <h5 class="card-header bg-1D267D text-white">#Contract Number <?= Html::encode($this->title) ?></h5>
-        <div class="card-body">
-            <!-- 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p> -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <h5 class="card-header bg-1D267D text-white">#Contract Number <?= Html::encode($this->title) ?></h5>
+                <div class="card-body">
+                    <?= DetailView::widget([
+                        'model' => $model,
+                        'attributes' => [
+                            'client.name',
+                            'contract_number',
+                            [
+                                'attribute' => 'start_date',
+                                'format' => ['date', 'php:d-m-Y']
+                            ],
+                            [
+                                'attribute' => 'end_date',
+                                'format' => ['date', 'php:d-m-Y']
+                            ],
+                        ],
+                    ]) ?>
 
-            <?= DetailView::widget([
-                'model' => $model,
-                'attributes' => [
-                    'client.name',
-                    'contract_number',
-                    [
-                        'attribute' => 'start_date',
-                        'format' => ['date', 'php:d-m-Y']
-                    ],
-                    [
-                        'attribute' => 'end_date',
-                        'format' => ['date', 'php:d-m-Y']
-                    ],
-                ],
-            ]) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <canvas id="myChart"></canvas>
+
 
         </div>
+
     </div>
+
 </div>
 
 <ul class="nav nav-tabs nav-justified mt-3" id="myTab" role="tablist">
@@ -134,8 +136,6 @@ if ($reqOrder) {
                                     return Yii::$app->formatter->asCurrency($model->price, 'IDR');
                                 }
                             ],
-                            //'created_at',
-                            //'updated_at',
                             [
                                 'class' => ActionColumn::className(),
                                 'urlCreator' => function ($action, Costing $model, $key, $index, $column) {
@@ -199,8 +199,14 @@ if ($reqOrder) {
                             ],
                             [
                                 'class' => ActionColumn::className(),
-                                'urlCreator' => function ($action, ContractActivityValue $model, $key, $index, $column) {
-                                    return Url::toRoute([$action, 'id' => $model->id]);
+                                'urlCreator' => function ($action, ContractActivityValue $modelcont, $key, $index, $column) use ($model) {
+                                    if ($action === 'view') {
+                                        return Url::to(['contract-activity-value/view', 'id' => $modelcont->id]);
+                                    } elseif ($action === 'update') {
+                                        return Url::to(['contract-activity-value/update', 'id' => $modelcont->id, 'contract_id' => $model->id,'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
+                                    } elseif ($action === 'delete') {
+                                        return Url::to(['contract-activity-value/delete', 'id' => $modelcont->id, 'contract_id' => $model->id,'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
+                                    }
                                 }
                             ],
                         ],
@@ -513,6 +519,73 @@ $this->registerJs($js, View::POS_END);
 ?>
 
 
+
+<?php
+
+// Convert data to JSON format
+$budgetDataJson = Json::encode($budgetData);
+$actualsDataJson = Json::encode($actualsData);
+
+// Prepare data for chart
+// $labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+$data = $dataProvidercav->getModels();
+// Array of labels
+$labels = [];
+// Loop over the array of objects and extract the id property
+foreach ($data as $object) {
+    $labels[] = $object->activity->activity_code;
+}
+
+$options = [
+    'responsive' => true,
+    'maintainAspectRatio' => false,
+];
+
+// Create datasets for chart
+$budgetDataset = [
+    'label' => 'Budget',
+    'data' => $budgetData,
+    'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
+    'borderColor' => 'rgba(54, 162, 235, 1)',
+    'borderWidth' => 1,
+];
+$actualsDataset = [
+    'label' => 'Actuals',
+    'data' => $actualsData,
+    'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
+    'borderColor' => 'rgba(255, 99, 132, 1)',
+    'borderWidth' => 1,
+];
+$varianceDataset = [
+    'label' => 'Variance',
+    'data' => array_map(function ($budget, $actuals) {
+        return $budget - $actuals;
+    }, $budgetData, $actualsData),
+    'backgroundColor' => 'rgba(255, 206, 86, 0.2)',
+    'borderColor' => 'rgba(255, 206, 86, 1)',
+    'borderWidth' => 1,
+];
+
+// Convert datasets to JSON format
+$datasetsJson = Json::encode([$budgetDataset, $actualsDataset, $varianceDataset]);
+$options_string = json_encode($options);
+$labels = json_encode($labels);
+
+
+$js = <<<JS
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: $labels,
+            datasets: $datasetsJson,
+        },
+        options: $options_string,
+    });
+    JS;
+
+$this->registerJs(new JsExpression($js));
+?>
 
 
 

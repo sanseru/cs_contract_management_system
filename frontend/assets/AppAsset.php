@@ -21,7 +21,8 @@ class AppAsset extends AssetBundle
         'https://kit.fontawesome.com/6b37673df3.js',
         'https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js',
         'https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js',
-        'https://cdn.jsdelivr.net/npm/sweetalert2@11'
+        'https://cdn.jsdelivr.net/npm/sweetalert2@11',
+        'https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

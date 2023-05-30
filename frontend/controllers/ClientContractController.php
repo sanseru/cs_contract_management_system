@@ -75,15 +75,56 @@ class ClientContractController extends Controller
         $searchModelcav = new ContractActivityValueSearch(['contract_id' => $data->id]);
         $dataProvidercav = $searchModelcav->search($this->request->queryParams);
         $costing = new Costing();
+
+        // $budgetData = $this->generateRandomData();
+        $budgetData = $dataProvidercav->getModels();
+
+        // Array of labels
+        $budgets = [];
+        // Loop over the array of objects and extract the id property
+        foreach ($budgetData as $object) {
+            $budgets[] = $object->value;
+        }
+
+        $actuals = [];
+        // Loop over the array of objects and extract the id property
+        foreach ($budgetData as $object) {
+            $actuals[] = $object->value - rand(100000, 800000);
+        }
+
+        $actualsData = $this->generateRandomData();
+
         return $this->render('view', [
             'model' => $this->findModel($id),
             'searchModelCosting' => $searchModelCosting,
             'dataCostingProvider' => $dataCostingProvider,
             'searchModelcav' => $searchModelcav,
             'dataProvidercav' => $dataProvidercav,
-            'costing' => $costing
+            'costing' => $costing,
+            'budgetData' => $budgets,
+            'actualsData' => $actuals,
+
 
         ]);
+    }
+
+
+    private function generateRandomData()
+    {
+        return [
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+            rand(1000, 5000),
+        ];
     }
 
     /**
