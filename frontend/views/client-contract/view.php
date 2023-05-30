@@ -203,9 +203,9 @@ if ($reqOrder) {
                                     if ($action === 'view') {
                                         return Url::to(['contract-activity-value/view', 'id' => $modelcont->id]);
                                     } elseif ($action === 'update') {
-                                        return Url::to(['contract-activity-value/update', 'id' => $modelcont->id, 'contract_id' => $model->id,'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
+                                        return Url::to(['contract-activity-value/update', 'id' => $modelcont->id, 'contract_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
                                     } elseif ($action === 'delete') {
-                                        return Url::to(['contract-activity-value/delete', 'id' => $modelcont->id, 'contract_id' => $model->id,'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
+                                        return Url::to(['contract-activity-value/delete', 'id' => $modelcont->id, 'contract_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
                                     }
                                 }
                             ],
@@ -359,6 +359,9 @@ $this->registerJs(
 
         $(document).on('submit', '#my-form', function(e) {
             e.preventDefault();
+            var submitButton = $(this).find(':submit');
+            submitButton.prop('disabled', true);
+            submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
             $.ajax({
                 type: 'post',
                 url: '/costing/create-ajax',
@@ -368,6 +371,7 @@ $this->registerJs(
                     $('#my-form')[0].reset();
                     $("#item_id").val(null).trigger("change"); // reset to empty state
                     $('#consting_client_contract').modal('hide');
+                    $("#teks_number").text("");
                     $.pjax.reload({container:'#my_pjax'});
                     Swal.fire({
                     icon: 'success',
@@ -375,9 +379,13 @@ $this->registerJs(
                     showConfirmButton: true,
                     timer: 1500
                     })
+                    submitButton.prop('disabled', false);
+                    submitButton.html('Save');
                 },
                 error: function() {
                     alert('An error occurred while submitting the form.');
+                    submitButton.prop('disabled', false);
+                    submitButton.html('Save');
                 }
             });
         });

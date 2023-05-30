@@ -10,6 +10,7 @@ use yii\helpers\Url;
 use yii\bootstrap5\Modal;
 use yii\bootstrap5\ActiveForm;
 use yii\jui\DatePicker;
+use yii\web\JsExpression;
 use yii\web\View;
 
 /** @var yii\web\View $this */
@@ -89,9 +90,9 @@ $this->registerJsFile('@web/js/client/script.js', ['depends' => [\yii\web\Jquery
                             'template' => '{view} {update} {delete}', // Show only Update and Delete buttons
                             'urlCreator' => function ($action, ClientContract $modelClientContract, $key, $index, $column) use ($model) {
                                 if ($action === 'view') {
-                                    return Url::to(['client-contract/view', 'id' => $modelClientContract->id,'req_order' => $model->id]);
+                                    return Url::to(['client-contract/view', 'id' => $modelClientContract->id, 'req_order' => $model->id]);
                                 } elseif ($action === 'update') {
-                                    return Url::to(['client-contract/update', 'id' => $modelClientContract->id,'req_order' => $model->id]);
+                                    return Url::to(['client-contract/update', 'id' => $modelClientContract->id, 'req_order' => $model->id]);
                                 } elseif ($action === 'delete') {
                                     return Url::to(['client-contract/delete', 'id' => $modelClientContract->id, 'client' => $modelClientContract->client_id]);
                                 }
@@ -114,7 +115,7 @@ Modal::begin([
     'title' => '<h5>Add Contract</h5>',
     'headerOptions' => ['id' => 'modalHeader'],
     'id' => 'myModal',
-    'size' => 'modal-sm', // ukuran modal: large, medium, small, fullscreen
+    'size' => 'modal-md', // ukuran modal: large, medium, small, fullscreen
     'clientOptions' => ['backdrop' => 'static', 'keyboard' => TRUE]
 ]);
 
@@ -124,16 +125,41 @@ Modal::begin([
 <?= $form->field($modelClientContract, 'client_id')->hiddenInput(['value' => $model->id])->label(false) ?>
 
 <div class="row">
-    <?= $form->field($modelClientContract, 'contract_number')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($modelClientContract, 'contract_number')->textInput(['maxlength' => true, 'autocomplete' => 'off']) ?>
 
     <?= $form->field($modelClientContract, 'start_date')->widget(DatePicker::className(), [
         'dateFormat' => 'dd-MM-yyyy', // format tanggal yang digunakan
-        'options' => ['class' => 'form-control'], // opsi tambahan untuk input field
+        'options' => [
+            'class' => 'form-control',
+            'autocomplete' => 'off', // disable autocomplete
+        ], // opsi tambahan untuk input field
+        'clientOptions' => [
+            'beforeShow' => new JsExpression('function(input, inst) {
+                inst.dpDiv.css({
+                    marginTop: -200 + "px", 
+                    marginLeft: 0 + "px"
+                });
+            }'),
+        ],
+
+                // 'clientOptions' => [
+        //     'beforeShow' => new JsExpression('function(input, inst) {
+        //         inst.dpDiv.css({
+        //             marginTop: -input.offsetHeight + "px", 
+        //             marginLeft: input.offsetWidth + "px"
+        //         });
+        //     }'),
+        // ],
     ]) ?>
 
     <?= $form->field($modelClientContract, 'end_date')->widget(DatePicker::className(), [
         'dateFormat' => 'dd-MM-yyyy', // format tanggal yang digunakan
-        'options' => ['class' => 'form-control'], // opsi tambahan untuk input field
+
+        'options' => [
+            'class' => 'form-control',
+            'autocomplete' => 'off', // disable autocomplete
+
+        ], // opsi tambahan untuk input field
     ]) ?>
 
 </div>
@@ -149,3 +175,13 @@ Modal::begin([
 <?php
 Modal::end();
 ?>
+<!-- 
+<style>
+    .datepicker {
+        z-index: 1100 !important;
+    }
+
+    #ui-datepicker-div {
+        width: 30% !important;
+    }
+</style> -->
