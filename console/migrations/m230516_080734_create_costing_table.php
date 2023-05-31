@@ -25,7 +25,7 @@ class m230516_080734_create_costing_table extends Migration
 
         // add foreign keys for company, contract, and unit_rate tables
         $this->addForeignKey('fk-costing-company', 'costing', 'client_id', 'client', 'id');
-        $this->addForeignKey('fk-costing-contract', 'costing', 'contract_id', 'client_contract', 'id');
+        $this->addForeignKey('fk-costing-contract', 'costing', 'contract_id', 'client_contract', 'id', 'CASCADE');
         $this->addForeignKey('fk-costing-unit_rate', 'costing', 'unit_rate_id', 'unit_rate', 'id');
         $this->addForeignKey('fk-costing-item', 'costing', 'item_id', 'item', 'id');
 
