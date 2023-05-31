@@ -115,7 +115,7 @@ $this->registerJs(<<<JS
             var \$option = $(
                 '<div><strong style=\"font-size:14px;\"> Activity : ' + 
                     option.text 
-                + '</strong></div><div class=\"row\"><i style=\"font-size:11px\"><div class=\"col\"><b> Type: '+ option.type_name +'</b></div><div class=\"col\"><b> Size: '+option.unitrate+'</b></div><div class=\"col\"><b> Size: '+option.size+'</b></div><div class=\"col\"><b> Class: '+option.class+'</b></div><div class=\"col\"><b> Price: '+option.price+'</b></div></i></div>'
+                + '</strong></div><div class=\"row\"><i style=\"font-size:11px\"><div class=\"col\"><b> Type: '+ option.type_name +'</b></div><div class=\"col\"><b> Rate: '+option.unitrate+'</b></div><div class=\"col\"><b> Size: '+option.size+'</b></div><div class=\"col\"><b> Class: '+option.class+'</b></div><div class=\"col\"><b> Price: '+option.price+'</b></div></i></div>'
             );
             return \$option;
         }
@@ -450,9 +450,10 @@ $this->registerCss("
             
             $('#myModal').on('submit', 'form#addCosting', function(e){
                 e.preventDefault();
+                var submitButton = $(this).find(':submit');
+                submitButton.prop('disabled', true);
+                submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 var form = $(this);
-                // $('#myModal').modal('hide');
-                console.log(form.attr('method'));
                 $.ajax({
                     url: '/request-order-trans/create',
                     method: form.attr('method'),
@@ -467,9 +468,14 @@ $this->registerCss("
                             showConfirmButton: true,
                             timer: 1500
                             });
+                            $("#costing_idx").val(null).trigger("change"); // reset to empty state
+                            submitButton.prop('disabled', false);
+                            submitButton.html('Save');
                         $.pjax.reload({container:'#my-pjax'});
                         }else{
                             alert('Failed Saved');
+                            submitButton.prop('disabled', false);
+                            submitButton.html('Save');
 
                         }
                     },

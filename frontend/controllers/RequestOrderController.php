@@ -248,7 +248,7 @@ class RequestOrderController extends Controller
                     ['like', 'item.class', $search],
                     ['like', 'price', $search],
                     ['like', 'size', $search],
-                    ['like', 'unitRate.rate_name', $search],
+                    ['like', 'unit_rate.rate_name', $search],
                 ])
                 ->all();
         } else {
