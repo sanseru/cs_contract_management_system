@@ -132,7 +132,7 @@ $this->registerCss("
 
         </div>
         <div class="col-md-4">
-            <?= $form->field($model, 'so_number')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'so_number')->textInput(['maxlength' => true, 'autocomplete'=> 'off']) ?>
 
 
 
@@ -142,7 +142,7 @@ $this->registerCss("
     </div>
     <div class="row">
         <div class="col-md-4">
-            <?= $form->field($model, 'ro_number')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'ro_number')->textInput(['maxlength' => true, 'autocomplete'=> 'off']) ?>
 
         </div>
         <div class="col-md-4">
@@ -171,13 +171,13 @@ $this->registerCss("
         <div class="col-md-6">
             <?= $form->field($model, 'start_date')->widget(DatePicker::class, [
                 'dateFormat' => 'dd-MM-yyyy', // format tanggal yang digunakan
-                'options' => ['class' => 'form-control'], // opsi tambahan untuk input field
+                'options' => ['class' => 'form-control', 'autocomplete'=> 'off'], // opsi tambahan untuk input field
             ]) ?>
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'end_date')->widget(DatePicker::class, [
                 'dateFormat' => 'dd-MM-yyyy', // format tanggal yang digunakan
-                'options' => ['class' => 'form-control'], // opsi tambahan untuk input field
+                'options' => ['class' => 'form-control', 'autocomplete'=> 'off'], // opsi tambahan untuk input field
             ]) ?>
 
         </div>
