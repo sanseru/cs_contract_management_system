@@ -3,8 +3,11 @@
 namespace frontend\controllers;
 
 use frontend\models\Client;
+use frontend\models\ContractActivityValue;
+use frontend\models\ContractActivityValueSow;
 use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -141,5 +144,64 @@ class RequestOrderTransController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionShowDetails()
+    {
+        $id = Yii::$app->request->post('id');
+
+        $model = $this->findModel($id);
+
+        // print_r($model->requestOrder->contract->contractActivityValues);die;
+
+
+        // Your logic to retrieve the order details using the $orderId goes here
+        $record = ContractActivityValue::find()
+            ->where(['contract_id' => $model->requestOrder->contract_id, 'activity_id' => $model->costing->item->masterActivityCode->id])
+            ->one();
+
+        $column = ContractActivityValueSow::find()
+            ->where(['contract_activity_value_id' => $record->id])
+            ->all();
+        $tables = ' <div class="table-responsive"><table class="table table-bordered" id="tablesed">
+          <thead>
+          <tr>
+          ';
+        foreach ($column as $value) {
+            $tables .= "<th style='font-size:12px' colspan='2'>" . $value->sow->name_sow . "</th>";
+        }
+        $tables .= "
+        </tr><tr>";
+
+        foreach ($column as $value) {
+            $tables .= "<th style='font-size:10px'>Tanggal</th>";
+            $tables .= "<th style='font-size:10px'>Ket</th>";
+
+        }
+        $tables .= "</tr>";
+
+        $tables .= "</thead>
+          <tbody>";
+
+        // foreach ($column as $value) {
+
+        //     $tables .= " <tr><td>" . $value->sow->name_sow . "</td></tr>";
+        // }
+
+
+        $tables .= '    </tbody>
+          </table></div>';
+
+
+        // Return the order details as a JSON response
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return [
+            'success' => true,
+            'orderDetails' => [
+                'orderId' => $id,
+                'table' => $tables,
+                // Add more order details as needed
+            ]
+        ];
     }
 }

@@ -70,6 +70,20 @@ if ($reqOrder) {
 
 </div>
 
+<style>
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-item.show .nav-link {
+        background-color: #1d267d;
+        color: white;
+    }
+
+    .nav-tabs .nav-link {
+    background: #1d267447;
+    color: white;
+
+}
+</style>
+
 <ul class="nav nav-tabs nav-justified mt-3" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active fw-bold" id="costing-tab" data-bs-toggle="tab" data-bs-target="#costing-tab-pane" type="button" role="tab" aria-controls="costing-tab-pane" aria-selected="true">Costing</button>

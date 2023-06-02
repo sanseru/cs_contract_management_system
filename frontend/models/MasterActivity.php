@@ -12,7 +12,8 @@ use Yii;
  * @property string|null $activity_name
  * @property string|null $created_at
  * @property string|null $updated_at
- *
+ * @property int|null $has_item 
+ * @property int|null $has_sow 
  * @property Item[] $items
  * @property MasterItemType[] $masterItemTypes
  * @property RequestOrderActivity[] $requestOrderActivities
@@ -36,6 +37,7 @@ class MasterActivity extends \yii\db\ActiveRecord
         return [
             [['created_at', 'updated_at','unitrate_activity'], 'safe'],
             [['activity_code'], 'unique'],
+            [['has_item', 'has_sow'], 'integer'],
             [['activity_code'], 'string', 'max' => 10],
             [['activity_name'], 'string', 'max' => 50],
         ];
@@ -52,6 +54,8 @@ class MasterActivity extends \yii\db\ActiveRecord
             'activity_name' => 'Activity Name',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'has_item' => 'Has Item', 
+            'has_sow' => 'Has Sow', 
         ];
     }
 
@@ -62,7 +66,7 @@ class MasterActivity extends \yii\db\ActiveRecord
      */
     public function getItems()
     {
-        return $this->hasMany(Item::class, ['master_activity_code' => 'activity_code']);
+        return $this->hasMany(Item::class, ['master_activity_code' => 'id']);
     }
 
     /**
@@ -82,7 +86,7 @@ class MasterActivity extends \yii\db\ActiveRecord
      */
     public function getRequestOrderActivities()
     {
-        return $this->hasMany(RequestOrderActivity::class, ['activity_code' => 'activity_code']);
+        return $this->hasMany(RequestOrderActivity::class, ['activity_code' => 'id']);
     }
 
     
@@ -95,5 +99,15 @@ class MasterActivity extends \yii\db\ActiveRecord
    { 
        return $this->hasMany(ActivityUnitRate::class, ['activity_code' => 'id']); 
    } 
+
+   	/** 
+    * Gets query for [[ContractActivityValues]]. 
+    * 
+    * @return \yii\db\ActiveQuery 
+    */ 
+    public function getContractActivityValues() 
+    { 
+        return $this->hasMany(ContractActivityValue::class, ['activity_id' => 'id']); 
+    }
  
 }

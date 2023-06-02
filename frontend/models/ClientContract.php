@@ -18,6 +18,9 @@ use Yii;
  * @property string|null $updated_at
  *
  * @property Client $client
+ * @property ContractActivityValue[] $contractActivityValues 
+ * @property Costing[] $costings 
+ * @property RequestOrder[] $requestOrders 
  */
 class ClientContract extends \yii\db\ActiveRecord
 {
@@ -69,5 +72,35 @@ class ClientContract extends \yii\db\ActiveRecord
     public function getClient()
     {
         return $this->hasOne(Client::class, ['id' => 'client_id']);
+    }
+
+    /** 
+     * Gets query for [[ContractActivityValues]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getContractActivityValues()
+    {
+        return $this->hasMany(ContractActivityValue::class, ['contract_id' => 'id']);
+    }
+
+    /** 
+     * Gets query for [[Costings]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getCostings()
+    {
+        return $this->hasMany(Costing::class, ['contract_id' => 'id']);
+    }
+
+    /** 
+     * Gets query for [[RequestOrders]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getRequestOrders()
+    {
+        return $this->hasMany(RequestOrder::class, ['contract_id' => 'id']);
     }
 }

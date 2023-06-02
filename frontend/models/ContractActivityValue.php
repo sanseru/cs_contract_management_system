@@ -20,6 +20,10 @@ class ContractActivityValue extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $sow;
+    public $sow_kpi;
+
+    
     public static function tableName()
     {
         return 'contract_activity_value';
@@ -33,7 +37,7 @@ class ContractActivityValue extends \yii\db\ActiveRecord
         return [
             [['contract_id', 'activity_id', 'value'], 'required'],
             [['contract_id', 'activity_id'], 'integer'],
-            [['value'], 'safe'],
+            [['value','sow'], 'safe'],
             [['activity_id'], 'exist', 'skipOnError' => true, 'targetClass' => MasterActivity::class, 'targetAttribute' => ['activity_id' => 'id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClientContract::class, 'targetAttribute' => ['contract_id' => 'id']],
         ];
@@ -81,5 +85,10 @@ class ContractActivityValue extends \yii\db\ActiveRecord
             $total += $item[$columnName];
         }
         return  Yii::$app->formatter->asCurrency($total, 'IDR');
+    }
+
+    public function getContractActivityValueSows()
+    {
+        return $this->hasMany(ContractActivityValueSow::class, ['contract_activity_value_id' => 'id']);
     }
 }

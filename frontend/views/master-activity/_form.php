@@ -33,7 +33,7 @@ JS);
 
                 <?php $form = ActiveForm::begin(); ?>
 
-                <?= $form->field($model, 'activity_code')->textInput(['maxlength' => true,'enableAjaxValidation' => true]) ?>
+                <?= $form->field($model, 'activity_code')->textInput(['maxlength' => true, 'enableAjaxValidation' => true]) ?>
 
                 <?= $form->field($model, 'activity_name')->textInput(['maxlength' => true]) ?>
 
@@ -44,6 +44,17 @@ JS);
                         'prompt' => 'Select an option...', 'id' => 'unit_rate_id'
                     ]
                 ) ?>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= $form->field($model, 'has_item')->checkbox() ?>
+
+                    </div>
+                    <div class="col-md-6">
+                        <?= $form->field($model, 'has_sow')->checkbox() ?>
+
+                    </div>
+                </div>
                 <div class="d-grid gap-2 form-group mt-3 text-center">
                     <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
                 </div>
