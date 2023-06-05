@@ -127,9 +127,15 @@ $this->registerJs(<<<JS
             type: 'POST',
             data: {id: id},
             success: function(response) {
-                console.log(response.orderDetails.table)
+                // console.log(response.orderDetails.table)
                 $("#insertHere").html(response.orderDetails.table);
-                $('#tablesed').DataTable();
+                $('#tablesed').DataTable({
+                    "autoWidth": true
+                });
+
+                $('html, body').animate({
+                scrollTop: $("#card-details").offset().top
+            }, 1000); // 1000 is the duration of the animation in milliseconds
 
             },
             error: function() {
@@ -318,15 +324,15 @@ $this->registerCss("
 
     </div>
 
-    <div class="card mt-5">
+    <div class="card mt-5" id="card-details">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">#Jenis Apa </h5>
+            <h5 class="mb-0">#Detail Service To Provide </h5>
         </div>
         <div class="card-body" id="insertHere">
 
         </div>
     </div>
-    
+
 
 
 
@@ -345,31 +351,6 @@ $this->registerCss("
         <?php // $form->field($dataRequestOrderTransModel, 'costing_name')->dropDownList(['1' => 1], ['id' => 'costing_name', 'class' => "costings", 'prompt' => 'Select unit Rate...']) 
         ?>
         <?= $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList([], ['id' => 'costing_idx', 'class' => 'form-control form-select', 'prompt' => 'Select a Costing ...', 'style' => 'width:100%',])->label('Costing') ?>
-
-        <?php
-        // $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList(
-        //     ArrayHelper::map(
-        //         Costing::find()
-        //             ->joinWith('item')
-        //             ->where(['client_id' => $model->client_id])
-        //             ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
-        //             ->all(),
-        //         'id',
-        //         function ($costing) {
-        //             $activityName = strtoupper($costing->item->masterActivityCode->activity_name);
-        //             $typeName = strtoupper($costing->item->itemType->type_name);
-        //             $size = strtoupper($costing->item->size);
-        //             $class = strtoupper($costing->item->class);
-
-        //             $rateName = strtoupper($costing->unitRate->rate_name);
-        //             $price = number_format($costing->price, 0, ',', '.');
-
-        //             return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName} (Rp {$price})";
-        //         }
-        //     ),
-        //     ['id' => 'costing_idx', 'class' => 'form-control form-select', 'style' => 'width: 100%"', 'prompt' => 'Select a Costing ...']
-        // )->label('Costing');
-        ?>
 
         <?= $form->field($dataRequestOrderTransModel, 'curency_format')->textInput(['id' => 'curency_format', 'maxlength' => true, 'readonly' => true]) ?>
 
@@ -410,7 +391,7 @@ $this->registerCss("
                     method: form.attr('method'),
                     data: form.serialize(),
                     success: function(response){
-                        console.log(response);
+                        // console.log(response);
                         if(response.success){
                             $('#myModal').modal('hide');
                             Swal.fire({
@@ -433,4 +414,215 @@ $this->registerCss("
                 });
             });
         JS);
+    ?>
+
+
+    <!-- Modals -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resv-number" class="form-label">RESV NUMBER</label>
+                                    <input type="text" class="form-control" id="resv-number" name="resv-number" autocomplete="off" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="ce-year" class="form-label">CE YEAR</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="ce-year" name="ce-year">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cost-estimate" class="form-label">COST ESTIMATE</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="cost-estimate" name="cost-estimate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="ro-number" class="form-label">RO NUMBER</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="ro-number" name="ro-number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="material-incoming-date" class="form-label">MATERIAL INCOMING DATE</label>
+                                    <input type="date" class="form-control" autocomplete="off" id="material-incoming-date" name="material-incoming-date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="ro-start" class="form-label">RO START</label>
+                                    <input type="date" class="form-control" autocomplete="off" id="ro-start" name="ro-start">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+                                    <label for="ro-end" class="form-label">RO END</label>
+                                    <input type="date" class="form-control" autocomplete="off" id="ro-end" name="ro-end">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="urgency" class="form-label">URGENCY</label>
+                            <input type="text" class="form-control" autocomplete="off" id="urgency" name="urgency">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qty" class="form-label">QTY</label>
+                                    <input type="number" class="form-control" autocomplete="off" id="qty" name="qty">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id-valve" class="form-label">ID VALVE</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="id-valve" name="id-valve">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="size" class="form-label">SIZE</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="size" name="size">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="class" class="form-label">CLASS</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="class" name="class">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipment-type" class="form-label">EQUIPMENT TYPE</label>
+                            <input type="text" class="form-control" autocomplete="off" id="equipment-type" name="equipment-type">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sow" class="form-label">SOW</label>
+                            <input type="text" class="form-control" autocomplete="off" id="sow" name="sow">
+                        </div>
+                        <input type="hidden" class="form-control" id="rotrans_id" name="rotrans_id">
+                        <input type="hidden" class="form-control" id="roid" name="roid" value="<?= $model->id ?>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <?php
+    $js = <<<JS
+        $(document).on('click', '#btn_item', function() {
+            var id = $(this).data('id');
+            $('#rotrans_id').val(id);
+        });
+
+        $('#addItemModal form').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/request-order-trans/add-item',
+                data: $(this).serialize(),
+                success: function(response) {
+                    // handle success response
+                    console.log(response);
+                    $('#addItemModal').modal('hide');
+                },
+                error: function(xhr, status, error) {
+                    // handle error response
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+
+        $('#exampleModal form').submit(function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        console.log(formData);
+        $.ajax({
+            url: '/request-order-trans/insert-update-item',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                // Handle the success    response
+                console.log(response);
+            },
+            error: function(xhr) {
+                // Handle the error response
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+    JS;
+    $this->registerJs($js);
+
+
+
+    ?>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form id='myFormItemUpdate'>
+                </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <?php
+    $js = <<<JS
+
+    $(document).on('click', '.editItems', function() {
+        var itemId = $(this).data('id');
+        var reqId = $(this).data('reqid');
+            console.log(itemId,reqId);
+        // Create an AJAX request to post the data
+        $.ajax({
+            url: '/request-order-trans/update-item',
+            type: 'POST',
+            data: { itemId: itemId, reqId: reqId },
+            success: function(data) {
+            $('#myFormItemUpdate').html(data.form);
+            // Handle the response from the server
+            // console.log(data);
+            }
+        });
+    });
+    JS;
+    $this->registerJs($js);
+
+
     ?>

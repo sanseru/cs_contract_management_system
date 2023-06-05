@@ -113,6 +113,11 @@ class RequestOrder extends \yii\db\ActiveRecord
         return $this->hasMany(ActivityContract::class, ['contract_id' => 'id']);
     }
 
+    public function getRequestOrderTransItems()
+    {
+        return $this->hasMany(RequestOrderTransItem::class, ['request_order_id' => 'id']);
+    }
+
     public static function getTotal($provider, $columnName)
     {
 

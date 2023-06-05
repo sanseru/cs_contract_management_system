@@ -108,7 +108,7 @@ if (!$model->isNewRecord) {
         $forms .= '<tr>
         <td style="width:60%;">
             <select class="form-control select2" name="sow[]">
-            <option value="' . $sowId->contract_activity_value_id . '" selected>' . $sowId->sow->name_sow . '</option>
+            <option value="' . $sowId->sow_id . '" selected>' . $sowId->sow->name_sow . '</option>
             </select>
         </td>
         <td style="width:20%;">

@@ -43,7 +43,7 @@ class RequestOrderTrans extends \yii\db\ActiveRecord
         return [
             [['request_order_id', 'costing_id', 'quantity', 'unit_price', 'sub_total'], 'required'],
             [['request_order_id', 'costing_id', 'quantity'], 'integer'],
-            [['unit_price','contract_number'], 'safe'],
+            [['unit_price', 'contract_number'], 'safe'],
             [['costing_id'], 'exist', 'skipOnError' => true, 'targetClass' => Costing::class, 'targetAttribute' => ['costing_id' => 'id']],
             [['request_order_id'], 'exist', 'skipOnError' => true, 'targetClass' => RequestOrder::class, 'targetAttribute' => ['request_order_id' => 'id']],
         ];
@@ -84,5 +84,14 @@ class RequestOrderTrans extends \yii\db\ActiveRecord
     public function getRequestOrder()
     {
         return $this->hasOne(RequestOrder::class, ['id' => 'request_order_id']);
+    }
+    /** 
+     * Gets query for [[RequestOrderTransItems]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getRequestOrderTransItems()
+    {
+        return $this->hasMany(RequestOrderTransItem::class, ['request_order_trans_id' => 'id']);
     }
 }

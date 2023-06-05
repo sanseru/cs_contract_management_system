@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles adding columns to table `{{%master_activity}}`.
  */
-class m230602_013618_add_columns_to_master_activity_table extends Migration
+class m230602_013618_add_columns_to_master_activity_value_table extends Migration
 {
     /**
      * {@inheritdoc}
