@@ -94,4 +94,13 @@ class RequestOrderTrans extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RequestOrderTransItem::class, ['request_order_trans_id' => 'id']);
     }
+    /** 
+     * Gets query for [[RoTransItemSows]]. 
+     * 
+     * @return \yii\db\ActiveQuery 
+     */
+    public function getRoTransItemSows()
+    {
+        return $this->hasMany(RoTransItemSow::class, ['request_order_trans_id' => 'id']);
+    }
 }

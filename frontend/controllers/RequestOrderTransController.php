@@ -8,6 +8,7 @@ use frontend\models\ContractActivityValueSow;
 use frontend\models\RequestOrderTrans;
 use frontend\models\RequestOrderTransItem;
 use frontend\models\RequestOrderTransSearch;
+use frontend\models\RoTransItemSow;
 use Yii;
 use yii\bootstrap5\Html;
 use yii\filters\AccessControl;
@@ -201,6 +202,12 @@ class RequestOrderTransController extends Controller
         $column = ContractActivityValueSow::find()
             ->where(['contract_activity_value_id' => $record->id])
             ->all();
+
+        $roitemsow = RoTransItemSow::find()
+            ->where(['request_order_trans_id' => $id])
+            ->all();
+
+
         $tables = '<div class="text-white d-flex justify-content-between align-items-center"><p style="color:black">Item Valve Repair</p><button type="button" id="btn_item" class="btn btn-sm btn-primary mb-2 float-end" data-id="' . $id . '" data-bs-toggle="modal" data-bs-target="#addItemModal">Add Item</button></div>';
         $tables .= ' <div class="table-responsive"><table class="table table-bordered" id="tablesed">
           <thead>
@@ -238,6 +245,8 @@ class RequestOrderTransController extends Controller
           <tbody>";
 
         foreach ($record_item as $value) {
+            // print_r( $value);die;
+
             $tables .= "<tr>";
 
             $tables .= "<td style='font-size:0.8rem'>$value->resv_number</td>";
@@ -257,9 +266,34 @@ class RequestOrderTransController extends Controller
             // use the factory to create a Faker\Generator instance
             $faker = \Faker\Factory::create();
 
+            $filteredArray = array_filter($roitemsow, function ($item) use ($value) {
+                return $item->request_order_trans_item_id == $value->id;
+            });
+
+
+
             foreach ($column as $valuex) {
-                $tables .= "<td style='font-size:0.8rem'>" . $faker->dateTimeThisCentury->format('Y-m-d') . "</td>";
-                $tables .= "<td style='font-size:0.8rem'>1</td>";
+                $filteredArrays = array_filter($filteredArray, function ($item) use ($valuex) {
+                    return $item->sow_id == $valuex->sow_id;
+                });
+                $tablex = "<td style='font-size:0.8rem'>-</td>";
+                $tablexs = "<td style='font-size:0.8rem'>-</td>";
+                foreach ($filteredArrays as $key => $valuez) {
+                    if ($valuez) {
+                        if ($valuez->status) {
+                            $check = '<i class="fa-solid fa-circle-check fa-xl" style="color: #29b503;"></i>';
+                        } else {
+                            $check = '<i class="fa-solid fa-circle-minus fa-xl" style="color: #c70505;"></i>';
+                        }
+                        $tablex = "<td style='font-size:0.8rem'>" . $valuez->date_sow . "</td>";
+                        $tablexs = "<td style='font-size:0.8rem;text-align: center'>" . $check . "</td>";
+                    } else {
+                        $tablex = "<td style='font-size:0.8rem'>-</td>";
+                        $tablexs = "<td style='font-size:0.8rem'>-</td>";
+                    }
+                }
+                $tables .= $tablex;
+                $tables .= $tablexs;
             }
             $tables .= "<td style='font-size:0.8rem'><button type='button' class='btn btn-outline-info btn-sm editItems' data-id='" . $value->id . "' data-reqid='" . $id . "' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class=\"fa-solid fa-pen-to-square fa-2xs\"></i></button></i></td>";
             $tables .= "</tr>";
@@ -303,23 +337,71 @@ class RequestOrderTransController extends Controller
             $options[$c->sow_id] = $c->sow->name_sow;
         }
         $selectLabel = Html::label('Select SOW:', 'select_input');
-        $selectForm = Html::dropDownList('select_input', null, $options, ['class' => 'form-control mb-3', 'prompt' => 'Select SOW']);
+        $selectForm = Html::dropDownList('select_input', null, $options, ['class' => 'form-control mb-3', 'prompt' => 'Select SOW',  'required' => true]);
         // Create the date input and submit button
         $dateLabel = Html::label('Select Date:', 'date_input');
         // $dateInput = Html::input('date_input', 'date', date('Y-m-d'), ['class' => 'form-control mb-3']);
-        $dateInput = '<input type="date" class="form-control mb-3" autocomplete="off" id="date_input" name="date_input">';
+        $dateInput = '<input type="date" class="form-control mb-3" autocomplete="off" id="date_input" name="date_input" required>';
+        $statusLabel = Html::label('Select Status:', 'status');
+
+        $status = '<select name="status" class="form-control mb-3" required>
+        <option >Select Status</option>
+        <option value="0">Pending</option>
+        <option value="1">Done</option>
+      </select>';
+        $ro_item_id = '<input type="hidden" class="form-control mb-3" autocomplete="off" value="' . $itemId . '" id="ro_item_id" name="ro_item_id">';
+        $ro_trans_id = '<input type="hidden" class="form-control mb-3" autocomplete="off" value="' . $reqId . '" id="ro_trans_item_id" name="ro_trans_item_id">';
+
         $submitButton = Html::submitButton('Submit', ['class' => 'btn btn-primary float-end']);
-        $forms = $selectLabel . $selectForm .  $dateLabel . $dateInput . $submitButton;
+        $forms = $selectLabel . $selectForm .  $dateLabel . $dateInput . $statusLabel . $status . $ro_item_id . $ro_trans_id . $submitButton;
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['success' => true, 'form' => $forms];
     }
 
     public function actionInsertUpdateItem()
     {
-        $selectInput = Yii::$app->request->post('select_input');
-        $dateInput = Yii::$app->request->post('date_input');
+        $model = new RoTransItemSow();
+        if ($this->request->isPost && $this->request->post()) {
+            $selectInput = Yii::$app->request->post('select_input');
+            $dateInput = Yii::$app->request->post('date_input');
+            $roItemId = Yii::$app->request->post('ro_item_id');
+            $roTransId = Yii::$app->request->post('ro_trans_item_id');
+            $status = Yii::$app->request->post('status');
 
-    
+            // Check if a record with the given request_order_trans_id and request_order_trans_item_id exists
+            $existingModel = RoTransItemSow::findOne([
+                'request_order_trans_id' => $roTransId,
+                'request_order_trans_item_id' => $roItemId,
+                'sow_id' => $selectInput,
+
+            ]);
+
+            if ($existingModel) {
+                // Update the existing record
+                $existingModel->date_sow = $dateInput;
+                $existingModel->status = $status;
+                $existingModel->updated_at = date('Y-m-d H:i:s');
+                $existingModel->updated_by = \Yii::$app->user->identity->id;
+                $existingModel->save(false);
+            } else {
+                // Create a new record
+                $model->request_order_trans_id = $roTransId;
+                $model->request_order_trans_item_id = $roItemId;
+                $model->sow_id = $selectInput;
+                $model->date_sow = $dateInput;
+                $model->status = $status;
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->created_by = \Yii::$app->user->identity->id;
+                $model->save(false);
+            }
+
+            // Return the order details as a JSON response
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return [
+                'success' => true,
+            ];
+        }
+
         // Return a response (e.g., JSON)
         return json_encode(['success' => true, 'message' => 'Data saved successfully']);
     }

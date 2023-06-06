@@ -561,18 +561,33 @@ $this->registerCss("
         $('#exampleModal form').submit(function(e) {
         e.preventDefault();
         var formData = $(this).serialize();
-        console.log(formData);
+        var submitButton = $(this).find(":submit");
+        submitButton.prop("disabled", true);
+        submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
         $.ajax({
             url: '/request-order-trans/insert-update-item',
             type: 'POST',
             data: formData,
             success: function(response) {
                 // Handle the success    response
-                console.log(response);
+                // console.log(response);
+                $('#exampleModal').modal('hide'); // Hide the modal
+                $(this)[0].reset(); // Reset the form
+                Swal.fire({
+                    icon: "success",
+                    title: "Data has been saved",
+                    showConfirmButton: true,
+                    timer: 1500,
+                });
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
             },
             error: function(xhr) {
                 // Handle the error response
-                console.log(xhr.responseText);
+                // console.log(xhr.responseText);
+                alert("Failed Save To Server");
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
             }
         });
     });
@@ -593,8 +608,8 @@ $this->registerCss("
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                <form id='myFormItemUpdate'>
-                </form>
+                    <form id='myFormItemUpdate'>
+                    </form>
                 </div>
 
             </div>
