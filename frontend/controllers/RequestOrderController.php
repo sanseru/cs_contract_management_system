@@ -158,6 +158,8 @@ class RequestOrderController extends Controller
                     $transaction->rollBack();
                     throw new \Exception('Failed to save request order');
                 }
+
+                RequestOrderActivity::deleteAll(['request_order_id' => $model->id]);
                 foreach ($model->activityCodeArray as $activity_code) {
                     $pivot = new RequestOrderActivity();
                     $pivot->request_order_id = $model->id;
@@ -218,6 +220,7 @@ class RequestOrderController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 
 
     public function actionSelect2Get()

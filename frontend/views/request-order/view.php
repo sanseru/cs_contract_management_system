@@ -119,6 +119,31 @@ $this->registerJs(<<<JS
             );
             return \$option;
         }
+
+    $(document).on('click', '.show-button', function() {
+    var id = $(this).data('id');
+        $.ajax({
+            url: '/request-order-trans/show-details',
+            type: 'POST',
+            data: {id: id},
+            success: function(response) {
+                // console.log(response.orderDetails.table)
+                $("#insertHere").html(response.orderDetails.table);
+                $('#tablesed').DataTable({
+                    "autoWidth": true
+                });
+
+                $('html, body').animate({
+                scrollTop: $("#card-details").offset().top
+            }, 1000); // 1000 is the duration of the animation in milliseconds
+
+            },
+            error: function() {
+                alert('Error occurred while processing the request.');
+            }
+        });
+    });
+
 JS);
 
 $this->registerCss("
@@ -146,71 +171,72 @@ $this->registerCss("
                             ],
                         ]) ?>
                 </p> -->
+            <div class="table-responsive">
 
-            <?= DetailView::widget([
-                'model' => $model,
-                'attributes' => [
-                    'contract.contract_number',
-                    'client.name',
-                    'ro_number',
-                    'so_number',
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
+                        'contract.contract_number',
+                        'client.name',
+                        'ro_number',
+                        'so_number',
 
-                    [
-                        'label' => 'Contract Detail',
-                        'format' => 'raw',
-                        'value' => function ($model) {
+                        [
+                            'label' => 'Contract Detail',
+                            'format' => 'raw',
+                            'value' => function ($model) {
 
-                            $badgeClass = 'bg-secondary';
-                            switch ($model->status) {
-                                case '1':
-                                    $badgeClass = 'bg-success';
-                                    $status = 'OPEN';
-                                    break;
-                                case '9':
-                                    $badgeClass = 'bg-warning text-dark';
-                                    $status = 'CLOSE';
-                                    break;
-                                case 'Cancelled':
-                                    $badgeClass = 'bg-danger';
-                                    break;
-                            }
-                            $activitys = "";
-                            // foreach ($model->requestOrderActivities as $key => $value) {
-                            //     $activitys .= $value->activity_code->activity_name ;
-                            //     // print_r($value->activity_code);die;
-                            // }
-
-                            $activities = array_map(function ($activity) {
-                                return $activity->activityCode->activity_name;
-                            }, $model->requestOrderActivities);
-                            $activitys =  implode(', ', $activities);
-
-                            return "<strong style=\"margin-right: 50px;\">Contract Type</strong>  
+                                $badgeClass = 'bg-secondary';
+                                switch ($model->status) {
+                                    case '1':
+                                        $badgeClass = 'bg-success';
+                                        $status = 'OPEN';
+                                        break;
+                                    case '9':
+                                        $badgeClass = 'bg-warning text-dark';
+                                        $status = 'CLOSE';
+                                        break;
+                                    case 'Cancelled':
+                                        $badgeClass = 'bg-danger';
+                                        break;
+                                }
+                                $activitys = "";
+                                $activities = array_map(function ($activity) {
+                                    return $activity->activityCode->activity_name;
+                                }, $model->requestOrderActivities);
+                                $activitys =  implode(', ', $activities);
+                                // print_r($activities);die;
+                                $skdas = "";
+                                foreach ($activities as $key => $value) {
+                                    $skdas .= "<span class=\"badge bg-warning text-dark\">$value</span> ";
+                                }
+                                return "<strong style=\"margin-right: 50px;\">Contract Type</strong>  
                     <span class=\"badge bg-primary\" style=\"padding: 5px 10px;margin-right: 10px;\">$model->contract_type</span>
                     <strong style=\"margin-right: 30px;\">Contract Status</strong>
                     <span class=\"badge " . $badgeClass . "\" style=\"padding: 5px 5px;\">" . $status . "</span>
                     <br>
                     <strong style=\"
-                    margin-right: 30px;\">Contract Activity</strong><span class=\"badge bg-warning text-dark mr-5\">$activitys</span>";
-                        }
+                    margin-right: 30px;\">Contract Activity</strong><br>$skdas";
+                            }
+                        ],
+                        [
+                            'label' => 'Contract Duration',
+                            'value' => function ($model) {
+                                return date('d-m-Y', strtotime($model->start_date)) . ' To ' . date('d-m-Y', strtotime($model->end_date));
+                            }
+                        ],
+                        [
+                            'attribute' => 'created_at',
+                            'format' => ['date', 'php:d-m-Y']
+                        ],
+                        [
+                            'attribute' => 'updated_at',
+                            'format' => ['date', 'php:d-m-Y']
+                        ],
                     ],
-                    [
-                        'label' => 'Contract Duration',
-                        'value' => function ($model) {
-                            return date('d-m-Y', strtotime($model->start_date)) . ' To ' . date('d-m-Y', strtotime($model->end_date));
-                        }
-                    ],
-                    [
-                        'attribute' => 'created_at',
-                        'format' => ['date', 'php:d-m-Y']
-                    ],
-                    [
-                        'attribute' => 'updated_at',
-                        'format' => ['date', 'php:d-m-Y']
-                    ],
-                ],
-            ]) ?>
+                ]) ?>
 
+            </div>
         </div>
     </div>
 
@@ -252,20 +278,13 @@ $this->registerCss("
                                 $size = strtoupper($model->costing->item->size);
 
                                 $rateName = strtoupper($model->costing->unitRate->rate_name);
-                                // $price = number_format($model->price, 0, ',', '.');
-                                // return "{$activityName} - {$typeName} - {$rateName} (Rp {$price})";;
                                 return "- Activity : {$activityName}<br> - Type : {$typeName}<br> - Class: {$class}<br> - Size: {$size}<br> - Rate: {$rateName}";
                             }
                         ],
-                        // 'requestOrder.ro_number',
-                        // 'quantity',
                         [
                             'attribute' => 'quantity',
                             'filter' => false,
                         ],
-
-                        // 'unit_price',
-                        // 'sub_total',
                         [
                             'attribute' => 'unit_price',
                             'value' => function ($model) {
@@ -282,7 +301,17 @@ $this->registerCss("
                         ],
                         [
                             'class' => ActionColumn::className(),
-                            'template' => '{delete}',
+                            'template' => '{show} {delete} ',
+                            'buttons' => [
+                                'show' => function ($url, $model, $key) {
+                                    if ($model->costing->item->masterActivityCode->has_item == true || $model->costing->item->masterActivityCode->has_sow) {
+                                        return Html::button('<i class="fa-solid fa-table"></i>', [
+                                            'class' => 'btn btn-info btn-sm show-button text-white',
+                                            'data-id' => $model->id,
+                                        ]);
+                                    }
+                                },
+                            ],
                             'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
                                 return Url::toRoute(['/request-order-trans/delete', 'id' => $model->id, 'ro' => \Yii::$app->request->get('id')]);
                             }
@@ -296,154 +325,58 @@ $this->registerCss("
 
     </div>
 
-    <div class="card mt-5">
+    <div class="card mt-5" id="card-details">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">#<?= Html::encode($this->title) ?> </h5>
-            <a href="<?= Url::toRoute(['activity-contract/create', 'id' => $model->id]); ?>"><button class="btn btn-sm btn-primary">Add Activity</button></a>
+            <h5 class="mb-0">#Detail Service To Provide </h5>
         </div>
+        <div class="card-body" id="insertHere">
 
-        <div class="card-body">
-            <div class="container py-2">
-                <h2 class="font-weight-light text-center text-muted py-3">Timeline</h2>
-                <!-- timeline item 1 -->
-                <?php
-                foreach ($model->activityContract as $index => $event) : ?>
-
-                    <?php
-                    if ($event['status'] == 2) {
-                        $textColor = 'text-success';
-                        $bg = 'bg-success animate__animated animate__pulse pulse';
-                        $border = 'border border-3 border-success';
-                    } elseif ($event['status'] == 1) {
-                        $textColor = '';
-                        $bg = 'bg-light border';
-                        $border = '';
-                    } else {
-                        $textColor = 'text-muted';
-                        $bg = 'bg-light border';
-                        $border = '';
-                    }
-                    ?>
-
-                    <div class="row">
-                        <!-- timeline item left dot -->
-                        <div class="col-auto text-center flex-column d-none d-sm-flex">
-                            <div class="row h-50">
-                                <div class="col <?= $index == 0 ? '' : 'border-end' ?>">&nbsp;</div>
-                                <div class="col">&nbsp;</div>
-                            </div>
-                            <h5 class="m-2">
-                                <span class="badge rounded-pill <?= $bg ?>">&nbsp;</span>
-                            </h5>
-                            <div class="row h-50">
-                                <div class="col border-end">&nbsp;</div>
-                                <div class="col">&nbsp;</div>
-                            </div>
-                        </div>
-                        <!-- timeline item event content -->
-                        <div class="col py-2">
-                            <div class="card <?= $border ?> ">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="float-right <?= $textColor ?>"><?= date('D, jS M Y g:i A', strtotime($event['created_date'])); ?></div>
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Action
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                <li><a class="dropdown-item" href="<?= Url::toRoute(['activity-contract/update/', 'id' => $event['id'], 'contract_id' => $model->id]); ?>">Edit</a></li>
-                                                <li><a class="dropdown-item" data-confirm="Are you sure you want to delete this item?" data-method="post" href="<?= Url::toRoute(['activity-contract/delete/', 'id' => $event['id']]); ?>">Delete</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <h4 class="card-title <?= $textColor ?>"><?= $event['activity'] ?></h4>
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-target="#t<?= $event['id']  ?>_details" data-bs-toggle="collapse">Show Details ▼</button>
-
-                                    <div class="collapse border" id="t<?= $event['id']  ?>_details">
-                                        <div class="p-2 font-monospace">
-                                            <p class="card-text"><?= $event['description'] ?></p>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach ?>
-            </div>
-            <!--container-->
         </div>
+    </div>
 
-        <?php
+
+
+
+    <!-- Trans Modal -->
+
+    <?php Modal::begin([
+        'title' => '<h5>Add Request Order Trans</h5>',
+        'headerOptions' => ['id' => 'modalHeader'],
+        'id' => 'myModal',
+    ]); ?>
+
+    <div id='modalContent'>
+
+        <?php $form = ActiveForm::begin(['id' => 'addCosting']); ?>
+        <?= $form->field($dataRequestOrderTransModel, 'contract_number')->textInput(['value' => $model->contract->contract_number, 'disabled' => true]) ?>
+        <?php // $form->field($dataRequestOrderTransModel, 'costing_name')->dropDownList(['1' => 1], ['id' => 'costing_name', 'class' => "costings", 'prompt' => 'Select unit Rate...']) 
         ?>
+        <?= $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList([], ['id' => 'costing_idx', 'class' => 'form-control form-select', 'prompt' => 'Select a Costing ...', 'style' => 'width:100%',])->label('Costing') ?>
+
+        <?= $form->field($dataRequestOrderTransModel, 'curency_format')->textInput(['id' => 'curency_format', 'maxlength' => true, 'readonly' => true]) ?>
 
 
-
-        <!-- Trans Modal -->
-
-        <?php Modal::begin([
-            'title' => '<h5>Add Request Order Trans</h5>',
-            'headerOptions' => ['id' => 'modalHeader'],
-            'id' => 'myModal',
-        ]); ?>
-
-        <div id='modalContent'>
-
-            <?php $form = ActiveForm::begin(['id' => 'addCosting']); ?>
-            <?= $form->field($dataRequestOrderTransModel, 'contract_number')->textInput(['value' => $model->contract->contract_number, 'disabled' => true]) ?>
-            <?php // $form->field($dataRequestOrderTransModel, 'costing_name')->dropDownList(['1' => 1], ['id' => 'costing_name', 'class' => "costings", 'prompt' => 'Select unit Rate...']) 
-            ?>
-            <?= $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList([], ['id' => 'costing_idx', 'class' => 'form-control form-select', 'prompt' => 'Select a Costing ...', 'style' => 'width:100%',])->label('Costing') ?>
-
-            <?php
-            // $form->field($dataRequestOrderTransModel, 'costing_id')->dropDownList(
-            //     ArrayHelper::map(
-            //         Costing::find()
-            //             ->joinWith('item')
-            //             ->where(['client_id' => $model->client_id])
-            //             ->andWhere(['IN', 'item.master_activity_code', $activityArray]) // add any other conditions here
-            //             ->all(),
-            //         'id',
-            //         function ($costing) {
-            //             $activityName = strtoupper($costing->item->masterActivityCode->activity_name);
-            //             $typeName = strtoupper($costing->item->itemType->type_name);
-            //             $size = strtoupper($costing->item->size);
-            //             $class = strtoupper($costing->item->class);
-
-            //             $rateName = strtoupper($costing->unitRate->rate_name);
-            //             $price = number_format($costing->price, 0, ',', '.');
-
-            //             return "{$activityName} - {$typeName} - {$class} - {$size} - {$rateName} (Rp {$price})";
-            //         }
-            //     ),
-            //     ['id' => 'costing_idx', 'class' => 'form-control form-select', 'style' => 'width: 100%"', 'prompt' => 'Select a Costing ...']
-            // )->label('Costing');
-            ?>
-
-            <?= $form->field($dataRequestOrderTransModel, 'curency_format')->textInput(['id' => 'curency_format', 'maxlength' => true, 'readonly' => true]) ?>
+        <?= $form->field($dataRequestOrderTransModel, 'quantity')->textInput(['id' => 'quantity2']) ?>
 
 
-            <?= $form->field($dataRequestOrderTransModel, 'quantity')->textInput(['id' => 'quantity2']) ?>
+        <?= $form->field($dataRequestOrderTransModel, 'total_curency_format')->textInput(['id' => 'total_curency_format', 'maxlength' => true]) ?>
 
 
-            <?= $form->field($dataRequestOrderTransModel, 'total_curency_format')->textInput(['id' => 'total_curency_format', 'maxlength' => true]) ?>
+        <?= $form->field($dataRequestOrderTransModel, 'request_order_id')->hiddenInput(['value' => $model->id])->label(false) ?>
+        <?= $form->field($dataRequestOrderTransModel, 'unit_price')->hiddenInput(['id' => 'unit_pricex', 'maxlength' => true, 'readonly' => true])->label(false) ?>
+        <?= $form->field($dataRequestOrderTransModel, 'sub_total')->hiddenInput(['id' => 'total_price', 'maxlength' => true])->label(false) ?>
 
-
-            <?= $form->field($dataRequestOrderTransModel, 'request_order_id')->hiddenInput(['value' => $model->id])->label(false) ?>
-            <?= $form->field($dataRequestOrderTransModel, 'unit_price')->hiddenInput(['id' => 'unit_pricex', 'maxlength' => true, 'readonly' => true])->label(false) ?>
-            <?= $form->field($dataRequestOrderTransModel, 'sub_total')->hiddenInput(['id' => 'total_price', 'maxlength' => true])->label(false) ?>
-
-            <div class="form-group mt-3">
-                <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
+        <div class="form-group mt-3">
+            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
         </div>
 
-        <?php Modal::end(); ?>
-        <!-- End Trans Modal -->
-        <?php
-        $this->registerJs(<<<JS
+        <?php ActiveForm::end(); ?>
+    </div>
+
+    <?php Modal::end(); ?>
+    <!-- End Trans Modal -->
+    <?php
+    $this->registerJs(<<<JS
             $('#myModal').on('hidden.bs.modal', function () {
                 $(this).find('form').trigger('reset');
             });
@@ -459,7 +392,7 @@ $this->registerCss("
                     method: form.attr('method'),
                     data: form.serialize(),
                     success: function(response){
-                        console.log(response);
+                        // console.log(response);
                         if(response.success){
                             $('#myModal').modal('hide');
                             Swal.fire({
@@ -482,4 +415,315 @@ $this->registerCss("
                 });
             });
         JS);
-        ?>
+    ?>
+
+
+    <!-- Modals -->
+
+
+    <!-- Modal -->
+    <div class="modal fade modals-forms" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAdd">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="resv-number" class="form-label">RESV NUMBER</label>
+                                    <input type="text" class="form-control" id="resv-number" name="resv-number" autocomplete="off" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="ce-year" class="form-label">CE YEAR</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="ce-year" name="ce-year">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cost-estimate" class="form-label">COST ESTIMATE</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="cost-estimate" name="cost-estimate">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="ro-number" class="form-label">RO NUMBER</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="ro-number" name="ro-number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="material-incoming-date" class="form-label">MATERIAL INCOMING DATE</label>
+                                    <input type="date" class="form-control" autocomplete="off" id="material-incoming-date" name="material-incoming-date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="ro-start" class="form-label">RO START</label>
+                                    <input type="date" class="form-control" autocomplete="off" id="ro-start" name="ro-start">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+
+                                <div class="mb-3">
+                                    <label for="ro-end" class="form-label">RO END</label>
+                                    <input type="date" class="form-control" autocomplete="off" id="ro-end" name="ro-end">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="urgency" class="form-label">URGENCY</label>
+                            <input type="text" class="form-control" autocomplete="off" id="urgency" name="urgency">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="qty" class="form-label">QTY</label>
+                                    <input type="number" class="form-control" autocomplete="off" id="qty" name="qty">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id-valve" class="form-label">ID VALVE</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="id-valve" name="id-valve">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="size" class="form-label">SIZE</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="size" name="size">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="class" class="form-label">CLASS</label>
+                                    <input type="text" class="form-control" autocomplete="off" id="class" name="class">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipment-type" class="form-label">EQUIPMENT TYPE</label>
+                            <input type="text" class="form-control" autocomplete="off" id="equipment-type" name="equipment-type">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sow" class="form-label">SOW</label>
+                            <input type="text" class="form-control" autocomplete="off" id="sow" name="sow">
+                        </div>
+                        <input type="hidden" class="form-control" id="rotrans_id" name="rotrans_id">
+                        <input type="hidden" class="form-control" id="roid" name="roid" value="<?= $model->id ?>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary sbmt-button">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <?php
+    $js = <<<JS
+        $(document).on('click', '#btn_item', function() {
+
+            if ($('#formUpdate').length) {
+            $('#formUpdate')[0].reset();
+            $('#updateItems').attr('id', 'addItemModal');
+            $('#addItemModal').removeClass('updateItemsclass');
+            $('#formUpdate').attr('id', 'formAdd');
+            $('#addItemModalLabel').text('Add Item');
+            $('.sbmt-button').text('Submit');
+            $('#addItemModal').modal('show');
+            }else{
+                $('#formAdd')[0].reset();
+                $('#addItemModal').modal('show');
+            }
+            var id = $(this).data('id');
+            $('#rotrans_id').val(id);
+        });
+
+        $(document).on('submit', '#addItemModal #formAdd', function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/request-order-trans/add-item',
+                data: $(this).serialize(),
+                success: function(response) {
+                    // handle success response
+                    console.log(response);
+                    $('#addItemModal').modal('hide');
+                },
+                error: function(xhr, status, error) {
+                    // handle error response
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+
+
+        $('#exampleModal form').submit(function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        var submitButton = $(this).find(":submit");
+        submitButton.prop("disabled", true);
+        submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
+        $.ajax({
+            url: '/request-order-trans/insert-update-item',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                // Handle the success    response
+                // console.log(response);
+                $('#exampleModal').modal('hide'); // Hide the modal
+                $(this)[0].reset(); // Reset the form
+                Swal.fire({
+                    icon: "success",
+                    title: "Data has been saved",
+                    showConfirmButton: true,
+                    timer: 1500,
+                });
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
+            },
+            error: function(xhr) {
+                // Handle the error response
+                // console.log(xhr.responseText);
+                alert("Failed Save To Server");
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
+            }
+        });
+    });
+
+    JS;
+    $this->registerJs($js);
+
+
+
+    ?>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id='myFormItemUpdate'>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <?php
+    $js = <<<JS
+
+    $(document).on('click', '.editItems', function() {
+        var itemId = $(this).data('id');
+        var reqId = $(this).data('reqid');
+        // Create an AJAX request to post the data
+        $.ajax({
+            url: '/request-order-trans/update-item',
+            type: 'POST',
+            data: { itemId: itemId, reqId: reqId },
+            success: function(data) {
+            $('#myFormItemUpdate').html(data.form);
+            // Handle the response from the server
+            // console.log(data);
+            }
+        });
+    });
+
+    $(document).on('click', '.editItem', function() {
+        $('#addItemModal').addClass('updateItemsclass');
+        $('#addItemModal').attr('id', 'updateItems');
+        $('#formAdd').attr('id', 'formUpdate');
+        $('#addItemModalLabel').text('Update Item');
+        $('.sbmt-button').text('Update');
+        var itemId = $(this).data('id');
+        var reqId = $(this).data('reqid');
+        $.ajax({
+            url: '/request-order-trans/find-request-order-trans-items',
+            type: 'POST',
+            data: { itemId: itemId, reqId: reqId },
+            success: function(data) {
+                value = data.orderDetails.model;
+                $('#resv-number').val(value.resv_number)
+                $('#ce-year').val(value.ce_year)
+                $('#cost-estimate').val(value.cost_estimate)
+                $('#ro-number').val(value.ro_number)
+                $('#material-incoming-date').val(value.material_incoming_date)
+                $('#ro-start').val(value.ro_start)
+                $('#ro-end').val(value.ro_end)
+                $('#urgency').val(value.urgency)
+                $('#qty').val(value.qty)
+                $('#id-valve').val(value.id_valve)
+                $('#size').val(value.size)
+                $('#class').val(value.class)
+                $('#equipment-type').val(value.equipment_type)
+                $('#sow').val(value.sow)
+                $('#rotrans_id').val(data.orderDetails.roti)
+            }
+        });
+        
+    });
+
+    $(document).on('submit', '.updateItemsclass #formUpdate', function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        var submitButton = $(this).find(":submit");
+        submitButton.prop("disabled", true);
+        submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
+        $.ajax({
+            url: '/request-order-trans/update-trans-item',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                $('.updateItemsclass').modal('hide'); // Hide the modal
+                Swal.fire({
+                    icon: "success",
+                    title: "Data has been saved",
+                    showConfirmButton: true,
+                    timer: 1500,
+                });
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
+                $('#formUpdate')[0].reset();
+                $('#updateItems').attr('id', 'addItemModal');
+                $('.modals-forms').attr('id', 'addItemModal');
+                $('#addItemModal').removeClass('updateItemsclass');
+                $('#formUpdate').attr('id', 'formAdd');
+                $('#addItemModalLabel').text('Add Item');
+                $('.sbmt-button').text('Submit');
+                $('#addItemModal').modal('show');
+            },
+            error: function(xhr) {
+                // Handle the error response
+                // console.log(xhr.responseText);
+                alert("Failed Save To Server");
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
+            }
+        });
+    });
+    JS;
+    $this->registerJs($js);
+
+
+    ?>
