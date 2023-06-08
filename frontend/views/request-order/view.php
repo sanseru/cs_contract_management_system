@@ -586,7 +586,8 @@ $this->registerCss("
                 // Handle the success    response
                 // console.log(response);
                 $('#exampleModal').modal('hide'); // Hide the modal
-                $(this)[0].reset(); // Reset the form
+                $('#myFormItemUpdate')[0].reset();
+
                 Swal.fire({
                     icon: "success",
                     title: "Data has been saved",
