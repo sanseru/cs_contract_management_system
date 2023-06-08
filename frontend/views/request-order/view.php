@@ -205,10 +205,10 @@ $this->registerCss("
                                     return $activity->activityCode->activity_name;
                                 }, $model->requestOrderActivities);
                                 $activitys =  implode(', ', $activities);
-                                // var_dump($activities);die;
+                                // print_r($activities);die;
                                 $skdas = "";
                                 foreach ($activities as $key => $value) {
-                                    $skdas .= "<span class=\"badge bg-warning text-dark mr-5\">$value</span></br>";
+                                    $skdas .= "<span class=\"badge bg-warning text-dark\">$value</span> ";
                                 }
                                 return "<strong style=\"margin-right: 50px;\">Contract Type</strong>  
                     <span class=\"badge bg-primary\" style=\"padding: 5px 10px;margin-right: 10px;\">$model->contract_type</span>
