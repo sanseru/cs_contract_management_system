@@ -455,7 +455,7 @@ $this->registerCss("
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="ro-number" class="form-label">RO NUMBER</label>
-                                    <input type="text" class="form-control" autocomplete="off" id="ro-number" name="ro-number">
+                                    <input type="text" class="form-control" autocomplete="off" id="ro-number" name="ro-number" readonly value="<?= $model->ro_number ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -469,14 +469,14 @@ $this->registerCss("
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="ro-start" class="form-label">RO START</label>
-                                    <input type="date" class="form-control" autocomplete="off" id="ro-start" name="ro-start">
+                                    <input type="date" class="form-control" autocomplete="off" id="ro-start" name="ro-start" value="<?= $model->start_date ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
 
                                 <div class="mb-3">
                                     <label for="ro-end" class="form-label">RO END</label>
-                                    <input type="date" class="form-control" autocomplete="off" id="ro-end" name="ro-end">
+                                    <input type="date" class="form-control" autocomplete="off" id="ro-end" name="ro-end" value="<?= $model->end_date ?>">
                                 </div>
                             </div>
                         </div>
