@@ -171,71 +171,72 @@ $this->registerCss("
                             ],
                         ]) ?>
                 </p> -->
+            <div class="table-responsive">
 
-            <?= DetailView::widget([
-                'model' => $model,
-                'attributes' => [
-                    'contract.contract_number',
-                    'client.name',
-                    'ro_number',
-                    'so_number',
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
+                        'contract.contract_number',
+                        'client.name',
+                        'ro_number',
+                        'so_number',
 
-                    [
-                        'label' => 'Contract Detail',
-                        'format' => 'raw',
-                        'value' => function ($model) {
+                        [
+                            'label' => 'Contract Detail',
+                            'format' => 'raw',
+                            'value' => function ($model) {
 
-                            $badgeClass = 'bg-secondary';
-                            switch ($model->status) {
-                                case '1':
-                                    $badgeClass = 'bg-success';
-                                    $status = 'OPEN';
-                                    break;
-                                case '9':
-                                    $badgeClass = 'bg-warning text-dark';
-                                    $status = 'CLOSE';
-                                    break;
-                                case 'Cancelled':
-                                    $badgeClass = 'bg-danger';
-                                    break;
-                            }
-                            $activitys = "";
-                            // foreach ($model->requestOrderActivities as $key => $value) {
-                            //     $activitys .= $value->activity_code->activity_name ;
-                            //     // print_r($value->activity_code);die;
-                            // }
-
-                            $activities = array_map(function ($activity) {
-                                return $activity->activityCode->activity_name;
-                            }, $model->requestOrderActivities);
-                            $activitys =  implode(', ', $activities);
-
-                            return "<strong style=\"margin-right: 50px;\">Contract Type</strong>  
+                                $badgeClass = 'bg-secondary';
+                                switch ($model->status) {
+                                    case '1':
+                                        $badgeClass = 'bg-success';
+                                        $status = 'OPEN';
+                                        break;
+                                    case '9':
+                                        $badgeClass = 'bg-warning text-dark';
+                                        $status = 'CLOSE';
+                                        break;
+                                    case 'Cancelled':
+                                        $badgeClass = 'bg-danger';
+                                        break;
+                                }
+                                $activitys = "";
+                                $activities = array_map(function ($activity) {
+                                    return $activity->activityCode->activity_name;
+                                }, $model->requestOrderActivities);
+                                $activitys =  implode(', ', $activities);
+                                // var_dump($activities);die;
+                                $skdas = "";
+                                foreach ($activities as $key => $value) {
+                                    $skdas .= "<span class=\"badge bg-warning text-dark mr-5\">$value</span></br>";
+                                }
+                                return "<strong style=\"margin-right: 50px;\">Contract Type</strong>  
                     <span class=\"badge bg-primary\" style=\"padding: 5px 10px;margin-right: 10px;\">$model->contract_type</span>
                     <strong style=\"margin-right: 30px;\">Contract Status</strong>
                     <span class=\"badge " . $badgeClass . "\" style=\"padding: 5px 5px;\">" . $status . "</span>
                     <br>
                     <strong style=\"
-                    margin-right: 30px;\">Contract Activity</strong><span class=\"badge bg-warning text-dark mr-5\">$activitys</span>";
-                        }
+                    margin-right: 30px;\">Contract Activity</strong><br>$skdas";
+                            }
+                        ],
+                        [
+                            'label' => 'Contract Duration',
+                            'value' => function ($model) {
+                                return date('d-m-Y', strtotime($model->start_date)) . ' To ' . date('d-m-Y', strtotime($model->end_date));
+                            }
+                        ],
+                        [
+                            'attribute' => 'created_at',
+                            'format' => ['date', 'php:d-m-Y']
+                        ],
+                        [
+                            'attribute' => 'updated_at',
+                            'format' => ['date', 'php:d-m-Y']
+                        ],
                     ],
-                    [
-                        'label' => 'Contract Duration',
-                        'value' => function ($model) {
-                            return date('d-m-Y', strtotime($model->start_date)) . ' To ' . date('d-m-Y', strtotime($model->end_date));
-                        }
-                    ],
-                    [
-                        'attribute' => 'created_at',
-                        'format' => ['date', 'php:d-m-Y']
-                    ],
-                    [
-                        'attribute' => 'updated_at',
-                        'format' => ['date', 'php:d-m-Y']
-                    ],
-                ],
-            ]) ?>
+                ]) ?>
 
+            </div>
         </div>
     </div>
 
@@ -277,8 +278,6 @@ $this->registerCss("
                                 $size = strtoupper($model->costing->item->size);
 
                                 $rateName = strtoupper($model->costing->unitRate->rate_name);
-                                // $price = number_format($model->price, 0, ',', '.');
-                                // return "{$activityName} - {$typeName} - {$rateName} (Rp {$price})";;
                                 return "- Activity : {$activityName}<br> - Type : {$typeName}<br> - Class: {$class}<br> - Size: {$size}<br> - Rate: {$rateName}";
                             }
                         ],
@@ -305,10 +304,12 @@ $this->registerCss("
                             'template' => '{show} {delete} ',
                             'buttons' => [
                                 'show' => function ($url, $model, $key) {
-                                    return Html::button('<i class="fa-solid fa-table"></i>', [
-                                        'class' => 'btn btn-info btn-sm show-button text-white',
-                                        'data-id' => $model->id,
-                                    ]);
+                                    if ($model->costing->item->masterActivityCode->has_item == true || $model->costing->item->masterActivityCode->has_sow) {
+                                        return Html::button('<i class="fa-solid fa-table"></i>', [
+                                            'class' => 'btn btn-info btn-sm show-button text-white',
+                                            'data-id' => $model->id,
+                                        ]);
+                                    }
                                 },
                             ],
                             'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
@@ -421,7 +422,7 @@ $this->registerCss("
 
 
     <!-- Modal -->
-    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal fade modals-forms" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -429,7 +430,7 @@ $this->registerCss("
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="formAdd">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -525,7 +526,7 @@ $this->registerCss("
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary sbmt-button">Submit</button>
                 </div>
                 </form>
             </div>
@@ -535,11 +536,24 @@ $this->registerCss("
     <?php
     $js = <<<JS
         $(document).on('click', '#btn_item', function() {
+
+            if ($('#formUpdate').length) {
+            $('#formUpdate')[0].reset();
+            $('#updateItems').attr('id', 'addItemModal');
+            $('#addItemModal').removeClass('updateItemsclass');
+            $('#formUpdate').attr('id', 'formAdd');
+            $('#addItemModalLabel').text('Add Item');
+            $('.sbmt-button').text('Submit');
+            $('#addItemModal').modal('show');
+            }else{
+                $('#formAdd')[0].reset();
+                $('#addItemModal').modal('show');
+            }
             var id = $(this).data('id');
             $('#rotrans_id').val(id);
         });
 
-        $('#addItemModal form').submit(function(e) {
+        $(document).on('submit', '#addItemModal #formAdd', function(e) {
             e.preventDefault();
             $.ajax({
                 type: 'POST',
@@ -623,7 +637,6 @@ $this->registerCss("
     $(document).on('click', '.editItems', function() {
         var itemId = $(this).data('id');
         var reqId = $(this).data('reqid');
-            console.log(itemId,reqId);
         // Create an AJAX request to post the data
         $.ajax({
             url: '/request-order-trans/update-item',
@@ -633,6 +646,79 @@ $this->registerCss("
             $('#myFormItemUpdate').html(data.form);
             // Handle the response from the server
             // console.log(data);
+            }
+        });
+    });
+
+    $(document).on('click', '.editItem', function() {
+        $('#addItemModal').addClass('updateItemsclass');
+        $('#addItemModal').attr('id', 'updateItems');
+        $('#formAdd').attr('id', 'formUpdate');
+        $('#addItemModalLabel').text('Update Item');
+        $('.sbmt-button').text('Update');
+        var itemId = $(this).data('id');
+        var reqId = $(this).data('reqid');
+        $.ajax({
+            url: '/request-order-trans/find-request-order-trans-items',
+            type: 'POST',
+            data: { itemId: itemId, reqId: reqId },
+            success: function(data) {
+                value = data.orderDetails.model;
+                $('#resv-number').val(value.resv_number)
+                $('#ce-year').val(value.ce_year)
+                $('#cost-estimate').val(value.cost_estimate)
+                $('#ro-number').val(value.ro_number)
+                $('#material-incoming-date').val(value.material_incoming_date)
+                $('#ro-start').val(value.ro_start)
+                $('#ro-end').val(value.ro_end)
+                $('#urgency').val(value.urgency)
+                $('#qty').val(value.qty)
+                $('#id-valve').val(value.id_valve)
+                $('#size').val(value.size)
+                $('#class').val(value.class)
+                $('#equipment-type').val(value.equipment_type)
+                $('#sow').val(value.sow)
+                $('#rotrans_id').val(data.orderDetails.roti)
+            }
+        });
+        
+    });
+
+    $(document).on('submit', '.updateItemsclass #formUpdate', function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        var submitButton = $(this).find(":submit");
+        submitButton.prop("disabled", true);
+        submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
+        $.ajax({
+            url: '/request-order-trans/update-trans-item',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                $('.updateItemsclass').modal('hide'); // Hide the modal
+                Swal.fire({
+                    icon: "success",
+                    title: "Data has been saved",
+                    showConfirmButton: true,
+                    timer: 1500,
+                });
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
+                $('#formUpdate')[0].reset();
+                $('#updateItems').attr('id', 'addItemModal');
+                $('.modals-forms').attr('id', 'addItemModal');
+                $('#addItemModal').removeClass('updateItemsclass');
+                $('#formUpdate').attr('id', 'formAdd');
+                $('#addItemModalLabel').text('Add Item');
+                $('.sbmt-button').text('Submit');
+                $('#addItemModal').modal('show');
+            },
+            error: function(xhr) {
+                // Handle the error response
+                // console.log(xhr.responseText);
+                alert("Failed Save To Server");
+                submitButton.prop("disabled", false);
+                submitButton.html("Save");
             }
         });
     });

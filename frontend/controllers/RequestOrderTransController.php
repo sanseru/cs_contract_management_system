@@ -170,6 +170,38 @@ class RequestOrderTransController extends Controller
         }
     }
 
+
+    public function actionUpdateTransItem()
+    {
+        $id = $this->request->post('rotrans_id');
+        $model = RequestOrderTransItem::findOne(['id' => $id]);
+        if ($this->request->isPost && $this->request->post()) {
+            $model->resv_number =  $this->request->post('resv-number');
+            $model->ce_year =  $this->request->post('ce-year');
+            $model->cost_estimate =  $this->request->post('cost-estimate');
+            $model->ro_number =  $this->request->post('ro-number');
+            $model->material_incoming_date =  $this->request->post('material-incoming-date');
+            $model->ro_start =  $this->request->post('ro-start');
+            $model->ro_end =  $this->request->post('ro-end');
+            $model->urgency =  $this->request->post('urgency');
+            $model->qty =  $this->request->post('qty');
+            $model->id_valve =  $this->request->post('id-valve');
+            $model->size =  $this->request->post('size');
+            $model->class =  $this->request->post('class');
+            $model->equipment_type =  $this->request->post('equipment-type');
+            $model->sow =  $this->request->post('sow');
+            $model->created_at = date('Y-m-d H:i:s');
+            $model->created_by = \Yii::$app->user->identity->id;
+            $model->save();
+
+            // Return the order details as a JSON response
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return [
+                'success' => true,
+            ];
+        }
+    }
+
     /**
      * Finds the RequestOrderTrans model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -181,6 +213,24 @@ class RequestOrderTransController extends Controller
     {
         if (($model = RequestOrderTrans::findOne(['id' => $id])) !== null) {
             return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionFindRequestOrderTransItems()
+    {
+        $id = Yii::$app->request->post('itemId');
+        if (($model = RequestOrderTransItem::findOne(['id' => $id])) !== null) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return [
+                'success' => true,
+                'orderDetails' => [
+                    'roti' => $id,
+                    'model' => $model,
+                    // Add more order details as needed
+                ]
+            ];
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
@@ -295,7 +345,11 @@ class RequestOrderTransController extends Controller
                 $tables .= $tablex;
                 $tables .= $tablexs;
             }
-            $tables .= "<td style='font-size:0.8rem'><button type='button' class='btn btn-outline-info btn-sm editItems' data-id='" . $value->id . "' data-reqid='" . $id . "' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class=\"fa-solid fa-pen-to-square fa-2xs\"></i></button></i></td>";
+            $tables .= "<td style='font-size:0.8rem'>
+            <button type='button' class='btn btn-outline-info btn-sm editItems' data-id='" . $value->id . "' data-reqid='" . $id . "' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class=\"fa-solid fa-list fa-2xs\"></i></button></i>
+            <button type='button' class='btn btn-outline-info btn-sm editItem' data-id='" . $value->id . "' data-reqid='" . $id . "' data-bs-toggle='modal' data-bs-target='#addItemModal'><i class=\"fa-solid fa-pen-to-square fa-2xs\"></i></button></i>
+            
+            </td>";
             $tables .= "</tr>";
         }
 
