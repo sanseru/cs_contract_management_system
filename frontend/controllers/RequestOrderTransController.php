@@ -278,6 +278,8 @@ class RequestOrderTransController extends Controller
         $tables .= "<th rowspan='2' style='font-size:0.8rem;width:100%'>CLASS</th>";
         $tables .= "<th rowspan='2' style='font-size:0.8rem;width:100%'>EQUIPMENT TYPE</th>";
         $tables .= "<th rowspan='2' style='font-size:0.8rem;width:100%'>SOW</th>";
+        $tables .= "<th rowspan='2' style='font-size:0.8rem;width:100%'>PROGRESS</th>";
+
         foreach ($column as $value) {
             $tables .= "<th style='font-size:12px' colspan='2'>" . $value->sow->name_sow . "</th>";
         }
@@ -313,14 +315,47 @@ class RequestOrderTransController extends Controller
             $tables .= "<td style='font-size:0.8rem'>$value->class</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->equipment_type</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->sow</td>";
-            // use the factory to create a Faker\Generator instance
-            $faker = \Faker\Factory::create();
 
-            $filteredArray = array_filter($roitemsow, function ($item) use ($value) {
+
+
+
+
+            $filteredArray4 = array_filter($roitemsow, function ($item) use ($value) {
                 return $item->request_order_trans_item_id == $value->id;
             });
 
 
+            $filteredArray5 = array_filter($roitemsow, function ($item) use ($value) {
+                return $item->request_order_trans_item_id == $value->id && $item->status == 1;
+            });
+            $count = count($column);
+            $maxValue = count($filteredArray5);
+
+            
+            $persentvalue = 0;
+            $progressBarWidth = 0;
+
+            if ($count != 0 &&  $maxValue != 0) {
+                // $progressBarWidth = ($count / $maxValue) * 100;
+                $persentvalue = round(($maxValue / $count) * 100, 0);
+                $progressBarWidth = round(($maxValue / $count) * 100, 0);
+            }
+
+
+
+
+
+            $tables .= "<td>
+                <div class=\"progress\">
+                    <div class=\"progress-bar text-center text-red\" role=\"progressbar\" style=\"width: $progressBarWidth%;color: greenyellow; font-weight: bolder;\" aria-valuenow=\"$count\" aria-valuemin=\"0\" aria-valuemax=\"$maxValue\"> $persentvalue%</div>
+                </div>
+            </td>";
+
+
+
+            $filteredArray = array_filter($roitemsow, function ($item) use ($value) {
+                return $item->request_order_trans_item_id == $value->id;
+            });
 
             foreach ($column as $valuex) {
                 $filteredArrays = array_filter($filteredArray, function ($item) use ($valuex) {
@@ -330,7 +365,7 @@ class RequestOrderTransController extends Controller
                 $tablexs = "<td style='font-size:0.8rem'>-</td>";
                 foreach ($filteredArrays as $key => $valuez) {
                     if ($valuez) {
-                        if ($valuez->status) {
+                        if ($valuez->status == 1) {
                             $check = '<i class="fa-solid fa-circle-check fa-xl" style="color: #29b503;"></i>';
                         } else {
                             $check = '<i class="fa-solid fa-circle-minus fa-xl" style="color: #c70505;"></i>';
