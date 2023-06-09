@@ -236,10 +236,12 @@ class RequestOrderTransController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionShowDetails()
+    public function actionShowDetails($id = '')
     {
-        $id = Yii::$app->request->post('id');
+        $id = $id ?: Yii::$app->request->post('id');
+
         $model = $this->findModel($id);
+
         // Your logic to retrieve the order details using the $orderId goes here
         $record = ContractActivityValue::find()
             ->where(['contract_id' => $model->requestOrder->contract_id, 'activity_id' => $model->costing->item->masterActivityCode->id])
@@ -248,6 +250,8 @@ class RequestOrderTransController extends Controller
         $record_item = RequestOrderTransItem::find()
             ->where(['request_order_trans_id' => $id, 'request_order_id' => $model->request_order_id])
             ->all();
+
+
 
         $column = ContractActivityValueSow::find()
             ->where(['contract_activity_value_id' => $record->id])
@@ -331,7 +335,7 @@ class RequestOrderTransController extends Controller
             $count = count($column);
             $maxValue = count($filteredArray5);
 
-            
+
             $persentvalue = 0;
             $progressBarWidth = 0;
 
@@ -440,9 +444,10 @@ class RequestOrderTransController extends Controller
       </select>';
         $ro_item_id = '<input type="hidden" class="form-control mb-3" autocomplete="off" value="' . $itemId . '" id="ro_item_id" name="ro_item_id">';
         $ro_trans_id = '<input type="hidden" class="form-control mb-3" autocomplete="off" value="' . $reqId . '" id="ro_trans_item_id" name="ro_trans_item_id">';
+        $ro_id = '<input type="hidden" class="form-control mb-3" autocomplete="off" value="' . $model->request_order_id . '" id="ro_id" name="ro_id">';
 
         $submitButton = Html::submitButton('Submit', ['class' => 'btn btn-primary float-end']);
-        $forms = $selectLabel . $selectForm .  $dateLabel . $dateInput . $statusLabel . $status . $ro_item_id . $ro_trans_id . $submitButton;
+        $forms = $selectLabel . $selectForm .  $dateLabel . $dateInput . $statusLabel . $status . $ro_item_id . $ro_trans_id . $ro_id . $submitButton;
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['success' => true, 'form' => $forms];
     }
@@ -455,6 +460,7 @@ class RequestOrderTransController extends Controller
             $dateInput = Yii::$app->request->post('date_input');
             $roItemId = Yii::$app->request->post('ro_item_id');
             $roTransId = Yii::$app->request->post('ro_trans_item_id');
+            $roId = Yii::$app->request->post('ro_id');
             $status = Yii::$app->request->post('status');
 
             // Check if a record with the given request_order_trans_id and request_order_trans_item_id exists
@@ -484,14 +490,17 @@ class RequestOrderTransController extends Controller
                 $model->save(false);
             }
 
+            $tables = $this->actionShowDetails($roTransId);
             // Return the order details as a JSON response
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return [
                 'success' => true,
+                'tables' => $tables,
+
             ];
         }
 
         // Return a response (e.g., JSON)
-        return json_encode(['success' => true, 'message' => 'Data saved successfully']);
+        // return json_encode(['success' => true, 'message' => 'Data saved successfully']);
     }
 }

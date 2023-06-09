@@ -596,6 +596,11 @@ $this->registerCss("
                 });
                 submitButton.prop("disabled", false);
                 submitButton.html("Save");
+
+                $("#insertHere").html(response.tables.orderDetails.table);
+                $('#tablesed').DataTable({
+                    "autoWidth": true
+                });
             },
             error: function(xhr) {
                 // Handle the error response
