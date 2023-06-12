@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use frontend\models\ContractActivityValue;
 use frontend\models\ContractActivityValueSearch;
 use frontend\models\ContractActivityValueSow;
+use frontend\models\ContractActivityValueUnitRateSearch;
 use frontend\models\MasterScopeOfWork;
 use Yii;
 use yii\filters\AccessControl;
@@ -69,8 +70,16 @@ class ContractActivityValueController extends Controller
      */
     public function actionView($id)
     {
+
+        $searchModelCAVUR = new ContractActivityValueUnitRateSearch();
+        $dataProviderCAVUR = $searchModelCAVUR->search($this->request->queryParams);
+
+        
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'searchModelCAVUR' => $searchModelCAVUR,
+            'dataProviderCAVUR' => $dataProviderCAVUR
+
         ]);
     }
 

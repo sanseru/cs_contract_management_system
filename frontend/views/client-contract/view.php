@@ -215,7 +215,7 @@ if ($reqOrder) {
                                 'class' => ActionColumn::className(),
                                 'urlCreator' => function ($action, ContractActivityValue $modelcont, $key, $index, $column) use ($model) {
                                     if ($action === 'view') {
-                                        return Url::to(['contract-activity-value/view', 'id' => $modelcont->id]);
+                                        return Url::to(['contract-activity-value/view', 'id' => $modelcont->id, 'contract_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
                                     } elseif ($action === 'update') {
                                         return Url::to(['contract-activity-value/update', 'id' => $modelcont->id, 'contract_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order'), 'url_back' => true]);
                                     } elseif ($action === 'delete') {
