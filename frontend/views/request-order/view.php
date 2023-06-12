@@ -523,6 +523,8 @@ $this->registerCss("
                         </div>
                         <input type="hidden" class="form-control" id="rotrans_id" name="rotrans_id">
                         <input type="hidden" class="form-control" id="roid" name="roid" value="<?= $model->id ?>">
+                        <input type="hidden" class="form-control" id="is_update" name="is_update">
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -537,40 +539,136 @@ $this->registerCss("
     $js = <<<JS
         $(document).on('click', '#btn_item', function() {
 
-            if ($('#formUpdate').length) {
-            $('#formUpdate')[0].reset();
-            $('#updateItems').attr('id', 'addItemModal');
-            $('#addItemModal').removeClass('updateItemsclass');
-            $('#formUpdate').attr('id', 'formAdd');
+
             $('#addItemModalLabel').text('Add Item');
             $('.sbmt-button').text('Submit');
-            $('#addItemModal').modal('show');
-            }else{
-                $('#formAdd')[0].reset();
-                $('#addItemModal').modal('show');
-            }
             var id = $(this).data('id');
             $('#rotrans_id').val(id);
+            $('#is_update').val(0)
+            $('#formAdd')[0].reset();
+
         });
 
         $(document).on('submit', '#addItemModal #formAdd', function(e) {
             e.preventDefault();
+            var formData = $(this).serializeArray();
+            var is_update = formData.find(function(item) {
+                return item.name === 'is_update';
+            });
+            var is_updateValue = is_update.value;
+
+            if(is_updateValue == 1){
+                url = '/request-order-trans/update-trans-item';
+            }else{
+                url = '/request-order-trans/add-item';
+
+            }
+            var submitButton = $(this).find(":submit");
+            submitButton.prop("disabled", true);
+            submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
+
             $.ajax({
                 type: 'POST',
-                url: '/request-order-trans/add-item',
+                url: url,
                 data: $(this).serialize(),
                 success: function(response) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Data has been saved",
+                        showConfirmButton: true,
+                        timer: 1500,
+                    });
                     // handle success response
-                    console.log(response);
                     $('#addItemModal').modal('hide');
+                    $('#formAdd')[0].reset();
+                    $("#insertHere").html(response.table.orderDetails.table);
+                    submitButton.prop("disabled", false);
+                    submitButton.html("Save");
                 },
                 error: function(xhr, status, error) {
                     // handle error response
                     console.log(xhr.responseText);
+                    submitButton.prop("disabled", false);
+                    submitButton.html("Save");
                 }
             });
         });
 
+
+        $(document).on('click', '.editItem', function() {
+        // $('#addItemModal').addClass('updateItemsclass');
+        // $('#addItemModal').attr('id', 'updateItems');
+        // $('#formAdd').attr('id', 'formUpdate');
+        $('#addItemModalLabel').text('Update Item');
+        $('.sbmt-button').text('Update');
+        var itemId = $(this).data('id');
+        var reqId = $(this).data('reqid');
+        $.ajax({
+            url: '/request-order-trans/find-request-order-trans-items',
+            type: 'POST',
+            data: { itemId: itemId, reqId: reqId },
+            success: function(data) {
+                value = data.orderDetails.model;
+                $('#resv-number').val(value.resv_number)
+                $('#ce-year').val(value.ce_year)
+                $('#cost-estimate').val(value.cost_estimate)
+                $('#ro-number').val(value.ro_number)
+                $('#material-incoming-date').val(value.material_incoming_date)
+                $('#ro-start').val(value.ro_start)
+                $('#ro-end').val(value.ro_end)
+                $('#urgency').val(value.urgency)
+                $('#qty').val(value.qty)
+                $('#id-valve').val(value.id_valve)
+                $('#size').val(value.size)
+                $('#class').val(value.class)
+                $('#equipment-type').val(value.equipment_type)
+                $('#sow').val(value.sow)
+                $('#rotrans_id').val(data.orderDetails.roti)
+                $('#is_update').val(1)
+
+            }
+        });
+        
+    });
+
+    // $(document).on('submit', '.updateItemsclass #formUpdate', function(e) {
+    //     e.preventDefault();
+    //     var formData = $(this).serialize();
+    //     var submitButton = $(this).find(":submit");
+    //     submitButton.prop("disabled", true);
+    //     submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
+    //     $.ajax({
+    //         url: '/request-order-trans/update-trans-item',
+    //         type: 'POST',
+    //         data: formData,
+    //         success: function(response) {
+    //             $('.updateItemsclass').modal('hide'); // Hide the modal
+    //             Swal.fire({
+    //                 icon: "success",
+    //                 title: "Data has been saved",
+    //                 showConfirmButton: true,
+    //                 timer: 1500,
+    //             });
+    //             submitButton.prop("disabled", false);
+    //             submitButton.html("Save");
+    //             $('#formUpdate')[0].reset();
+    //             $('#updateItems').attr('id', 'addItemModal');
+    //             $('.modals-forms').attr('id', 'addItemModal');
+    //             $('#addItemModal').removeClass('updateItemsclass');
+    //             $('#formUpdate').attr('id', 'formAdd');
+    //             $('#addItemModalLabel').text('Add Item');
+    //             $('.sbmt-button').text('Submit');
+    //             $('#addItemModal').modal('show');
+    //         },
+    //         error: function(xhr) {
+    //             // Handle the error response
+    //             // console.log(xhr.responseText);
+    //             alert("Failed Save To Server");
+    //             submitButton.prop("disabled", false);
+    //             submitButton.html("Save");
+    //         }
+    //     });
+    // });
 
         $('#exampleModal form').submit(function(e) {
         e.preventDefault();
@@ -655,81 +753,6 @@ $this->registerCss("
             }
         });
     });
-
-    $(document).on('click', '.editItem', function() {
-        $('#addItemModal').addClass('updateItemsclass');
-        $('#addItemModal').attr('id', 'updateItems');
-        $('#formAdd').attr('id', 'formUpdate');
-        $('#addItemModalLabel').text('Update Item');
-        $('.sbmt-button').text('Update');
-        var itemId = $(this).data('id');
-        var reqId = $(this).data('reqid');
-        $.ajax({
-            url: '/request-order-trans/find-request-order-trans-items',
-            type: 'POST',
-            data: { itemId: itemId, reqId: reqId },
-            success: function(data) {
-                value = data.orderDetails.model;
-                $('#resv-number').val(value.resv_number)
-                $('#ce-year').val(value.ce_year)
-                $('#cost-estimate').val(value.cost_estimate)
-                $('#ro-number').val(value.ro_number)
-                $('#material-incoming-date').val(value.material_incoming_date)
-                $('#ro-start').val(value.ro_start)
-                $('#ro-end').val(value.ro_end)
-                $('#urgency').val(value.urgency)
-                $('#qty').val(value.qty)
-                $('#id-valve').val(value.id_valve)
-                $('#size').val(value.size)
-                $('#class').val(value.class)
-                $('#equipment-type').val(value.equipment_type)
-                $('#sow').val(value.sow)
-                $('#rotrans_id').val(data.orderDetails.roti)
-            }
-        });
-        
-    });
-
-    $(document).on('submit', '.updateItemsclass #formUpdate', function(e) {
-        e.preventDefault();
-        var formData = $(this).serialize();
-        var submitButton = $(this).find(":submit");
-        submitButton.prop("disabled", true);
-        submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
-        $.ajax({
-            url: '/request-order-trans/update-trans-item',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                $('.updateItemsclass').modal('hide'); // Hide the modal
-                Swal.fire({
-                    icon: "success",
-                    title: "Data has been saved",
-                    showConfirmButton: true,
-                    timer: 1500,
-                });
-                submitButton.prop("disabled", false);
-                submitButton.html("Save");
-                $('#formUpdate')[0].reset();
-                $('#updateItems').attr('id', 'addItemModal');
-                $('.modals-forms').attr('id', 'addItemModal');
-                $('#addItemModal').removeClass('updateItemsclass');
-                $('#formUpdate').attr('id', 'formAdd');
-                $('#addItemModalLabel').text('Add Item');
-                $('.sbmt-button').text('Submit');
-                $('#addItemModal').modal('show');
-            },
-            error: function(xhr) {
-                // Handle the error response
-                // console.log(xhr.responseText);
-                alert("Failed Save To Server");
-                submitButton.prop("disabled", false);
-                submitButton.html("Save");
-            }
-        });
-    });
     JS;
     $this->registerJs($js);
-
-
     ?>

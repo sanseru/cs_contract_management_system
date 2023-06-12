@@ -136,7 +136,6 @@ class RequestOrderTransController extends Controller
 
     public function actionAddItem()
     {
-
         $model = new RequestOrderTransItem();
 
         if ($this->request->isPost && $this->request->post()) {
@@ -162,10 +161,14 @@ class RequestOrderTransController extends Controller
             $model->created_by = \Yii::$app->user->identity->id;
             $model->save();
 
+            $tables = $this->actionShowDetails($this->request->post('rotrans_id'));
+
             // Return the order details as a JSON response
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return [
                 'success' => true,
+                'table' => $tables,
+
             ];
         }
     }
@@ -194,10 +197,14 @@ class RequestOrderTransController extends Controller
             $model->created_by = \Yii::$app->user->identity->id;
             $model->save();
 
+            $tables = $this->actionShowDetails($model->request_order_trans_id);
+
             // Return the order details as a JSON response
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             return [
                 'success' => true,
+                'table' => $tables,
+
             ];
         }
     }
@@ -241,7 +248,6 @@ class RequestOrderTransController extends Controller
         $id = $id ?: Yii::$app->request->post('id');
 
         $model = $this->findModel($id);
-
         // Your logic to retrieve the order details using the $orderId goes here
         $record = ContractActivityValue::find()
             ->where(['contract_id' => $model->requestOrder->contract_id, 'activity_id' => $model->costing->item->masterActivityCode->id])
@@ -504,7 +510,6 @@ class RequestOrderTransController extends Controller
             ];
         }
 
-        // Return a response (e.g., JSON)
-        // return json_encode(['success' => true, 'message' => 'Data saved successfully']);
+ 
     }
 }
