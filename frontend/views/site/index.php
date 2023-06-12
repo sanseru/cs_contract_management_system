@@ -20,14 +20,14 @@ $this->title = 'Contrack Management System';
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
             <div class="info-box-4 text-white bg-green hover-expand-effect">
                 <div class="icon">
                     <i class="fa-solid fa-list fa-2xl"></i>
                 </div>
                 <div class="content">
                     <div class="text text-white">ACTIVITY ORDER OPEN</div>
-                    <div class="number text-white"><?= $activityOpen ?></div>
+                    <div class="number text-white"><?php // $activityOpen ?></div>
                 </div>
             </div>
         </div>
@@ -38,10 +38,10 @@ $this->title = 'Contrack Management System';
                 </div>
                 <div class="content">
                     <div class="text text-white">ACTIVITY ON PROCESS</div>
-                    <div class="number text-white"><?= $activityProcess ?></div>
+                    <div class="number text-white"><?php // $activityProcess ?></div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
             <div class="info-box-4 text-white bg-lime hover-expand-effect">
                 <div class="icon">
