@@ -48,6 +48,7 @@ AppAsset::register($this);
                     ['label' => '<i class="fa-solid fa-address-book fa-sm"></i> Client', 'url' => ['/client/index']],
                     ['label' => '<i class="fa-solid fa-list-check"></i> Activity', 'url' => ['/master-activity/index']],
                     ['label' => '<i class="fa-solid fa-barcode fa-sm"></i> Item', 'url' => ['/item/index']],
+                    ['label' => '<i class="fa-solid fa-equals fa-sm"></i> Unit Rate', 'url' => ['/unit-rate/index']],
                     ['label' => '<i class="fa-solid fa-money-check-dollar fa-sm"></i> Costing', 'url' => ['/costing/index']],
 
 
