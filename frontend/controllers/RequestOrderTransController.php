@@ -304,14 +304,18 @@ class RequestOrderTransController extends Controller
             // print_r( $value);die;
 
             $tables .= "<tr>";
+            $ro_start = date("d M Y", strtotime($value->ro_start));
+            $ro_end = date("d M Y", strtotime($value->ro_end));
+            $material_incoming_date = date("d M Y", strtotime($value->material_incoming_date));
+
 
             $tables .= "<td style='font-size:0.8rem'>$value->resv_number</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->ce_year</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->cost_estimate</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->ro_number</td>";
-            $tables .= "<td style='font-size:0.8rem'>$value->material_incoming_date</td>";
-            $tables .= "<td style='font-size:0.8rem'>$value->ro_start</td>";
-            $tables .= "<td style='font-size:0.8rem'>$value->ro_end</td>";
+            $tables .= "<td style='font-size:0.8rem'>$material_incoming_date</td>";
+            $tables .= "<td style='font-size:0.8rem'>$ro_start</td>";
+            $tables .= "<td style='font-size:0.8rem'>$ro_end</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->urgency</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->qty</td>";
             $tables .= "<td style='font-size:0.8rem'>$value->id_valve</td>";
@@ -374,7 +378,7 @@ class RequestOrderTransController extends Controller
                         } else {
                             $check = '<i class="fa-solid fa-circle-minus fa-xl" style="color: #c70505;"></i>';
                         }
-                        $tablex = "<td style='font-size:0.8rem'>" . $valuez->date_sow . "</td>";
+                        $tablex = "<td style='font-size:0.8rem'>" . date("d M Y", strtotime($valuez->date_sow)) . "</td>";
                         $tablexs = "<td style='font-size:0.8rem;text-align: center'>" . $check . "</td>";
                     } else {
                         $tablex = "<td style='font-size:0.8rem'>-</td>";
