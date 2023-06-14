@@ -303,7 +303,7 @@ $this->registerCss("
                             'class' => ActionColumn::className(),
                             'template' => '{show} {delete} ',
                             'buttons' => [
-                                'show' => function ($url, $model, $key) {
+                                'show' => function ($url, RequestOrderTrans $model, $key) {
                                     if ($model->costing->item->masterActivityCode->has_item == true || $model->costing->item->masterActivityCode->has_sow) {
                                         return Html::button('<i class="fa-solid fa-table"></i>', [
                                             'class' => 'btn btn-info btn-sm show-button text-white',
