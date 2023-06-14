@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var frontend\models\ContractActivityValueUnitRate $model */
 
-$this->title = 'Create Contract Activity Value Unit Rate';
-$this->params['breadcrumbs'][] = ['label' => 'Contract Activity Value Unit Rates', 'url' => ['index']];
+$this->title = 'Add Activity Unit Rate';
+$this->params['breadcrumbs'][] = ['label' => 'Contract Activity Unit Rates', 'url' => ['contract-activity-value/view','id' => Yii::$app->request->get('act_val_id'), 'contract_id'=>Yii::$app->request->get('contract_id'),'req_order'=>Yii::$app->request->get('req_order')]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contract-activity-value-unit-rate-create">

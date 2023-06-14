@@ -3,6 +3,7 @@
 use frontend\models\Costing;
 use frontend\models\RequestOrder;
 use frontend\models\RequestOrderTrans;
+use frontend\models\RequestOrderTransItem;
 use yii\bootstrap5\ActiveForm;
 use yii\widgets\DetailView;
 use yii\bootstrap5\Html;
@@ -200,7 +201,7 @@ $this->registerCss("
                                         $badgeClass = 'bg-danger';
                                         break;
                                 }
-                                $activitys = "";
+                                $activities = "";
                                 $activities = array_map(function ($activity) {
                                     return $activity->activityCode->activity_name;
                                 }, $model->requestOrderActivities);
@@ -301,7 +302,7 @@ $this->registerCss("
                         ],
                         [
                             'class' => ActionColumn::className(),
-                            'template' => '{show} {delete} ',
+                            'template' => '{shows} {delete} ',
                             'buttons' => [
                                 'show' => function ($url, $model, $key) {
                                     if ($model->costing->item->masterActivityCode->has_item == true || $model->costing->item->masterActivityCode->has_sow) {
@@ -328,10 +329,52 @@ $this->registerCss("
     <div class="card mt-5" id="card-details">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">#Detail Service To Provide </h5>
-        </div>
-        <div class="card-body" id="insertHere">
+            <?= Html::a('+ Add', ['request-order-trans-item/create', 'req_order'=> $model->id], ['class' => 'btn btn-success']) ?>
 
         </div>
+        <div class="card-body" id="insertHere">
+            <div class="table-responsive">
+
+                <?php Pjax::begin(); ?>
+                <?php // echo $this->render('_search', ['model' => $searchModel]); 
+                ?>
+                <?= GridView::widget([
+                    'dataProvider' => $dataProviderROTI,
+                    'filterModel' => $searchModelROTI,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+
+                        // 'id',
+                        // 'request_order_id',
+                        // 'request_order_trans_id',
+                        'resv_number',
+                        'ce_year',
+                        'cost_estimate',
+                        'ro_number',
+                        'material_incoming_date',
+                        'ro_start',
+                        'ro_end',
+                        'urgency',
+                        'qty',
+                        'id_valve',
+                        'size',
+                        'class',
+                        'equipment_type',
+                        'sow:ntext',
+                        'date_to_status',
+                        'progress',
+                        [
+                            'class' => ActionColumn::className(),
+                            'urlCreator' => function ($action, RequestOrderTransItem $model, $key, $index, $column) {
+                                return Url::toRoute([$action, 'id' => $model->id]);
+                            }
+                        ],
+                    ],
+                ]); ?>
+                <?php Pjax::end(); ?>
+            </div>
+        </div>
+
     </div>
 
 

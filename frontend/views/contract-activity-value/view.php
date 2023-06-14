@@ -21,17 +21,6 @@ $this->params['breadcrumbs'][] = "Contract Activity KPI " . $this->title;
     <div class="card">
         <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
         <div class="card-body">
-            <!-- <p>
-                <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                    'class' => 'btn btn-danger',
-                    'data' => [
-                        'confirm' => 'Are you sure you want to delete this item?',
-                        'method' => 'post',
-                    ],
-                ]) ?>
-            </p> -->
-
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
@@ -40,7 +29,6 @@ $this->params['breadcrumbs'][] = "Contract Activity KPI " . $this->title;
                     'value',
                 ],
             ]) ?>
-
         </div>
     </div>
 
@@ -48,7 +36,7 @@ $this->params['breadcrumbs'][] = "Contract Activity KPI " . $this->title;
         <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
         <div class="card-body">
             <p>
-                <?= Html::a('Create Contract Activity Value Unit Rate', ['contract-activity-value-unit-rate/create', 'contract_id'=> Yii::$app->request->get('contract_id'), 'act_val_id'=>$model->id], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('+ Add', ['contract-activity-value-unit-rate/create', 'contract_id' => Yii::$app->request->get('contract_id'), 'act_val_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order')], ['class' => 'btn btn-success']) ?>
             </p>
             <?php Pjax::begin(); ?>
             <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -57,15 +45,41 @@ $this->params['breadcrumbs'][] = "Contract Activity KPI " . $this->title;
             <?= GridView::widget([
                 'dataProvider' => $dataProviderCAVUR,
                 'filterModel' => $searchModelCAVUR,
+                'filterPosition' => false, // this line removes the filter header\
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-                    'contract_id',
-                    'activity_value_id',
-                    'unit_rate_id',
+                    'activityValue.activity.activity_name',
+                    'unitRate.rate_name',
+                    [
+                        'attribute' => 'myColumn',
+                        'label' => 'Scope Of Work',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            //Custom logic to get the value
+                            $activities = "";
+                            $activities = array_map(function ($activity) {
+                                return $activity->sow->name_sow;
+                            }, $model->contractActivityValueUnitRateSows);
+                            $activitys =  implode(', ', $activities);
+                            // print_r($activities);die;
+                            $skdas = "";
+                            foreach ($activities as $key => $value) {
+                                $skdas .= "<span class=\"badge bg-warning text-dark\">$value</span> ";
+                            }
+
+                            return $skdas;
+                        },
+                    ],
                     [
                         'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, ContractActivityValueUnitRate $model, $key, $index, $column) {
-                            return Url::toRoute([$action, 'id' => $model->id]);
+                        'urlCreator' => function ($action, ContractActivityValueUnitRate $modelCAVUR, $key, $index, $column) use ($model) {
+                            if ($action === 'view') {
+                                return Url::to(['contract-activity-value-unit-rate/view', 'id' => $modelCAVUR->id, 'req_order' => $model->id, 'contract_id' => Yii::$app->request->get('contract_id'), 'act_val_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order')]);
+                            } elseif ($action === 'update') {
+                                return Url::to(['contract-activity-value-unit-rate/update', 'id' => $modelCAVUR->id, 'req_order' => $model->id, 'contract_id' => Yii::$app->request->get('contract_id'), 'act_val_id' => $model->id, 'req_order' => Yii::$app->request->get('req_order')]);
+                            } elseif ($action === 'delete') {
+                                return Url::to(['contract-activity-value-unit-rate/delete', 'id' => $modelCAVUR->id]);
+                            }
                         }
                     ],
                 ],

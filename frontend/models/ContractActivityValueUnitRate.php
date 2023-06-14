@@ -14,6 +14,7 @@ use Yii;
  *
  * @property ContractActivityValue $activityValue
  * @property ClientContract $contract
+ * @property ContractActivityValueUnitRateSow[] $contractActivityValueUnitRateSows
  * @property UnitRate $unitRate
  */
 class ContractActivityValueUnitRate extends \yii\db\ActiveRecord
@@ -71,6 +72,16 @@ class ContractActivityValueUnitRate extends \yii\db\ActiveRecord
     public function getContract()
     {
         return $this->hasOne(ClientContract::class, ['id' => 'contract_id']);
+    }
+
+    /**
+     * Gets query for [[ContractActivityValueUnitRateSows]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getContractActivityValueUnitRateSows()
+    {
+        return $this->hasMany(ContractActivityValueUnitRateSow::class, ['contract_activity_value_unit_rate_id' => 'id']);
     }
 
     /**

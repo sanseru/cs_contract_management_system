@@ -33,6 +33,7 @@ use Yii;
  *
  * @property RequestOrder $requestOrder
  * @property RequestOrderTrans $requestOrderTrans
+ * @property RoTransItemSow[] $roTransItemSows
  */
 class RequestOrderTransItem extends \yii\db\ActiveRecord
 {
@@ -111,10 +112,11 @@ class RequestOrderTransItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(RequestOrderTrans::class, ['id' => 'request_order_trans_id']);
     }
-    /** 
-     * Gets query for [[RoTransItemSows]]. 
-     * 
-     * @return \yii\db\ActiveQuery 
+
+    /**
+     * Gets query for [[RoTransItemSows]].
+     *
+     * @return \yii\db\ActiveQuery
      */
     public function getRoTransItemSows()
     {

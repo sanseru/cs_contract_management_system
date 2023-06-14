@@ -71,7 +71,7 @@ class ContractActivityValueController extends Controller
     public function actionView($id)
     {
 
-        $searchModelCAVUR = new ContractActivityValueUnitRateSearch();
+        $searchModelCAVUR = new ContractActivityValueUnitRateSearch(['activity_value_id' => $id]);
         $dataProviderCAVUR = $searchModelCAVUR->search($this->request->queryParams);
 
         

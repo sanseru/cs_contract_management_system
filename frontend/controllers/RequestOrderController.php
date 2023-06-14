@@ -7,6 +7,7 @@ use frontend\models\RequestOrder;
 use frontend\models\RequestOrderActivity;
 use frontend\models\RequestOrderSearch;
 use frontend\models\RequestOrderTrans;
+use frontend\models\RequestOrderTransItemSearch;
 use frontend\models\RequestOrderTransSearch;
 use Yii;
 use yii\filters\AccessControl;
@@ -76,12 +77,17 @@ class RequestOrderController extends Controller
         $dataRequestOrderTranssearchModel = new RequestOrderTransSearch(['request_order_id' => $id]);
         $dataRequestOrderTransProvider = $dataRequestOrderTranssearchModel->search($this->request->queryParams);
 
+        $searchModelROTI= new RequestOrderTransItemSearch(['request_order_id' => $id]);
+        $dataProviderROTI = $searchModelROTI->search($this->request->queryParams);
 
         return $this->render('view', [
             'model' => $this->findModel($id),
             'dataRequestOrderTranssearchModel' => $dataRequestOrderTranssearchModel,
             'dataRequestOrderTransProvider' => $dataRequestOrderTransProvider,
             'dataRequestOrderTransModel' => $dataRequestOrderTransModel,
+            'searchModelROTI' => $searchModelROTI,
+            'dataProviderROTI' => $dataProviderROTI,
+
         ]);
     }
 

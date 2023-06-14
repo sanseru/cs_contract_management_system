@@ -10,63 +10,6 @@ use yii\jui\DatePicker;
 /** @var yii\web\View $this */
 /** @var frontend\models\RequestOrder $model */
 /** @var yii\widgets\ActiveForm $form */
-// var_dump($model->isNewRecord);die;
-$this->registerJs("
-// $('#so_number').select2({
-//     minimumInputLength: 2,
-//     ajax: {
-//         url: 'https://erp2.ptcs.co.id/api/sales/sales-order/select2?_type=query',
-//         dataType: 'json',
-//         delay: 250,
-//         data: function(params) {
-//             return {
-//                 q: params.term
-//             };
-//         },
-//         processResults: function(data, params) {
-//             return {
-//               results: $.map(data.data, function (obj) {
-//                 return {id: obj.SO_Number, text: obj.SO_Number, customer: obj.customer, date: obj.date, 'data-customer': obj.customer};
-//               }),
-
-//             };
-//         },      
-//         cache: true
-//     },
-//     templateResult: templateResult,
-//     placeholder: 'Select a client ...',
-//     allowClear: true,
-//     templateSelection: function (data, container) {
-//         // Add custom attributes to the <option> tag for the selected option
-//         $(data.element).attr('data-customer', data.customer);
-//         return data.text;
-//     }
-// }).on('change', function() {
-//     // Ambil nilai customer dari opsi yang dipilih
-//     var selectedOption = $(this).find('option:selected');
-//     var customer = selectedOption.attr('data-customer');
-//     // Masukkan nilai customer ke field lain
-//     // $('#client_name').val(customer);
-// });
-
-// function templateResult(option) {
-//     var \$option = $(
-//         '<div><strong style=\"font-size:14px;\">' + 
-//             option.text 
-//         + '</strong></div><div class=\"row\"><i style=\"font-size:11px\"><div class=\"col\">'+ option.customer +'</div><div class=\"col\">'+option.date+'</div></i></div>'
-//     );
-//     return \$option;
-// }
-
-// $('#start_date').datepicker({
-//     dateFormat: 'yy-mm-dd'
-// });
-// $('#end_date').datepicker({
-//     dateFormat: 'yy-mm-dd'
-// });
-");
-
-
 $this->registerJs(
     <<<JS
     $('#activity').select2();

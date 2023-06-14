@@ -10,8 +10,9 @@ use Yii;
  * @property int $id
  * @property string|null $rate_name
  *
+ * @property ActivityUnitRate[] $activityUnitRates
+ * @property ContractActivityValueUnitRate[] $contractActivityValueUnitRates
  * @property Costing[] $costings
- * @property ActivityUnitRate[] $activityUnitRates 
  */
 class UnitRate extends \yii\db\ActiveRecord
 {
@@ -45,6 +46,26 @@ class UnitRate extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[ActivityUnitRates]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActivityUnitRates()
+    {
+        return $this->hasMany(ActivityUnitRate::class, ['unit_rate_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ContractActivityValueUnitRates]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getContractActivityValueUnitRates()
+    {
+        return $this->hasMany(ContractActivityValueUnitRate::class, ['unit_rate_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[Costings]].
      *
      * @return \yii\db\ActiveQuery
@@ -53,15 +74,4 @@ class UnitRate extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Costing::class, ['unit_rate_id' => 'id']);
     }
-    /**
-    * Gets query for [[ActivityUnitRates]]. 
-    * 
-    * @return \yii\db\ActiveQuery 
-    */ 
-   public function getActivityUnitRates() 
-   { 
-       return $this->hasMany(ActivityUnitRate::class, ['activity_code' => 'activity_code']); 
-   } 
- 
-   
 }
