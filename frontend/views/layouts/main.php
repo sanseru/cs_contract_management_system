@@ -56,8 +56,18 @@ AppAsset::register($this);
                 ],
             ],
         ];
+
+        $menuItemsClient = [
+            ['label' => '<i class="fas fa-home"></i> Home', 'url' => ['/site/index']],
+        ];
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
+        }else if (Yii::$app->user->identity->user_type_id == 3){
+            echo Nav::widget([
+                'encodeLabels' => false,
+                'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
+                'items' => $menuItemsClient,
+            ]);
         }else{
             echo Nav::widget([
                 'encodeLabels' => false,

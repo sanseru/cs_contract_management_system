@@ -12,11 +12,14 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 use frontend\models\ActivityContract;
+use frontend\models\ClientContract;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use frontend\models\ContractActivityValue;
 use frontend\models\RequestOrder;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Site controller
@@ -31,7 +34,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup','index','about'],
+                'only' => ['logout', 'signup', 'index', 'about'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -87,20 +90,68 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
-        $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
 
-        $activityOpen = ActivityContract::find()->where(['status' => 1])->count();
-        $activityProcess= ActivityContract::find()->where(['status' => 2])->count();
+        if (Yii::$app->user->identity->user_type_id != 3) {
+            $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
+            $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
 
-        return $this->render('index',[
-            'requestOpen' => $requestOpen,
-            'requestClosed' => $requestClosed,
-            'activityOpen' => $activityOpen,
-            'activityProcess' => $activityProcess,
+            $activityOpen = ActivityContract::find()->where(['status' => 1])->count();
+            $activityProcess = ActivityContract::find()->where(['status' => 2])->count();
 
+            return $this->render('index', [
+                'requestOpen' => $requestOpen,
+                'requestClosed' => $requestClosed,
+                'activityOpen' => $activityOpen,
+                'activityProcess' => $activityProcess,
+            ]);
+        } else {
+            // $client_name = Yii::$app->user->identity->client->name;
+            $clientId = Yii::$app->user->identity->client_id;
+            $contract = ClientContract::find()->where(['client_id'=> $clientId])->all();
+            $resultArray = [];
+            foreach ($contract as $key => $value) {
 
-        ]);
+                $roReceive = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 1, 'client_id'=> $clientId])->count();
+                $workProgress = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 2, 'client_id'=> $clientId])->count();
+                $completed = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 3, 'client_id'=> $clientId])->count();
+                $invoiced = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 4, 'client_id'=> $clientId])->count();
+                $paid = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 9, 'client_id'=> $clientId])->count();
+                $contractValue = ContractActivityValue::find()->where(['contract_id'=>$value->id]);
+                $contractValueSum = $contractValue->sum('value');
+                $contractValueData = $contractValue->all();
+                
+                $requestOrder = RequestOrder::find()->where(['contract_id'=>$value->id, 'client_id'=> $clientId]);
+                $reqCommited = $requestOrder->andWhere(['IN', 'status', [1, 2, 3]])->joinWith('requestOrderTrans');
+                $sumReqCommited = $reqCommited->sum('request_order_trans.sub_total');
+
+                $requestOrder = RequestOrder::find()->where(['contract_id'=>$value->id, 'client_id'=> $clientId]);
+                $reqInvoiced = $requestOrder->where(['status'=> 4])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
+
+                $requestOrder = RequestOrder::find()->where(['contract_id'=>$value->id, 'client_id'=> $clientId]);
+                $reqPaid = $requestOrder->where(['status'=> 9])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
+
+                // $asa = $reqCommited->all();
+                $resultArray[$key] = [
+                    'contract' => $value,
+                    'roReceive' => $roReceive,
+                    'workProgress' => $workProgress,
+                    'completed' => $completed,
+                    'invoiced' => $invoiced,
+                    'paid' => $paid,
+                    'contractValueSum' => $contractValueSum,
+                    'contractValueData' => $contractValueData,
+                    'sumReqCommited' => $sumReqCommited,
+                    'reqInvoiced' => $reqInvoiced,
+                    'reqroactual' => ($sumReqCommited+$reqInvoiced) - $reqPaid  ,
+                    'remaincontvalue' => $contractValueSum - $reqPaid  ,
+
+                ];
+            }
+
+            return $this->render('dashboard_client', [
+                'result' => $resultArray,
+            ]);
+        }
     }
 
     /**

@@ -190,14 +190,31 @@ $this->registerCss("
                                 switch ($model->status) {
                                     case '1':
                                         $badgeClass = 'bg-success';
-                                        $status = 'OPEN';
+                                        $status = 'RO Received';
+                                        break;
+                                    case '2':
+                                        $badgeClass = 'bg-primary';
+                                        $status = 'Work In Progress';
+                                        break;
+                                    case '3':
+                                        $badgeClass = 'bg-info';
+                                        $status = 'Work Completed';
+                                        break;
+                                    case '4':
+                                        $badgeClass = 'bg-secondary';
+                                        $status = 'Invoiced';
                                         break;
                                     case '9':
                                         $badgeClass = 'bg-warning text-dark';
-                                        $status = 'CLOSE';
+                                        $status = 'Paid';
                                         break;
                                     case 'Cancelled':
                                         $badgeClass = 'bg-danger';
+                                        $status = 'Cancelled';
+                                        break;
+                                    default:
+                                        $badgeClass = 'bg-secondary';
+                                        $status = 'Unknown';
                                         break;
                                 }
                                 $activitys = "";
@@ -264,6 +281,9 @@ $this->registerCss("
                     'filterModel' => $dataRequestOrderTranssearchModel,
                     'filterPosition' => false, // this line removes the filter header\
                     'showFooter' => true, // this line enables the footer row
+                    'pager' => [
+                        'class' => 'yii\bootstrap5\LinkPager'
+                    ],
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
                         [
@@ -303,14 +323,14 @@ $this->registerCss("
                             'class' => ActionColumn::className(),
                             'template' => '{show} {delete} ',
                             'buttons' => [
-                                'show' => function ($url, RequestOrderTrans $model, $key) {
-                                    if ($model->costing->item->masterActivityCode->has_item == true || $model->costing->item->masterActivityCode->has_sow) {
-                                        return Html::button('<i class="fa-solid fa-table"></i>', [
-                                            'class' => 'btn btn-info btn-sm show-button text-white',
-                                            'data-id' => $model->id,
-                                        ]);
-                                    }
-                                },
+                                // 'show' => function ($url, RequestOrderTrans $model, $key) {
+                                //     if ($model->costing->item->masterActivityCode->has_item == true || $model->costing->item->masterActivityCode->has_sow) {
+                                //         return Html::button('<i class="fa-solid fa-table"></i>', [
+                                //             'class' => 'btn btn-info btn-sm show-button text-white',
+                                //             'data-id' => $model->id,
+                                //         ]);
+                                //     }
+                                // },
                             ],
                             'urlCreator' => function ($action, RequestOrderTrans $model, $key, $index, $column) {
                                 return Url::toRoute(['/request-order-trans/delete', 'id' => $model->id, 'ro' => \Yii::$app->request->get('id')]);
@@ -325,14 +345,14 @@ $this->registerCss("
 
     </div>
 
-    <div class="card mt-5" id="card-details">
+    <!-- <div class="card mt-5" id="card-details">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">#Detail Service To Provide </h5>
         </div>
         <div class="card-body" id="insertHere">
 
         </div>
-    </div>
+    </div> -->
 
 
 

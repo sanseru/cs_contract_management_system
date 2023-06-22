@@ -3,14 +3,12 @@
 use frontend\models\ClientContract;
 use frontend\models\ContractActivityValue;
 use frontend\models\Costing;
-use frontend\models\Item;
-use frontend\models\UnitRate;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Modal;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -111,6 +109,9 @@ if ($reqOrder) {
                     <?= GridView::widget([
                         'dataProvider' => $dataCostingProvider,
                         'filterModel' => $searchModelCosting,
+                        'pager' => [
+                            'class' => 'yii\bootstrap5\LinkPager'
+                        ],
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
                             [
@@ -191,7 +192,9 @@ if ($reqOrder) {
                         'options' => ['class' => 'table table-striped table-bordered text-sm text-center font-monospace table-responsive'],
                         'showFooter' => true, // this line enables the footer row
                         'filterPosition' => false, // this line removes the filter header\
-
+                        'pager' => [
+                            'class' => 'yii\bootstrap5\LinkPager'
+                        ],
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
 
@@ -374,6 +377,7 @@ $this->registerJs(
         $(document).on('submit', '#my-form', function(e) {
             e.preventDefault();
             var submitButton = $(this).find(':submit');
+            console.log(submitButton);
             submitButton.prop('disabled', true);
             submitButton.html('Processing <i class="fa fa-spinner fa-spin"></i>');
             $.ajax({

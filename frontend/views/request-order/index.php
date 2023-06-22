@@ -58,16 +58,34 @@ $this->params['breadcrumbs'][] = $this->title;
                             switch ($model->status) {
                                 case '1':
                                     $badgeClass = 'bg-success';
-                                    $status = 'OPEN';
+                                    $status = 'RO Received';
+                                    break;
+                                case '2':
+                                    $badgeClass = 'bg-primary';
+                                    $status = 'Work In Progress';
+                                    break;
+                                case '3':
+                                    $badgeClass = 'bg-info';
+                                    $status = 'Work Completed';
+                                    break;
+                                case '4':
+                                    $badgeClass = 'bg-secondary';
+                                    $status = 'Invoiced';
                                     break;
                                 case '9':
                                     $badgeClass = 'bg-warning text-dark';
-                                    $status = 'CLOSE';
+                                    $status = 'Paid';
                                     break;
                                 case 'Cancelled':
                                     $badgeClass = 'bg-danger';
+                                    $status = 'Cancelled';
+                                    break;
+                                default:
+                                    $badgeClass = 'bg-secondary';
+                                    $status = 'Unknown';
                                     break;
                             }
+                            
 
                             return "<span class=\"badge " . $badgeClass . "\" style=\"padding: 5px 5px;\">" . $status . "</span>";
                         }

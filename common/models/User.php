@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use frontend\models\Client;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
@@ -22,6 +23,8 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property integer @user_type_id
+ * @property integer @client_id
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -209,5 +212,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getClient()
+    {
+        return $this->hasOne(Client::class, ['id' => 'client_id']);
     }
 }

@@ -1,12 +1,11 @@
 <?php
 
 use frontend\models\Item;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-
 /** @var yii\web\View $this */
 /** @var frontend\models\ItemSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -29,6 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
+                    'pager' => [
+                        'class' => 'yii\bootstrap5\LinkPager'
+                    ],
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
 
