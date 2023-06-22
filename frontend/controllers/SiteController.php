@@ -18,7 +18,10 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use frontend\models\ContractActivityValue;
+use frontend\models\ContractActivityValueSearch;
+use frontend\models\Costing;
 use frontend\models\RequestOrder;
+use frontend\models\RequestOrderTrans;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -105,51 +108,134 @@ class SiteController extends Controller
                 'activityProcess' => $activityProcess,
             ]);
         } else {
-            // $client_name = Yii::$app->user->identity->client->name;
+            $request = \Yii::$app->request;
+            $id = $request->get('id'); // Mengambil nilai 'id' dari parameter URL
             $clientId = Yii::$app->user->identity->client_id;
-            $contract = ClientContract::find()->where(['client_id'=> $clientId])->all();
+            $contractdata = ClientContract::find()->where(['client_id' => $clientId])->all();
             $resultArray = [];
-            foreach ($contract as $key => $value) {
 
-                $roReceive = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 1, 'client_id'=> $clientId])->count();
-                $workProgress = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 2, 'client_id'=> $clientId])->count();
-                $completed = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 3, 'client_id'=> $clientId])->count();
-                $invoiced = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 4, 'client_id'=> $clientId])->count();
-                $paid = RequestOrder::find()->where(['contract_id'=>$value->id,'status' => 9, 'client_id'=> $clientId])->count();
-                $contractValue = ContractActivityValue::find()->where(['contract_id'=>$value->id]);
-                $contractValueSum = $contractValue->sum('value');
-                $contractValueData = $contractValue->all();
-                
-                $requestOrder = RequestOrder::find()->where(['contract_id'=>$value->id, 'client_id'=> $clientId]);
-                $reqCommited = $requestOrder->andWhere(['IN', 'status', [1, 2, 3]])->joinWith('requestOrderTrans');
-                $sumReqCommited = $reqCommited->sum('request_order_trans.sub_total');
+            if (!empty($id)) {
+                $contract = ClientContract::find()->where(['contract_number' => $id, 'client_id' => $clientId])->all();
+                foreach ($contract as $key => $value) {
+                    $roReceive = RequestOrder::find()->where(['contract_id' => $value->id, 'status' => 1, 'client_id' => $clientId])->count();
+                    $workProgress = RequestOrder::find()->where(['contract_id' => $value->id, 'status' => 2, 'client_id' => $clientId])->count();
+                    $completed = RequestOrder::find()->where(['contract_id' => $value->id, 'status' => 3, 'client_id' => $clientId])->count();
+                    $invoiced = RequestOrder::find()->where(['contract_id' => $value->id, 'status' => 4, 'client_id' => $clientId])->count();
+                    $paid = RequestOrder::find()->where(['contract_id' => $value->id, 'status' => 9, 'client_id' => $clientId])->count();
+                    $contractValue = ContractActivityValue::find()->where(['contract_id' => $value->id]);
+                    $contractValueSum = $contractValue->sum('value');
+                    $contractValueData = $contractValue->all();
 
-                $requestOrder = RequestOrder::find()->where(['contract_id'=>$value->id, 'client_id'=> $clientId]);
-                $reqInvoiced = $requestOrder->where(['status'=> 4])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
+                    $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
+                    $reqCommited = $requestOrder->andWhere(['IN', 'status', [1, 2, 3]])->joinWith('requestOrderTrans');
+                    $sumReqCommited = $reqCommited->sum('request_order_trans.sub_total');
 
-                $requestOrder = RequestOrder::find()->where(['contract_id'=>$value->id, 'client_id'=> $clientId]);
-                $reqPaid = $requestOrder->where(['status'=> 9])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
+                    $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
+                    $reqInvoiced = $requestOrder->where(['status' => 4])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
 
-                // $asa = $reqCommited->all();
-                $resultArray[$key] = [
-                    'contract' => $value,
-                    'roReceive' => $roReceive,
-                    'workProgress' => $workProgress,
-                    'completed' => $completed,
-                    'invoiced' => $invoiced,
-                    'paid' => $paid,
-                    'contractValueSum' => $contractValueSum,
-                    'contractValueData' => $contractValueData,
-                    'sumReqCommited' => $sumReqCommited,
-                    'reqInvoiced' => $reqInvoiced,
-                    'reqroactual' => ($sumReqCommited+$reqInvoiced) - $reqPaid  ,
-                    'remaincontvalue' => $contractValueSum - $reqPaid  ,
+                    $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
+                    $reqPaid = $requestOrder->where(['status' => 9])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
 
-                ];
+                    $searchModelcav = new ContractActivityValueSearch(['contract_id' => $value->id]);
+                    $dataProvidercav = $searchModelcav->search($this->request->queryParams);
+                    // $budgetData = $this->generateRandomData();
+                    $budgetData = $dataProvidercav->getModels();
+                    $costing = new Costing();
+
+
+                    // Array of labels
+                    $budgets = [];
+                    // Loop over the array of objects and extract the id property
+                    foreach ($budgetData as $object) {
+                        $budgets[] = $object->value;
+                    }
+
+
+                    $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
+                    $datareq = $requestOrder->select(['id'])->all();
+
+                    // Mengambil semua nilai 'id' dari $datareq
+                    $requestOrderIds = [];
+                    foreach ($datareq as $data) {
+                        $requestOrderIds[] = $data->id;
+                    }
+
+                    // Query RequestorderTrans dengan menggunakan $requestOrderIds sebagai kondisi
+                    // $requestOrderTrans = RequestOrderTrans::find()->where(['IN', 'request_order_id', $requestOrderIds])->all();
+                    // $requestOrderTrans = RequestOrderTrans::find()
+                    //     ->select(['costing_id', 'sum(sub_total)'])
+                    //     ->where(['IN', 'request_order_id', $requestOrderIds])
+                    //     ->groupBy('costing_id')
+                    //     ->all();
+
+
+                    // $query = (new \yii\db\Query())
+                    //     ->select(['costing_id', 'SUM(sub_total) AS total'])
+                    //     ->from('request_order_trans')
+                    //     ->groupBy('costing_id');
+
+                    // $results = $query->all();
+
+
+                    $actuals = [];
+                    if (!empty($requestOrderIds)) {
+                        $query = (new \yii\db\Query())
+                            ->select(['a.costing_id', 'SUM(a.sub_total) AS total', 'c.master_activity_code'])
+                            ->from('request_order_trans a')
+                            ->join('JOIN', 'costing b', 'b.id = a.costing_id')
+                            ->join('JOIN', 'item c', 'c.id = b.item_id')
+                            ->where(['IN', 'request_order_id', $requestOrderIds])
+                            ->groupBy('a.costing_id');
+                        $results = $query->all();
+                        // Loop over the array of objects and extract the id property
+                        foreach ($budgetData as $object) {
+                            $actualValue = $object->value;
+                            // Find the corresponding result from $results using costing_id
+                            foreach ($results as $result) {
+                                if ($result['master_activity_code'] == $object->activity_id) {
+                                    // Calculate the difference between the actual value and total from the query
+                                    $difference =  $result['total'];
+
+                                    // Add the difference to the actuals array
+                                    $actuals[] = $difference;
+                                    break; // Stop the inner loop since we found the matching result
+                                }
+                            }
+                            $actuals[] = 0;
+                        }
+                    }
+
+                    // print_r($budgets);
+                    // print_r($actuals);
+                    
+                    // die;
+                    // $asa = $reqCommited->all();
+                    $resultArray[$key] = [
+                        'contract' => $value,
+                        'roReceive' => $roReceive,
+                        'workProgress' => $workProgress,
+                        'completed' => $completed,
+                        'invoiced' => $invoiced,
+                        'paid' => $paid,
+                        'contractValueSum' => $contractValueSum,
+                        'contractValueData' => $contractValueData,
+                        'sumReqCommited' => $sumReqCommited,
+                        'reqInvoiced' => $reqInvoiced,
+                        'reqroactual' => ($sumReqCommited + $reqInvoiced) - $reqPaid,
+                        'remaincontvalue' => $contractValueSum - $reqPaid,
+                        'costing' => $costing,
+                        'budgetData' => $budgets,
+                        'actualsData' => $actuals,
+                        'dataProvidercav' => $dataProvidercav,
+                    ];
+                }
             }
 
+            // print_r($resultArray);die;
             return $this->render('dashboard_client', [
                 'result' => $resultArray,
+                'datacont' => $contractdata,
+
             ]);
         }
     }
