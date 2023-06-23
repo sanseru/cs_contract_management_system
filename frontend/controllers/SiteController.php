@@ -136,6 +136,7 @@ class SiteController extends Controller
                     $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
                     $reqPaid = $requestOrder->where(['status' => 9])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
 
+                    $datarequestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId])->all();
                     $searchModelcav = new ContractActivityValueSearch(['contract_id' => $value->id]);
                     $dataProvidercav = $searchModelcav->search($this->request->queryParams);
 
@@ -220,6 +221,7 @@ class SiteController extends Controller
                         'actualsData' => $actuals,
                         'dataProvidercav' => $dataProvidercav,
                         'budgetsPie' => $budgetsPie,
+                        'reqOrder' =>  $datarequestOrder,
                     ];
                 }
             }

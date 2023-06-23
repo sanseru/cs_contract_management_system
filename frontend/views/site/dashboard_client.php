@@ -38,7 +38,7 @@ $this->title = 'Contrack Management System';
                 </div>
             </div>
             <div class="col-md-9">
-                <div class="row mt-2">
+                <div class="row">
                     <?php if (empty($result)) { ?>
                         <div class="row mb-3 text-center mt-4 ">
                             <div class="col-md-12  text-white">
@@ -60,42 +60,14 @@ $this->title = 'Contrack Management System';
                                                 </div>
                                                 <div class="content w-100 me-4">
                                                     <div class="text text-white">Contract Value</div>
-                                                    <div class="number text-white  text-start fw-bold">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['contractValueSum']) ? $value['contractValueSum'] : 0); ?></span></div>
+                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['contractValueSum']) ? $value['contractValueSum'] : 0); ?></span></div>
                                                 </div>
                                                 <!-- <strong> Contract Value <?= Yii::$app->formatter->asCurrency($value['contractValueSum'], 'IDR'); ?></strong> -->
                                             </button>
                                         </h2>
                                         <div id="contract_value" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped
-                                                            table-hover	
-                                                            table-borderless
-                                                            table-primary
-                                                            align-middle">
-                                                        <thead class="table-light">
-                                                            <tr>
-                                                                <th>Activity</th>
-                                                                <th>Value</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="table-group-divider">
-                                                            <?php $totalValue = 0; ?>
-                                                            <?php foreach ($value['contractValueData'] as $key => $contval) { ?>
-                                                                <tr class="table-primary">
-                                                                    <td scope="row"><?= $contval->activity->activity_name ?></td>
-                                                                    <td><?= Yii::$app->formatter->asCurrency($contval->value, 'IDR'); ?></td>
-                                                                </tr>
-                                                                <?php $totalValue = $totalValue + $contval->value ?>
-                                                            <?php } ?>
-                                                            <tr class="table-light">
-                                                                <td scope="row">Total</td>
-                                                                <td><?= Yii::$app->formatter->asCurrency($totalValue, 'IDR'); ?></td>
-                                                            </tr>
-                                                        </tbody>
-
-                                                    </table>
-                                                </div>
+                                                <!-- Nanti delete -->
                                             </div>
                                         </div>
                                     </div>
@@ -112,7 +84,7 @@ $this->title = 'Contrack Management System';
                                                 </div>
                                                 <div class="content w-100 me-4">
                                                     <div class="text text-white">Request Order Commited</div>
-                                                    <div class="number text-white  text-start fw-bold">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['sumReqCommited']) ? $value['sumReqCommited'] : 0); ?></span></div>
+                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['sumReqCommited']) ? $value['sumReqCommited'] : 0); ?></span></div>
                                                 </div>
                                             </button>
                                         </h2>
@@ -131,7 +103,7 @@ $this->title = 'Contrack Management System';
                                                 </div>
                                                 <div class="content w-100 me-4">
                                                     <div class="text text-white">Request Order Invoiced</div>
-                                                    <div class="number text-white  text-start fw-bold">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqInvoiced']) ? $value['reqInvoiced'] : 0); ?></span></div>
+                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqInvoiced']) ? $value['reqInvoiced'] : 0); ?></span></div>
                                                 </div>
                                             </button>
                                         </h2>
@@ -148,7 +120,7 @@ $this->title = 'Contrack Management System';
                                                 </div>
                                                 <div class="content w-100 me-4">
                                                     <div class="text text-white">Request Order Vs Actual</div>
-                                                    <div class="number text-white text-start fw-bold">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqroactual']) ? $value['reqroactual'] : 0); ?></span></div>
+                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqroactual']) ? $value['reqroactual'] : 0); ?></span></div>
                                                 </div>
                                             </button>
                                         </h2>
@@ -166,9 +138,9 @@ $this->title = 'Contrack Management System';
                                                     <div class="icon me-3">
                                                         <i class="fa-solid fa-sack-dollar fa-lg"></i>
                                                     </div>
-                                                    <div class="content">
-                                                        <div class="text text-white text-center">Remaining Contract Value</div>
-                                                        <div class="number text-white text-center fw-bold">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['remaincontvalue']) ? $value['remaincontvalue'] : 0); ?></span></div>
+                                                    <div class="content py-3">
+                                                        <div class="text text-white text-start fs-6">Remaining Contract Value</div>
+                                                        <div class="number text-white text-center fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['remaincontvalue']) ? $value['remaincontvalue'] : 0); ?></span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -260,13 +232,133 @@ $this->title = 'Contrack Management System';
         </div>
         <div class="row mt-5">
             <?php
-
                         foreach ($dataModel as $object) { ?>
                 <div class="col-md-2">
                     <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
                 </div>
             <?php } ?>
-        <?php } ?>
         </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center bg-cs1 text-white">
+                        <h5 class="fw-bold">List Activity</h5>
+                    </div>
+                    <div class="table-responsive card-body">
+                        <table class="table 
+                    table-hover	
+                    table-borderless
+                    align-middle" id="myTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <?php $totalValue = 0; ?>
+                                <?php foreach ($value['contractValueData'] as $key => $contval) { ?>
+                                    <tr class="">
+                                        <td scope="row"><?= $contval->activity->activity_name ?></td>
+                                        <td><?= Yii::$app->formatter->asCurrency($contval->value, 'IDR'); ?></td>
+                                    </tr>
+                                    <?php $totalValue = $totalValue + $contval->value ?>
+                                <?php } ?>
+                                <tr class="table-light">
+                                    <td scope="row" id="specificRowId">Total</td>
+                                    <td><?= Yii::$app->formatter->asCurrency($totalValue, 'IDR'); ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center bg-cs1 text-white">
+                        <h5 class="fw-bold">List Request Order</h5>
+                    </div>
+                    <div class="table-responsive card-body">
+                        <table class="table 
+                    table-hover	
+                    table-borderless
+                    align-middle clientTables">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>RO Number</th>
+                                    <th>SO Number</th>
+                                    <!-- <th>Start & End Date</th> -->
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <?php foreach ($value['reqOrder'] as $key => $r) { ?>
+
+                                    <?php
+                                    switch ($r->status) {
+                                        case '1':
+                                            $badgeClass = 'bg-success';
+                                            $status = 'RO Received';
+                                            break;
+                                        case '2':
+                                            $badgeClass = 'bg-primary';
+                                            $status = 'Work In Progress';
+                                            break;
+                                        case '3':
+                                            $badgeClass = 'bg-info';
+                                            $status = 'Work Completed';
+                                            break;
+                                        case '4':
+                                            $badgeClass = 'bg-secondary';
+                                            $status = 'Invoiced';
+                                            break;
+                                        case '9':
+                                            $badgeClass = 'bg-warning text-dark';
+                                            $status = 'Paid';
+                                            break;
+                                        case 'Cancelled':
+                                            $badgeClass = 'bg-danger';
+                                            $status = 'Cancelled';
+                                            break;
+                                        default:
+                                            $badgeClass = 'bg-secondary';
+                                            $status = 'Unknown';
+                                            break;
+                                    }
+                                    ?>
+                                    <tr class="">
+                                        <td scope="row"><?= $r->ro_number ?></td>
+                                        <td><?= $r->so_number ?></td>
+                                        <!-- <td><?= date('d-m-Y', strtotime($r->start_date)) . " - " . date('d-m-Y', strtotime($r->end_date)) ?></td> -->
+                                        <td class="text-center"><?= "<span class=\"badge " . $badgeClass . "\" style=\"padding: 5px 5px;\">" . $status . "</span>"  ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
     </div>
 </div>
+<?php
+$jsTables = <<<JS
+    $(document).ready(function() {
+        $('.clientTables').DataTable({
+            "autoWidth": true
+        });
+
+        $('#myTable').DataTable({
+            "ordering": false,
+            "autoWidth": true
+
+        });
+
+    });
+
+JS;
+$this->registerJs(new JsExpression($jsTables));
+
+?>
