@@ -157,7 +157,6 @@ $(document).ready(function () {
   // Handle item_id change event
   $("#item_id").on("change", function () {
     var itemId = $(this).val();
-    console.log(itemId);
     // Make an AJAX request to fetch select options based on item_id
     $.ajax({
       url: "/costing/fetch-options-unit-rate", // Replace with the actual URL to fetch select options
@@ -172,11 +171,15 @@ $(document).ready(function () {
           $("<option></option>").attr("value", "").text("Select unit Rate...")
         );
 
+        var itemupdateId = $("#valRate_id").val();
+
         // Add new options based on the response
         $.each(response, function (key, value) {
-          $("#rate_id").append(
-            $("<option></option>").attr("value", key).text(value)
-          );
+          var option = $("<option></option>").attr("value", key).text(value);
+          if (itemupdateId !== undefined && itemupdateId === key) {
+            option.attr("selected", "selected");
+          }
+          $("#rate_id").append(option);
         });
         // Refresh Select2 to reflect the updated options
         $("#rate_id").trigger("change");

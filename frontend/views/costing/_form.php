@@ -33,6 +33,9 @@ if (!$model->isNewRecord) {
                 // $('#rate_id').append(option).trigger('change');
                 // $('#item_id').trigger('change');
                 // $('#rate_id').val($model->unit_rate_id);
+
+
+
             });
         JS
     );
@@ -132,6 +135,10 @@ $this->registerCss("
         </div>
         <div class="row">
             <div class="col-md-12">
+                <?php
+                if (!$model->isNewRecord) { ?>
+                <input type="text" id="valRate_id" value="<?= $model->unit_rate_id?>">
+                <?php } ?>
                 <?= $form->field($model, 'item_id')->dropDownList([], ['id' => 'item_id', 'class' => 'form-control form-select', 'prompt' => 'Select a Item ...', 'style' => 'width:100%',])->label('Item') ?>
             </div>
             <div class="col-md-12">
