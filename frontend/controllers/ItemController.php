@@ -142,7 +142,7 @@ class ItemController extends Controller
         $search = \Yii::$app->request->get('q');
 
         if (!empty($search)) {
-            $clients = Item::find()
+            $Items = Item::find()
                 ->joinWith(['masterActivityCode', 'itemType'])
                 ->where(['like', 'activity_name', $search])
                 ->orWhere(['like', 'type_name', $search])
@@ -150,19 +150,19 @@ class ItemController extends Controller
                 ->orWhere(['like', 'class', $search])
                 ->all();
         } else {
-            $clients =  Item::find()->all();
+            $Items =  Item::find()->all();
         }
 
         // Format the data as required by Select2
         $data = [];
-        foreach ($clients as $client) {
+        foreach ($Items as $item) {
 
             $data[] = [
-                'id' => $client['id'],
-                'activity_name' => $client->masterActivityCode->activity_name,
-                'type_name' => $client->itemType->type_name,
-                'size' => $client->size,
-                'class' => $client->class,
+                'id' => $item['id'],
+                'activity_name' => $item->masterActivityCode->activity_name,
+                'type_name' => $item->itemType->type_name,
+                'size' => $item->size,
+                'class' => $item->class,
             ];
         }
 
