@@ -94,7 +94,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
-        if (Yii::$app->user->identity->id != 2) {
+        if (Yii::$app->user->identity->user_type_id != 3) {
             $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
             $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
 
@@ -138,9 +138,10 @@ class SiteController extends Controller
 
                     $searchModelcav = new ContractActivityValueSearch(['contract_id' => $value->id]);
                     $dataProvidercav = $searchModelcav->search($this->request->queryParams);
+
                     // $budgetData = $this->generateRandomData();
                     $budgetData = $dataProvidercav->getModels();
-                    // $costing = new Costing();
+                    $costing = new Costing();
 
 
                     // Array of labels
@@ -159,9 +160,6 @@ class SiteController extends Controller
                             'activity_id' => $object->activity_id,
                         ];
                     }
-
-
-
 
                     $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
                     $datareq = $requestOrder->select(['id'])->all();
@@ -217,8 +215,8 @@ class SiteController extends Controller
                         'reqInvoiced' => $reqInvoiced,
                         'reqroactual' => ($sumReqCommited + $reqInvoiced) - $reqPaid,
                         'remaincontvalue' => $contractValueSum - $reqPaid,
-                        // 'costing' => $costing,
-                        // 'budgetData' => $budgets,
+                        'costing' => $costing,
+                        'budgetData' => $budgets,
                         'actualsData' => $actuals,
                         'dataProvidercav' => $dataProvidercav,
                         'budgetsPie' => $budgetsPie,

@@ -192,8 +192,8 @@ $this->title = 'Contrack Management System';
                 </div>
 
                 <?php
-                        $data = $value['dataProvidercav']->getModels();
-                        foreach ($data as $key => $object) {
+                        $dataModel = $value['dataProvidercav']->getModels();
+                        foreach ($dataModel as $key => $object) {
 
                             $activityCode = $object->activity->activity_code;
                             $activityName = $object->activity->activity_name;
@@ -260,8 +260,7 @@ $this->title = 'Contrack Management System';
             </div>
         </div>
         <div class="row mt-5">
-            <?php $data = $value['dataProvidercav']->getModels(); ?>
-            <?php foreach ($data as $object) { ?>
+            <?php foreach ($dataModel as $object) { ?>
                 <div class="col-md-2">
                     <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
                 </div>
