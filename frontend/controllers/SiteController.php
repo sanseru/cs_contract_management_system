@@ -94,7 +94,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
-        if (Yii::$app->user->identity->user_type_id != 3) {
+        if (Yii::$app->user->identity->id != 2) {
             $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
             $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
 

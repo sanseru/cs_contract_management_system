@@ -62,7 +62,7 @@ AppAsset::register($this);
         ];
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-        }else if (Yii::$app->user->identity->user_type_id == 3){
+        }else if (Yii::$app->user->identity->id == 2){
             echo Nav::widget([
                 'encodeLabels' => false,
                 'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
