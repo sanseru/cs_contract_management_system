@@ -60,7 +60,7 @@ $this->registerJsFile('@web/js/client/script.js', ['depends' => [\yii\web\Jquery
     <div class="card mt-4">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">#Contract</h5>
-            <?= Html::button('Add Contract', ['class' => 'btn btn-info btn-modal', 'data-target' => '#myModal', 'data-toggle' => 'modal']) ?>
+            <?= Html::button('Add Contract', ['class' => 'btn btn-dark text-white btn-modal', 'data-target' => '#myModal', 'data-toggle' => 'modal']) ?>
 
             <!-- <a href="<?= Url::toRoute(['activity-contract/create', 'id' => $model->id]); ?>"><button class="btn btn-sm btn-primary">Add Contract</button></a> -->
         </div>

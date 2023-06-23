@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
         <div class="card-body">
             <p>
-                <?= Html::a('Add Unit Rate', ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('Add Unit Rate', ['create'], ['class' => 'btn btn-dark']) ?>
             </p>
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 

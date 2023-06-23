@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
 
             <p>
-                <?= Html::a('Create', ['create'], ['class' => 'btn btn-info']) ?>
+                <?= Html::a('Create', ['create'], ['class' => 'btn btn-dark text-white']) ?>
             </p>
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 

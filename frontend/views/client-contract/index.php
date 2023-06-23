@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
 
             <p>
-                <?= Html::a('Create Client Contract', ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('Create Client Contract', ['create'], ['class' => 'btn btn-dark']) ?>
             </p>
 
             <?php Pjax::begin(); ?>

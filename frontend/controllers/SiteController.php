@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 use frontend\models\ActivityContract;
+use frontend\models\Client;
 use frontend\models\ClientContract;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
@@ -95,17 +96,38 @@ class SiteController extends Controller
     {
 
         if (Yii::$app->user->identity->user_type_id != 3) {
-            $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
-            $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
+            $client = Client::find()->count();
+
+            $requestreceive = RequestOrder::find()->where(['status' => 1])->count();
+            $requestWorkinProgress = RequestOrder::find()->where(['status' => 2])->count();
+
+            $requestProgress = RequestOrder::find()->where(['in', 'status',[1,2]])->count();
+            $requestCompleted = RequestOrder::find()->where(['status' => 3])->count();
+
+            $requestInvoiced = RequestOrder::find()->where(['status' => 4])->count();
+
+            $requestPaid = RequestOrder::find()->where(['status' => 9])->count();
+            $contractCount = ClientContract::find()->count();
+
+            $invoiced = RequestOrder::find()->where(['status' => 4])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
+            $paid = RequestOrder::find()->where(['status' => 9])->joinWith('requestOrderTrans')->sum('request_order_trans.sub_total');
 
             $activityOpen = ActivityContract::find()->where(['status' => 1])->count();
             $activityProcess = ActivityContract::find()->where(['status' => 2])->count();
 
             return $this->render('index', [
-                'requestOpen' => $requestOpen,
-                'requestClosed' => $requestClosed,
+                'client' => $client,
+                'requestreceive' => $requestreceive,
+                'requestWorkinProgress' => $requestWorkinProgress,
+                'requestProgress' => $requestProgress,
+                'requestCompleted' => $requestCompleted,
+                'requestInvoiced' => $requestInvoiced,
+                'requestPaid' => $requestPaid,
+                'contractCount' => $contractCount,
                 'activityOpen' => $activityOpen,
                 'activityProcess' => $activityProcess,
+                'invoiced' => $invoiced,
+                'paid' => $paid,
             ]);
         } else {
             $request = \Yii::$app->request;

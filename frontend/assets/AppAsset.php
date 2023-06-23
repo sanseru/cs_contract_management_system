@@ -24,6 +24,7 @@ class AppAsset extends AssetBundle
         'https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js',
         'https://cdn.jsdelivr.net/npm/sweetalert2@11',
         'https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js',
+        'https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2',
         'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js',
         'https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js',
     ];

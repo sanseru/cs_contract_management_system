@@ -178,7 +178,7 @@ body {
 
 .info-box-4 .icon {
   position: absolute;
-  right: 45px;
+  right: 25px;
   bottom: 25px;
   text-align: center;
 }
@@ -190,16 +190,25 @@ body {
 
 .info-box-4 .content .text {
   font-size: 13px;
-  margin-top: 11px;
+  margin-top: 5px;
   color: #555;
 }
 
 .info-box-4 .content .number {
-  font-weight: normal;
-  font-size: 26px;
+  font-weight: bold;
+  font-size: 28px;
   margin-top: -4px;
   color: #555;
 }
+
+.info-box-4 .content .number-curency {
+  font-weight: bold;
+  font-size: 19px;
+  margin-top: -4px;
+  color: #555;
+}
+
+
 
 .info-box-4.hover-expand-effect:after {
   background-color: rgba(0, 0, 0, 0.2);

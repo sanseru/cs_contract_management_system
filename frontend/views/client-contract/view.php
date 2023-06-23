@@ -99,7 +99,7 @@ if ($reqOrder) {
             <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
                 <h5 class="text-white">#Costing for Contract Number <?= Html::encode($this->title) ?></h5>
                 <?= Html::button('Add Costing', [
-                    'class' => 'btn btn-info btn-sm btn-modal',
+                    'class' => 'btn btn-dark btn-sm btn-modal',
                     'data-target' => '#consting_client_contract', 'data-toggle' => 'modal'
                 ]) ?>
             </div>
@@ -174,10 +174,10 @@ if ($reqOrder) {
     </div>
     <div class="tab-pane fade" id="kpi-tab-pane" role="tabpanel" aria-labelledby="kpi-tab" tabindex="0">
         <div class="card mt-3">
-            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-cs1 text-white d-flex justify-content-between align-items-center">
                 <h5 class="text-white">#KPI for Contract Number <?= Html::encode($this->title) ?></h5>
                 <?= Html::a('Add KPI Activity', ['contract-activity-value/create', 'id' => $model->id, 'url_back' => true, 'tab' => 'kpi', 'req_order' => Yii::$app->request->get('req_order')], [
-                    'class' => 'btn btn-warning btn-sm',
+                    'class' => 'btn btn-dark btn-sm',
                 ]) ?>
             </div>
             <div class="card-body">

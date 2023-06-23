@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
         <div class="card-body">
             <p>
-                <?= Html::a('Create Costing', ['create'], ['class' => 'btn btn-info']) ?>
+                <?= Html::a('Create Costing', ['create'], ['class' => 'btn btn-dark']) ?>
             </p>
             <div class="table-responsive">
                 <?php Pjax::begin(); ?>
