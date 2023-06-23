@@ -28,7 +28,7 @@ $this->title = 'Contrack Management System';
                                         <div class="accordion" id="accordionExample">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header">
-                                                    <button class="accordion-button rounded bg-green text-white" type="button" data-bs-toggle="collapse" data-bs-target="#contract_value" aria-expanded="true" aria-controls="contract_value">
+                                                    <button class="accordion-button rounded bg-cs2 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#contract_value" aria-expanded="true" aria-controls="contract_value">
                                                         <div class="icon me-3">
                                                             <i class="fa-solid fa-vault fa-2xl"></i>
                                                         </div>
@@ -80,7 +80,7 @@ $this->title = 'Contrack Management System';
                                         <div class="accordion" id="accordionExample">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header">
-                                                    <button class="card-acordion rounded bg-teal text-white" type="button">
+                                                    <button class="card-acordion rounded bg-cs1 text-white" type="button">
                                                         <div class="icon me-3">
                                                             <i class="fa-solid fa-money-bill-trend-up fa-2xl"></i>
                                                         </div>
@@ -99,7 +99,7 @@ $this->title = 'Contrack Management System';
                                         <div class="accordion" id="accordionExample">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header">
-                                                    <button class="card-acordion rounded bg-light-green text-white" type="button">
+                                                    <button class="card-acordion rounded bg-cs3 text-white" type="button">
                                                         <div class="icon me-3">
                                                             <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
                                                         </div>
@@ -116,7 +116,7 @@ $this->title = 'Contrack Management System';
                                         <div class="accordion" id="accordionExample">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header">
-                                                    <button class="card-acordion rounded bg-lime text-white" type="button">
+                                                    <button class="card-acordion rounded bg-cs4 text-white" type="button">
                                                         <div class="icon me-3">
                                                             <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
                                                         </div>

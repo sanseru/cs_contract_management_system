@@ -10,7 +10,7 @@ $this->title = 'Contrack Management System';
 
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box-4 bg-teal text-white hover-expand-effect">
+            <div class="info-box-4 bg-cs1 text-white hover-expand-effect">
                 <div class="icon">
                     <i class="fa-solid fa-lock-open fa-2xl"></i>
                 </div>
@@ -21,7 +21,7 @@ $this->title = 'Contrack Management System';
             </div>
         </div>
         <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box-4 text-white bg-green hover-expand-effect">
+            <div class="info-box-4 text-white bg-cs2 hover-expand-effect">
                 <div class="icon">
                     <i class="fa-solid fa-list fa-2xl"></i>
                 </div>
@@ -32,7 +32,7 @@ $this->title = 'Contrack Management System';
             </div>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box-4 text-white bg-light-green hover-expand-effect">
+            <div class="info-box-4 text-white bg-cs3 hover-expand-effect">
                 <div class="icon">
                     <i class="fa-solid fa-list-check fa-2xl"></i>
                 </div>
@@ -43,7 +43,7 @@ $this->title = 'Contrack Management System';
             </div>
         </div> -->
         <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box-4 text-white bg-lime hover-expand-effect">
+            <div class="info-box-4 text-white bg-cs4 hover-expand-effect">
                 <div class="icon">
                     <i class="fa-solid fa-lock fa-2xl"></i>
                 </div>

@@ -146,18 +146,21 @@ body {
   font-weight: bold;
 }
 
-.bg-teal {
-  background-color: #009688 !important;
+.bg-cs1 {
+  background-color: #526D82 !important;
 }
-.bg-green {
-  background-color: #4caf50 !important;
+.bg-cs2 {
+  background-color: #9DB2BF !important;
 }
-.bg-light-green {
-  background-color: #8bc34a !important;
+.bg-cs3 {
+  background-color: #9DB2BF !important;
 }
 
-.bg-lime {
-  background-color: #cddc39 !important;
+.bg-cs4 {
+  background-color: #B7B7B7 !important;
+}
+.bg-cs5{
+  background-color: #454545 !important;
 }
 
 /* Info Box */
@@ -231,4 +234,11 @@ body {
   border-radius: 0;
   overflow-anchor: none;
   transition: var(--bs-accordion-transition);
+}
+
+.list-group-item.active {
+  background-color: #FF6000;
+  z-index: 2;
+  color: #ffffff;
+  border-color: #FFA559;
 }

@@ -10,15 +10,16 @@ use yii\web\JsExpression;
 $this->title = 'Contrack Management System';
 ?>
 <div class="site-index card mt-4">
-    <div class="card-header text-center bg-info-subtle">
+    <div class="card-header text-center bg-cs1 text-white">
         <h3 class="fw-bold"><?= Yii::$app->user->identity->client->name; ?></h3>
     </div>
     <div class="body-content card-body">
         <div class="row">
             <div class="col-md-3">
-                <div class="list-group">
+                <div class="list-group overflow-auto" style="max-height: 290px;">
                     <li class="list-group-item disabled bg-secondary text-white" aria-disabled="true"><i class="fa-solid fa-file-contract"></i> List Contract</li>
-                    <?php foreach ($datacont as $key => $value) {
+                    <?php
+                    foreach ($datacont as $key => $value) {
                         $url = Url::to(['site/index', 'id' => $value->contract_number]);
                         $request = \Yii::$app->request;
                         $id = $request->get('id'); // Mengambil nilai 'id' dari parameter URL
@@ -26,6 +27,7 @@ $this->title = 'Contrack Management System';
                         if ($value->contract_number == $id) {
                             $class = 'active';
                         }
+
                     ?>
                         <a href="<?= $url ?>" class="list-group-item list-group-item-action <?= $class ?>" aria-current="true">
                             <i class="fa-solid fa-arrow-right"></i> <strong><?= $value->contract_number ?></strong>
@@ -52,7 +54,7 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="accordion-button rounded bg-green text-white" type="button" data-bs-toggle="collapse" data-bs-target="#contract_value" aria-expanded="true" aria-controls="contract_value">
+                                            <button class="accordion-button rounded bg-cs1 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#contract_value" aria-expanded="true" aria-controls="contract_value">
                                                 <div class="icon me-3">
                                                     <i class="fa-solid fa-vault fa-2xl"></i>
                                                 </div>
@@ -104,7 +106,7 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-teal text-white" type="button">
+                                            <button class="card-acordion rounded bg-cs2 text-white" type="button">
                                                 <div class="icon me-3">
                                                     <i class="fa-solid fa-money-bill-trend-up fa-2xl"></i>
                                                 </div>
@@ -123,7 +125,7 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-light-green text-white" type="button">
+                                            <button class="card-acordion rounded bg-cs3 text-white" type="button">
                                                 <div class="icon me-3">
                                                     <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
                                                 </div>
@@ -140,7 +142,7 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-lime text-white" type="button">
+                                            <button class="card-acordion rounded bg-cs4 text-white" type="button">
                                                 <div class="icon me-3">
                                                     <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
                                                 </div>
@@ -159,8 +161,8 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <div class="rounded d-flex justify-content-center bg-success">
-                                                <div class="bg-success text-white d-flex align-items-center">
+                                            <div class="rounded d-flex justify-content-center bg-cs5">
+                                                <div class="bg-cs5 text-white d-flex align-items-center">
                                                     <div class="icon me-3">
                                                         <i class="fa-solid fa-sack-dollar fa-lg"></i>
                                                     </div>
@@ -175,117 +177,72 @@ $this->title = 'Contrack Management System';
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-2">
+                        <!-- <div class="row mt-2">
                             <div class="col-md-12">
                                 <div class="card">
-                                    <div class="card-header text-center bg-teal">
+                                    <div class="card-header text-center bg-cs1">
                                         <h5 class="fw-bold text-white">Contract Value / Remaining</h5>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="myChart"></canvas>
-
                                     </div>
-                                </div>
-
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <?php $data = $value['dataProvidercav']->getModels(); ?>
-                                            <?php foreach ($data as $object) { ?>
-                                                <div class="col-md-6">
-                                                    <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                 </div>
-            </div>
 
-            <?php
-
-                        // Convert data to JSON format
-                        $budgetDataJson = Json::encode($value['budgetData']);
-                        $actualsDataJson = Json::encode($value['actualsData']);
-
-                        // Prepare data for chart
-                        // $labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                <?php
                         $data = $value['dataProvidercav']->getModels();
-                        // Array of labels
-                        $labels = [];
-                        // Loop over the array of objects and extract the id property
-                        foreach ($data as $object) {
-                            $labels[] = $object->activity->activity_name;
-                        }
-
-                        $options = [
-                            'responsive' => true,
-                            'maintainAspectRatio' => false,
-                        ];
-
-                        // Create datasets for chart
-                        $budgetDataset = [
-                            'label' => 'Budget',
-                            'data' => $value['budgetData'],
-                            'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
-                            'borderColor' => 'rgba(54, 162, 235, 1)',
-                            'borderWidth' => 1,
-                        ];
-                        $actualsDataset = [
-                            'label' => 'Actuals',
-                            'data' => $value['actualsData'],
-                            'backgroundColor' => 'rgba(255, 99, 132, 0.2)',
-                            'borderColor' => 'rgba(255, 99, 132, 1)',
-                            'borderWidth' => 1,
-                        ];
-                        $varianceDataset = [
-                            'label' => 'Remaining',
-                            'data' => array_map(function ($budget, $actuals) {
-                                return $budget - $actuals;
-                            }, $value['budgetData'], $value['actualsData']),
-                            'backgroundColor' => 'rgba(255, 206, 86, 0.2)',
-                            'borderColor' => 'rgba(255, 206, 86, 1)',
-                            'borderWidth' => 1,
-                        ];
-
-                        // Convert datasets to JSON format
-                        $datasetsJson = Json::encode([$budgetDataset, $actualsDataset, $varianceDataset]);
-                        $options_string = json_encode($options);
-                        $labels = json_encode($labels);
-
-
-                        $js = <<<JS
-                    var ctx = document.getElementById('myChart').getContext('2d');
-                    var chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: $labels,
-                            datasets: $datasetsJson,
-                        },
-                        options: $options_string,
-                    });
-                    JS;
-
                         foreach ($data as $key => $object) {
+
                             $activityCode = $object->activity->activity_code;
-                            $activityCode = json_encode($datasasa);
+                            $activityName = $object->activity->activity_name;
+
+                            $activityCode = json_encode($activityCode);
+                            $activityName = json_encode($activityName);
+
+                            $budgetsPieData = 0;
+
+                            foreach ($value['budgetsPie'] as $budgetxs) {
+                                if (isset($actualsd['activity_id'])) {
+
+                                    if ($object->activity->id == $budgetxs['activity_id']) {
+                                        $budgetsPieData = $budgetxs['value'];
+                                        break;
+                                    }
+                                }
+                            }
+
+                            $actualPieData = 0;
+                            foreach ($value['actualsData'] as $actualsd) {
+                                if (isset($actualsd['activity_id'])) {
+                                    if ($object->activity->id == $actualsd['activity_id']) {
+                                        $actualPieData = $budgetxs['value'];
+                                        break;
+                                    }
+                                }
+                            }
+                            $remaining = 0;
+                            $remaining = $object->value - $actualPieData;
+
 
                             $jsx = <<<JS
                         var data1 = {
-                            labels: ['Actual', 'Used', 'Remaining'],
+                            labels: ['Budget', 'Used', 'Remaining'],
                             datasets: [{
-                                data: [30, 40, 20],
-                                backgroundColor: ['red', 'blue', 'green']
+                                data: [$object->value,$actualPieData,$remaining],
+                                backgroundColor: ['#7C96AB', '#00ABB3', '#B31312']
                             }]
                             };
 
-                  
-
                             var options1 = {
-                            // Chart options for chart1
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: $activityName,
+                                    },
+                            }
                             };
                             var charts = 'chart' + $activityCode;
                             var ctx1 = document.getElementById(charts).getContext('2d');
@@ -298,9 +255,17 @@ $this->title = 'Contrack Management System';
                             $this->registerJs(new JsExpression($jsx));
                         }
 
-                        $this->registerJs(new JsExpression($js));
-            ?>
-        <?php } ?>
+                ?>
+            <?php } ?>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <?php $data = $value['dataProvidercav']->getModels(); ?>
+            <?php foreach ($data as $object) { ?>
+                <div class="col-md-2">
+                    <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
+                </div>
+            <?php } ?>
         </div>
     </div>
 </div>

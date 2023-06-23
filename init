@@ -330,7 +330,7 @@ function getStyleCode($name)
         'fg-white' => 37,
         'bg-black' => 40,
         'bg-red' => 41,
-        'bg-green' => 42,
+        'bg-cs2' => 42,
         'bg-yellow' => 43,
         'bg-blue' => 44,
         'bg-magenta' => 45,

@@ -140,7 +140,7 @@ class SiteController extends Controller
                     $dataProvidercav = $searchModelcav->search($this->request->queryParams);
                     // $budgetData = $this->generateRandomData();
                     $budgetData = $dataProvidercav->getModels();
-                    $costing = new Costing();
+                    // $costing = new Costing();
 
 
                     // Array of labels
@@ -149,6 +149,18 @@ class SiteController extends Controller
                     foreach ($budgetData as $object) {
                         $budgets[] = $object->value;
                     }
+
+                    // Array of labels
+                    $budgetsPie = [];
+                    // Loop over the array of objects and extract the id property
+                    foreach ($budgetData as $object) {
+                        $budgetsPie[] = [
+                            'value' => $object->value,
+                            'activity_id' => $object->activity_id,
+                        ];
+                    }
+
+
 
 
                     $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
@@ -159,22 +171,6 @@ class SiteController extends Controller
                     foreach ($datareq as $data) {
                         $requestOrderIds[] = $data->id;
                     }
-
-                    // Query RequestorderTrans dengan menggunakan $requestOrderIds sebagai kondisi
-                    // $requestOrderTrans = RequestOrderTrans::find()->where(['IN', 'request_order_id', $requestOrderIds])->all();
-                    // $requestOrderTrans = RequestOrderTrans::find()
-                    //     ->select(['costing_id', 'sum(sub_total)'])
-                    //     ->where(['IN', 'request_order_id', $requestOrderIds])
-                    //     ->groupBy('costing_id')
-                    //     ->all();
-
-
-                    // $query = (new \yii\db\Query())
-                    //     ->select(['costing_id', 'SUM(sub_total) AS total'])
-                    //     ->from('request_order_trans')
-                    //     ->groupBy('costing_id');
-
-                    // $results = $query->all();
 
 
                     $actuals = [];
@@ -197,7 +193,10 @@ class SiteController extends Controller
                                     $difference =  $result['total'];
 
                                     // Add the difference to the actuals array
-                                    $actuals[] = $difference;
+                                    $actuals[] = [
+                                        'value' => $difference,
+                                        'activity_id' => $object->activity_id,
+                                    ];
                                     break; // Stop the inner loop since we found the matching result
                                 }
                             }
@@ -205,11 +204,6 @@ class SiteController extends Controller
                         }
                     }
 
-                    // print_r($budgets);
-                    // print_r($actuals);
-                    
-                    // die;
-                    // $asa = $reqCommited->all();
                     $resultArray[$key] = [
                         'contract' => $value,
                         'roReceive' => $roReceive,
@@ -223,10 +217,11 @@ class SiteController extends Controller
                         'reqInvoiced' => $reqInvoiced,
                         'reqroactual' => ($sumReqCommited + $reqInvoiced) - $reqPaid,
                         'remaincontvalue' => $contractValueSum - $reqPaid,
-                        'costing' => $costing,
-                        'budgetData' => $budgets,
+                        // 'costing' => $costing,
+                        // 'budgetData' => $budgets,
                         'actualsData' => $actuals,
                         'dataProvidercav' => $dataProvidercav,
+                        'budgetsPie' => $budgetsPie,
                     ];
                 }
             }
