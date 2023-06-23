@@ -110,7 +110,8 @@ class SiteController extends Controller
         } else {
             $request = \Yii::$app->request;
             $id = $request->get('id'); // Mengambil nilai 'id' dari parameter URL
-            $clientId = Yii::$app->user->identity->client_id;
+            // $clientId = Yii::$app->user->identity->client_id;
+            $clientId = 2;
             $contractdata = ClientContract::find()->where(['client_id' => $clientId])->all();
             $resultArray = [];
 
