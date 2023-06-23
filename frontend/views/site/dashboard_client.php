@@ -199,7 +199,7 @@ $this->title = 'Contrack Management System';
                             labels: ['Budget', 'Used', 'Remaining'],
                             datasets: [{
                                 data: [$object->value,$actualPieData,$remaining],
-                                backgroundColor: ['#7C96AB', '#00ABB3', '#B31312']
+                                backgroundColor: ['#7C96AB', '#00ABB3', '#B46060']
                             }]
                             };
 
