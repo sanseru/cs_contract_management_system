@@ -256,15 +256,17 @@ $this->title = 'Contrack Management System';
                         }
 
                 ?>
-            <?php } ?>
             </div>
         </div>
         <div class="row mt-5">
-            <?php foreach ($dataModel as $object) { ?>
+            <?php
+
+                        foreach ($dataModel as $object) { ?>
                 <div class="col-md-2">
                     <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
                 </div>
             <?php } ?>
+        <?php } ?>
         </div>
     </div>
 </div>
