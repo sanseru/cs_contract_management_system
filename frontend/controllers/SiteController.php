@@ -94,7 +94,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
-        if (Yii::$app->user->identity->id != 2) {
+        if (Yii::$app->user->identity->user_type_id != 3) {
             $requestOpen = RequestOrder::find()->where(['status' => 1])->count();
             $requestClosed = RequestOrder::find()->where(['status' => 9])->count();
 
@@ -108,13 +108,9 @@ class SiteController extends Controller
                 'activityProcess' => $activityProcess,
             ]);
         } else {
-            print_r(Yii::$app->user->identity);
-            die;
-
             $request = \Yii::$app->request;
             $id = $request->get('id'); // Mengambil nilai 'id' dari parameter URL
-            // $clientId = Yii::$app->user->identity->client_id;
-            $clientId = 2;
+            $clientId = Yii::$app->user->identity->client_id;
             $contractdata = ClientContract::find()->where(['client_id' => $clientId])->all();
             $resultArray = [];
 
