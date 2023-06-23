@@ -37,7 +37,7 @@ class RequestOrderTransController extends Controller
                             'allow' => true,
                             'roles' => ['@'],
                             'matchCallback' => function ($rule, $action) {
-                                return !Yii::$app->user->isGuest && Yii::$app->user->identity->user_type_id == 1;
+                                return !Yii::$app->user->isGuest && (Yii::$app->user->identity->user_type_id == 1 || Yii::$app->user->identity->user_type_id == 2);
                             },
                         ],
                     ],

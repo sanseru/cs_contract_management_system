@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use frontend\models\Client;
 use frontend\models\Contract;
 use frontend\models\ContractSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,6 +36,9 @@ class ContractController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return !Yii::$app->user->isGuest && (Yii::$app->user->identity->user_type_id == 1 || Yii::$app->user->identity->user_type_id == 2);
+                            },
                         ],
                     ],
                 ],
