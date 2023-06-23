@@ -108,6 +108,9 @@ class SiteController extends Controller
                 'activityProcess' => $activityProcess,
             ]);
         } else {
+            print_r(Yii::$app->user->identity);
+            die;
+
             $request = \Yii::$app->request;
             $id = $request->get('id'); // Mengambil nilai 'id' dari parameter URL
             // $clientId = Yii::$app->user->identity->client_id;
