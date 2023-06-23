@@ -7,6 +7,7 @@ use frontend\models\ClientContractSearch;
 use frontend\models\ContractActivityValueSearch;
 use frontend\models\Costing;
 use frontend\models\CostingSerach;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -31,6 +32,9 @@ class ClientContractController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return !Yii::$app->user->isGuest && Yii::$app->user->identity->user_type_id == 1;
+                            },
                         ],
                     ],
                 ],

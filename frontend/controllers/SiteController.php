@@ -116,18 +116,18 @@ class SiteController extends Controller
             $activityProcess = ActivityContract::find()->where(['status' => 2])->count();
 
             return $this->render('index', [
-                'client' => $client,
-                'requestreceive' => $requestreceive,
-                'requestWorkinProgress' => $requestWorkinProgress,
-                'requestProgress' => $requestProgress,
-                'requestCompleted' => $requestCompleted,
-                'requestInvoiced' => $requestInvoiced,
-                'requestPaid' => $requestPaid,
-                'contractCount' => $contractCount,
-                'activityOpen' => $activityOpen,
-                'activityProcess' => $activityProcess,
-                'invoiced' => $invoiced,
-                'paid' => $paid,
+                'client' => $client??0,
+                'requestreceive' => $requestreceive??0,
+                'requestWorkinProgress' => $requestWorkinProgress??0,
+                'requestProgress' => $requestProgress??0,
+                'requestCompleted' => $requestCompleted??0,
+                'requestInvoiced' => $requestInvoiced??0,
+                'requestPaid' => $requestPaid??0,
+                'contractCount' => $contractCount??0,
+                'activityOpen' => $activityOpen??0,
+                'activityProcess' => $activityProcess??0,
+                'invoiced' => $invoiced??0,
+                'paid' => $paid??0,
             ]);
         } else {
             $request = \Yii::$app->request;

@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\UnitRate;
 use frontend\models\UnitRateSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,6 +26,18 @@ class UnitRateController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return !Yii::$app->user->isGuest && Yii::$app->user->identity->user_type_id == 1;
+                            },
+                        ],
                     ],
                 ],
             ]

@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\ItemType;
 use frontend\models\ItemTypeSearch;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,6 +29,9 @@ class ItemTypeController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return !Yii::$app->user->isGuest && Yii::$app->user->identity->user_type_id == 1;
+                            },
                         ],
                     ],
                 ],
