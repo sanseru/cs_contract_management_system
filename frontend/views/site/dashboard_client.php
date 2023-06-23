@@ -65,7 +65,7 @@ $this->title = 'Contrack Management System';
                                                 <!-- <strong> Contract Value <?= Yii::$app->formatter->asCurrency($value['contractValueSum'], 'IDR'); ?></strong> -->
                                             </button>
                                         </h2>
-                                      
+
                                     </div>
                                 </div>
                             </div>
@@ -145,18 +145,6 @@ $this->title = 'Contrack Management System';
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="row mt-2">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header text-center bg-cs1">
-                                        <h5 class="fw-bold text-white">Contract Value / Remaining</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="myChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
                 </div>
 
                 <?php
@@ -255,15 +243,24 @@ $this->title = 'Contrack Management System';
                             <tbody class="table-group-divider">
                                 <?php $totalValue = 0; ?>
                                 <?php foreach ($value['contractValueData'] as $key => $contval) { ?>
-                                    <tr class="">
+                                    <tr>
                                         <td scope="row"><?= $contval->activity->activity_name ?></td>
-                                        <td><?= Yii::$app->formatter->asCurrency($contval->value, 'IDR'); ?></td>
+                                        <td>
+                                            <div class="d-flex justify-content-between">
+                                                IDR<span class="text-end"><?= Yii::$app->formatter->asDecimal($contval->value); ?></span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <?php $totalValue = $totalValue + $contval->value ?>
                                 <?php } ?>
                                 <tr class="table-dark">
                                     <td scope="row" id="specificRowId">Total</td>
-                                    <td><?= Yii::$app->formatter->asCurrency($totalValue, 'IDR'); ?></td>
+                                    <td>
+                                        <div class="d-flex justify-content-between">
+
+                                            IDR <span class="text-end"><?= Yii::$app->formatter->asDecimal($totalValue); ?></span>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -284,7 +281,6 @@ $this->title = 'Contrack Management System';
                                 <tr>
                                     <th>RO Number</th>
                                     <th>SO Number</th>
-                                    <!-- <th>Start & End Date</th> -->
                                     <th>Status</th>
                                 </tr>
                             </thead>
