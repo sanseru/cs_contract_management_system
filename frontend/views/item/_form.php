@@ -72,7 +72,7 @@ $this->registerJs($script);
         <div class="col-md-6">
             <?= $form->field($model, 'item_type_id')->dropDownList(
                 [],
-                ['prompt' => 'Select', 'id' => 'item_type']
+                ['prompt' => 'Select', 'id' => 'item_type', 'required'=> true]
             ) ?>
         </div>
     </div>
