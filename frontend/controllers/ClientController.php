@@ -185,7 +185,7 @@ class ClientController extends Controller
     public function actionGetClient($id)
     {
         $clients =  ClientContract::findOne(['id'=>$id]);
-
+        
         $model = $this->findModel($clients->client_id);
         return Json::encode($model);
     }

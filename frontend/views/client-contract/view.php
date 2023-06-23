@@ -260,7 +260,7 @@ Modal::begin([
         $script = <<< JS
     $('#contract_id').change(function(){
         // var contractId = $(this).val();
-        var client_id = $model->client_id;
+        var client_id = $model->id;
 
         $.ajax({
             url: '/client/get-client',
