@@ -164,7 +164,7 @@ $this->title = 'Contrack Management System';
 
                                     if ($object->activity->id == $budgetxs['activity_id']) {
                                         $budgetsPieData = $budgetxs['value'];
-                                        break;
+                                        // break;
                                     }
                                 }
                             }
@@ -173,11 +173,13 @@ $this->title = 'Contrack Management System';
                             foreach ($value['actualsData'] as $actualsd) {
                                 if (isset($actualsd['activity_id'])) {
                                     if ($object->activity->id == $actualsd['activity_id']) {
-                                        $actualPieData = $budgetxs['value'];
-                                        break;
+                                        $actualPieData = $actualPieData + $actualsd['value'];
+                                        // break;
                                     }
                                 }
                             }
+
+      
                             $remaining = 0;
                             $remaining = $object->value - $actualPieData;
 

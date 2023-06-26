@@ -166,7 +166,6 @@ class SiteController extends Controller
                     $budgetData = $dataProvidercav->getModels();
                     $costing = new Costing();
 
-
                     // Array of labels
                     $budgets = [];
                     // Loop over the array of objects and extract the id property
@@ -204,6 +203,7 @@ class SiteController extends Controller
                             ->where(['IN', 'request_order_id', $requestOrderIds])
                             ->groupBy('a.costing_id');
                         $results = $query->all();
+                        
                         // Loop over the array of objects and extract the id property
                         foreach ($budgetData as $object) {
                             $actualValue = $object->value;
@@ -218,12 +218,13 @@ class SiteController extends Controller
                                         'value' => $difference,
                                         'activity_id' => $object->activity_id,
                                     ];
-                                    break; // Stop the inner loop since we found the matching result
+                                    // break; // Stop the inner loop since we found the matching result
                                 }
                             }
                             $actuals[] = 0;
                         }
                     }
+
 
                     $resultArray[$key] = [
                         'contract' => $value,
@@ -248,7 +249,6 @@ class SiteController extends Controller
                 }
             }
 
-            // print_r($resultArray);die;
             return $this->render('dashboard_client', [
                 'result' => $resultArray,
                 'datacont' => $contractdata,
