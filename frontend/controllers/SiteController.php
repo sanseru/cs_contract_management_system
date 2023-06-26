@@ -440,4 +440,27 @@ class SiteController extends Controller
             'model' => $model
         ]);
     }
+
+    public function actionModalCommited(){
+
+        $contr = Yii::$app->request->get('contr');
+        $contractdata = ClientContract::find()->where(['contract_number' => $contr])->one();
+        // $reqOrder = RequestOrder::find()->where(['contract_id' => $contractdata->id, 'client_id' => $contractdata->client_id])->one();
+        $query = (new \yii\db\Query())
+        ->select(['a.costing_id', 'SUM(a.sub_total) AS total', 'c.master_activity_code'])
+        ->from('request_order_trans a')
+        ->join('JOIN', 'costing b', 'b.id = a.costing_id')
+        ->join('JOIN', 'item c', 'c.id = b.item_id')
+        ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
+        ->where(['x.contract_id' => $contractdata->id] )
+        ->andWhere(['x.client_id' => $contractdata->client_id ])
+        ->groupBy('x.status');
+        $results = $query->all();
+        print_r($results);die;
+
+        return $this->renderAjax('modalCommited', [
+            // 'model' => $model,
+            // Data lain yang diperlukan oleh tampilan
+        ]);
+    }
 }

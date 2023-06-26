@@ -11,31 +11,6 @@ use yii\web\JsExpression;
 $this->title = 'Contrack Management System';
 ?>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-  Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="site-index card mt-4">
     <div class="card-header text-center bg-cs1 text-white">
         <h3 class="fw-bold"><?= Yii::$app->user->identity->client->name; ?></h3>
@@ -77,7 +52,7 @@ $this->title = 'Contrack Management System';
                     <?php } ?>
                     <?php foreach ($result as $key => $value) { ?>
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-3">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -97,11 +72,11 @@ $this->title = 'Contrack Management System';
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-3 mt-3">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs2 text-white" type="button" data-toggle="modal" data-target="#exampleModal">
+                                            <button class="card-acordion rounded bg-cs2 text-white" type="button" data-bs-toggle="modal" data-bs-target="#modalCommited" data-contr="<?= Yii::$app->request->get('id'); ?>" data-url="commited">
                                                 <div class="icon me-3">
                                                     <i class="fa-solid fa-money-bill-trend-up fa-2xl"></i>
                                                 </div>
@@ -116,7 +91,7 @@ $this->title = 'Contrack Management System';
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-3">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -133,7 +108,7 @@ $this->title = 'Contrack Management System';
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-3">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -154,7 +129,7 @@ $this->title = 'Contrack Management System';
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-3">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -173,7 +148,7 @@ $this->title = 'Contrack Management System';
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 mt-3">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -420,6 +395,19 @@ $this->title = 'Contrack Management System';
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="modalCommited" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -446,6 +434,39 @@ $jsTables = <<<JS
         });
 
     });
+
+    $(document).ready(function() {
+    $('#modalCommited').on('show.bs.modal', function(event) {
+
+        var contr = event.relatedTarget.getAttribute('data-contr');
+        var url = event.relatedTarget.getAttribute('data-url');
+  
+        var button = $(event.relatedTarget); // Tombol yang memicu modal
+        var modal = $(this);
+        
+        // Ambil URL tautan yang akan di-render
+        if(url == 'commited'){
+            var url = '/site/modal-commited';
+        }
+        
+        // Lakukan permintaan AJAX untuk mendapatkan konten modal
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: { contr: contr }, // Include the data-contr value in the AJAX request
+            dataType: 'html',
+            success: function(response) {
+                // Render konten modal ke dalam modal-body
+                modal.find('.modal-body').html(response);
+            },
+            error: function(xhr, status, error) {
+                // Tangani kesalahan jika ada
+                console.error(error);
+            }
+        });
+    });
+});
+
 
 
 JS;
