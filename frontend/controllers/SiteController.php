@@ -203,6 +203,8 @@ class SiteController extends Controller
                             ->where(['IN', 'request_order_id', $requestOrderIds])
                             ->groupBy('a.costing_id');
                         $results = $query->all();
+
+                        // print_r($results);die;
                         
                         // Loop over the array of objects and extract the id property
                         foreach ($budgetData as $object) {
@@ -237,8 +239,11 @@ class SiteController extends Controller
                         'contractValueData' => $contractValueData,
                         'sumReqCommited' => $sumReqCommited,
                         'reqInvoiced' => $reqInvoiced,
+                        'reqUnpaid' => $reqInvoiced,
+                        'reqPaid' => $reqPaid,
+                        'inProgress' => $sumReqCommited - $reqInvoiced ,
                         'reqroactual' => ($sumReqCommited + $reqInvoiced) - $reqPaid,
-                        'remaincontvalue' => $contractValueSum - $reqPaid,
+                        'remaincontvalue' => $contractValueSum - ($sumReqCommited + $reqInvoiced + $reqPaid),
                         'costing' => $costing,
                         'budgetData' => $budgets,
                         'actualsData' => $actuals,

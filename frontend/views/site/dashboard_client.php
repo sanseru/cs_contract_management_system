@@ -115,8 +115,10 @@ $this->title = 'Contrack Management System';
                                                     <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
                                                 </div>
                                                 <div class="content w-100 me-4">
-                                                    <div class="text text-white">Request Order Vs Actual</div>
-                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqroactual']) ? $value['reqroactual'] : 0); ?></span></div>
+                                                <!-- <div class="text text-white">Request Order UnPaid</div> -->
+                                                    <!-- <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqUnpaid']) ? $value['reqUnpaid'] : 0); ?></span></div> -->
+                                                    <div class="text text-white">InProgress Request Order</div>
+                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div>
                                                 </div>
                                             </button>
                                         </h2>
@@ -125,21 +127,36 @@ $this->title = 'Contrack Management System';
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <div class="rounded d-flex justify-content-center bg-cs5">
-                                                <div class="bg-cs5 text-white d-flex align-items-center">
-                                                    <div class="icon me-3">
-                                                        <i class="fa-solid fa-sack-dollar fa-lg"></i>
-                                                    </div>
-                                                    <div class="content py-3">
-                                                        <div class="text text-white text-start fs-6">Remaining Contract Value</div>
-                                                        <div class="number text-white text-center fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['remaincontvalue']) ? $value['remaincontvalue'] : 0); ?></span></div>
-                                                    </div>
+                                            <button class="card-acordion rounded bg-cs1 text-white" type="button">
+                                                <div class="icon me-3">
+                                                    <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
                                                 </div>
-                                            </div>
+                                                <div class="content w-100 me-4">
+                                                    <div class="text text-white">Request Order Paid</div>
+                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqPaid']) ? $value['reqPaid'] : 0); ?></span></div>
+                                                </div>
+                                            </button>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="card-acordion rounded bg-cs5 text-white" type="button">
+                                                <div class="icon me-3">
+                                                    <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
+                                                </div>
+                                                <div class="content w-100 me-4">
+                                                    <div class="text text-white">Remaining Contract Value</div>
+                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['remaincontvalue']) ? $value['remaincontvalue'] : 0); ?></span></div>
+                                                </div>
+                                            </button>
                                         </h2>
                                     </div>
                                 </div>
@@ -179,7 +196,7 @@ $this->title = 'Contrack Management System';
                                 }
                             }
 
-      
+
                             $remaining = 0;
                             $remaining = $object->value - $actualPieData;
 
@@ -189,7 +206,7 @@ $this->title = 'Contrack Management System';
                             labels: ['Budget', 'Used', 'Remaining'],
                             datasets: [{
                                 data: [$object->value,$actualPieData,$remaining],
-                                backgroundColor: ['#7C96AB', '#00ABB3', '#B46060']
+                                backgroundColor: ['#7C96AB', '#00ABB3', '#B46060'],
                             }]
                             };
 
@@ -200,10 +217,13 @@ $this->title = 'Contrack Management System';
                                         display: true,
                                         text: $activityName,
                                     },
+                                    
                             }
                             };
                             var charts = 'chart' + $activityCode;
                             var ctx1 = document.getElementById(charts).getContext('2d');
+                            // Chart.register(ChartDataLabels);
+
                             new Chart(ctx1, {
                             type: 'pie',
                             data: data1,
@@ -217,12 +237,44 @@ $this->title = 'Contrack Management System';
             </div>
         </div>
         <div class="row mt-5">
+            <!-- <div class="d-flex align-items-center loading-page">
+                <strong>Loading...</strong>
+                <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+            </div> -->
+
+            <!-- Loading Spinner Wrapper-->
+            <div class="loader text-center loading-page">
+                <div class="loader-inner">
+
+                    <!-- Animated Spinner -->
+                    <div class="lds-roller mb-3">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+
+                    <!-- Spinner Description Text [For Demo Purpose]-->
+                    <h4 class="text-uppercase font-weight-bold">Loading</h4>
+                    <p class="font-italic text-muted">This loading Chart ...</p>
+                </div>
+            </div>
+            <!-- <div class="loading-page">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div> -->
             <?php
                         foreach ($dataModel as $object) { ?>
-                <div class="col-md-2">
+                <div class="col-md-2 chartData" style="display: none;">
                     <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
                 </div>
             <?php } ?>
+
         </div>
 
         <div class="row mt-5">
@@ -337,8 +389,18 @@ $this->title = 'Contrack Management System';
     <?php } ?>
     </div>
 </div>
+
 <?php
 $jsTables = <<<JS
+    // Fungsi untuk menyembunyikan loading page dan menampilkan halaman utama
+    function showPage() {
+      $('.loading-page').fadeOut();
+      $('.chartData').fadeIn();
+
+    }
+
+    // Simulasi penundaan selama 3 detik sebelum menampilkan halaman utama
+    setTimeout(showPage, 3000);
     $(document).ready(function() {
         $('.clientTables').DataTable({
             "autoWidth": true
@@ -352,7 +414,131 @@ $jsTables = <<<JS
 
     });
 
+
 JS;
 $this->registerJs(new JsExpression($jsTables));
 
 ?>
+<style>
+    .loading-page {
+        width: 100%;
+        height: 20vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* background-color: #f8f9fa; */
+        background-color: #fff;
+
+    }
+
+    .spinner {
+        width: 6rem;
+        height: 6rem;
+    }
+
+    /* Spinner */
+    .lds-roller {
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+    }
+
+    .lds-roller div {
+        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        transform-origin: 32px 32px;
+    }
+
+    .lds-roller div:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #333;
+        margin: -3px 0 0 -3px;
+    }
+
+    .lds-roller div:nth-child(1) {
+        animation-delay: -0.036s;
+    }
+
+    .lds-roller div:nth-child(1):after {
+        top: 50px;
+        left: 50px;
+    }
+
+    .lds-roller div:nth-child(2) {
+        animation-delay: -0.072s;
+    }
+
+    .lds-roller div:nth-child(2):after {
+        top: 54px;
+        left: 45px;
+    }
+
+    .lds-roller div:nth-child(3) {
+        animation-delay: -0.108s;
+    }
+
+    .lds-roller div:nth-child(3):after {
+        top: 57px;
+        left: 39px;
+    }
+
+    .lds-roller div:nth-child(4) {
+        animation-delay: -0.144s;
+    }
+
+    .lds-roller div:nth-child(4):after {
+        top: 58px;
+        left: 32px;
+    }
+
+    .lds-roller div:nth-child(5) {
+        animation-delay: -0.18s;
+    }
+
+    .lds-roller div:nth-child(5):after {
+        top: 57px;
+        left: 25px;
+    }
+
+    .lds-roller div:nth-child(6) {
+        animation-delay: -0.216s;
+    }
+
+    .lds-roller div:nth-child(6):after {
+        top: 54px;
+        left: 19px;
+    }
+
+    .lds-roller div:nth-child(7) {
+        animation-delay: -0.252s;
+    }
+
+    .lds-roller div:nth-child(7):after {
+        top: 50px;
+        left: 14px;
+    }
+
+    .lds-roller div:nth-child(8) {
+        animation-delay: -0.288s;
+    }
+
+    .lds-roller div:nth-child(8):after {
+        top: 45px;
+        left: 10px;
+    }
+
+    @keyframes lds-roller {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
