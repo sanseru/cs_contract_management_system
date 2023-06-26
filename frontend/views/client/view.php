@@ -142,7 +142,7 @@ Modal::begin([
             }'),
         ],
 
-                // 'clientOptions' => [
+        // 'clientOptions' => [
         //     'beforeShow' => new JsExpression('function(input, inst) {
         //         inst.dpDiv.css({
         //             marginTop: -input.offsetHeight + "px", 
@@ -175,13 +175,3 @@ Modal::begin([
 <?php
 Modal::end();
 ?>
-<!-- 
-<style>
-    .datepicker {
-        z-index: 1100 !important;
-    }
-
-    #ui-datepicker-div {
-        width: 30% !important;
-    }
-</style> -->
