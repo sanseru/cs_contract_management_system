@@ -238,7 +238,7 @@ class SiteController extends Controller
                         'contractValueSum' => $contractValueSum,
                         'contractValueData' => $contractValueData,
                         'sumReqCommited' => $sumReqCommited,
-                        'reqInvoiced' => $reqInvoiced,
+                        'reqInvoiced' => $reqInvoiced + $reqPaid,
                         'reqUnpaid' => $reqInvoiced,
                         'reqPaid' => $reqPaid,
                         'inProgress' => $sumReqCommited - $reqInvoiced ,

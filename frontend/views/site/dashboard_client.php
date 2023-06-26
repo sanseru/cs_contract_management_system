@@ -74,7 +74,7 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs2 text-white" type="button">
+                                            <button class="card-acordion rounded bg-cs2 text-white" type="button" data-toggle="modal" data-target="#exampleModal">
                                                 <div class="icon me-3">
                                                     <i class="fa-solid fa-money-bill-trend-up fa-2xl"></i>
                                                 </div>
@@ -110,15 +110,15 @@ $this->title = 'Contrack Management System';
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs4 text-white" type="button">
+                                            <button class="card-acordion rounded bg-cs1 text-white" type="button">
                                                 <div class="icon me-3">
-                                                    <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
+                                                    <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
                                                 </div>
                                                 <div class="content w-100 me-4">
-                                                <!-- <div class="text text-white">Request Order UnPaid</div> -->
-                                                    <!-- <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqUnpaid']) ? $value['reqUnpaid'] : 0); ?></span></div> -->
                                                     <div class="text text-white">InProgress Request Order</div>
                                                     <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div>
+                                                    <!-- <div class="text text-white">Request Order Paid</div>
+                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqPaid']) ? $value['reqPaid'] : 0); ?></span></div> -->
                                                 </div>
                                             </button>
                                         </h2>
@@ -127,17 +127,19 @@ $this->title = 'Contrack Management System';
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                        <div class="col-md-6">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs1 text-white" type="button">
+                                            <button class="card-acordion rounded bg-cs4 text-white" type="button">
                                                 <div class="icon me-3">
-                                                    <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
+                                                    <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
                                                 </div>
                                                 <div class="content w-100 me-4">
-                                                    <div class="text text-white">Request Order Paid</div>
-                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqPaid']) ? $value['reqPaid'] : 0); ?></span></div>
+                                                    <div class="text text-white">Request Order UnPaid</div>
+                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqUnpaid']) ? $value['reqUnpaid'] : 0); ?></span></div>
+                                                    <!-- <div class="text text-white">InProgress Request Order</div>
+                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div> -->
                                                 </div>
                                             </button>
                                         </h2>
@@ -389,6 +391,29 @@ $this->title = 'Contrack Management System';
     <?php } ?>
     </div>
 </div>
+
+<!-- Modals Card value -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <?php
 $jsTables = <<<JS
