@@ -404,26 +404,6 @@ $this->title = 'Contrack Management System';
             </div>
             <div class="modal-body" id="commitedBody">
                 Fetch Data...
-                <div class="loader text-center loading-page">
-                    <div class="loader-inner">
-
-                        <!-- Animated Spinner -->
-                        <div class="lds-roller mb-3">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-
-                        <!-- Spinner Description Text [For Demo Purpose]-->
-                        <h4 class="text-uppercase font-weight-bold">Loading</h4>
-                        <p class="font-italic text-muted">This loading Chart ...</p>
-                    </div>
-                </div>
                 <p>If Not Show Please Close And Open Again...</p>
             </div>
         </div>
@@ -439,28 +419,7 @@ $this->title = 'Contrack Management System';
             </div>
             <div class="modal-body" id="pieData">
                 Fetch Data...
-                <div class="loader text-center loading-page">
-                    <div class="loader-inner">
-
-                        <!-- Animated Spinner -->
-                        <div class="lds-roller mb-3">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-
-                        <!-- Spinner Description Text [For Demo Purpose]-->
-                        <h4 class="text-uppercase font-weight-bold">Loading</h4>
-                        <p class="font-italic text-muted">This loading Chart ...</p>
-                    </div>
-                </div>
                 <p>If Not Show Please Close And Open Again...</p>
-
             </div>
         </div>
     </div>
@@ -498,6 +457,9 @@ $jsTables = <<<JS
 
 
         $('.chartData').click(function() {
+            $html = 'Fetch Data...<p>If Not Show Please Close And Open Again...</p>';
+            $('#pieData').html(html);
+
         // Get the data-id attribute value
             var dataId = $(this).data('id');
             var noReq = $(this).data('noreq');

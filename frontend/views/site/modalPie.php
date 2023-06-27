@@ -12,7 +12,7 @@ $line = [];
 foreach ($model as $key => $value) {
     $bar1[] = $value['bar'];
     $myear[] = $value['month_year'];
-    $line [] = $value['line']/36;
+    $line [] = $value['line'];
 
 }
 

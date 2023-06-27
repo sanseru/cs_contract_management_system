@@ -557,7 +557,7 @@ class SiteController extends Controller
             $resultArray[$key] = [
                 'month_year' => $row['month_year'],
                 'bar' => $row['total'],
-                'line' => $cav->value,
+                'line' => $cav->value/36,
             ];
         }
 
