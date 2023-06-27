@@ -12,7 +12,7 @@ $line = [];
 foreach ($model as $key => $value) {
     $bar1[] = $value['bar'];
     $myear[] = $value['month_year'];
-    $line [] = $value['line']* 0.009;
+    $line [] = $value['line']/36;
 
 }
 
@@ -32,7 +32,7 @@ $(document).ready(function() {
                 datasets: [
                     {
                         type: 'bar',
-                        label: 'Commited',
+                        label: 'Request Order',
                         data: $bar1,
                         backgroundColor: 'rgba(255, 99, 132, 0.5)',
                         borderColor: 'rgba(255, 99, 132, 1)',
