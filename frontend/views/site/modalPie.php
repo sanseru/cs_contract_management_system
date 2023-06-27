@@ -49,6 +49,7 @@ $(document).ready(function() {
                 ]
             },
             options: {
+                animation,
                 responsive: true,
                 // scales: {
                 //     x: {
