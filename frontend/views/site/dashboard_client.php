@@ -457,7 +457,7 @@ $jsTables = <<<JS
 
 
         $('.chartData').click(function() {
-            $html = 'Fetch Data...<p>If Not Show Please Close And Open Again...</p>';
+            var html = 'Fetch Data...<p>If Not Show Please Close And Open Again...</p>';
             $('#pieData').html(html);
 
         // Get the data-id attribute value
