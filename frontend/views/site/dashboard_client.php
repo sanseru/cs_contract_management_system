@@ -274,7 +274,7 @@ $this->title = 'Contrack Management System';
             </div> -->
             <?php
                         foreach ($dataModel as $object) { ?>
-                <div class="col-md-2 chartData" style="display: none;">
+                <div class="col-md-2 chartData" style="display: none;" data-id="<?= $object->activity->id ?>" data-noreq="<?= \Yii::$app->request->get('id') ?>">
                     <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
                 </div>
             <?php } ?>
@@ -402,7 +402,21 @@ $this->title = 'Contrack Management System';
             <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="commitedBody">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalCommited2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="pieData">
                 ...
             </div>
         </div>
@@ -423,6 +437,8 @@ $jsTables = <<<JS
     // Simulasi penundaan selama 3 detik sebelum menampilkan halaman utama
     setTimeout(showPage, 3000);
     $(document).ready(function() {
+        var myModal = new bootstrap.Modal(document.getElementById('modalCommited2'))
+
         $('.clientTables').DataTable({
             "autoWidth": true
         });
@@ -432,10 +448,42 @@ $jsTables = <<<JS
             "autoWidth": true
 
         });
+        function chartpie(params) {
+            myModal.show();
+            alert(params);
+        }
+
+
+        $('.chartData').click(function() {
+        // Get the data-id attribute value
+            var dataId = $(this).data('id');
+            var noReq = $(this).data('noreq');
+            myModal.show();
+
+            var url = '/site/chart-data';
+        
+        // Lakukan permintaan AJAX untuk mendapatkan konten modal
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: { id: dataId, noReq: noReq }, // Include the data-contr value in the AJAX request
+                dataType: 'html',
+                success: function(response) {
+                    // Render konten modal ke dalam modal-body
+                    $('#pieData').html(response);
+                },
+                error: function(xhr, status, error) {
+                    // Tangani kesalahan jika ada
+                    console.error(error);
+                }
+            });
+        });
 
     });
 
+
     $(document).ready(function() {
+
     $('#modalCommited').on('show.bs.modal', function(event) {
 
         var contr = event.relatedTarget.getAttribute('data-contr');
@@ -457,7 +505,7 @@ $jsTables = <<<JS
             dataType: 'html',
             success: function(response) {
                 // Render konten modal ke dalam modal-body
-                modal.find('.modal-body').html(response);
+                modal.find('#commitedBody').html(response);
             },
             error: function(xhr, status, error) {
                 // Tangani kesalahan jika ada

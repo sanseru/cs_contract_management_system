@@ -24,6 +24,7 @@ use frontend\models\Costing;
 use frontend\models\RequestOrder;
 use frontend\models\RequestOrderTrans;
 use Symfony\Component\Finder\Finder;
+use yii\db\Expression;
 
 /**
  * Site controller
@@ -101,7 +102,7 @@ class SiteController extends Controller
             $requestreceive = RequestOrder::find()->where(['status' => 1])->count();
             $requestWorkinProgress = RequestOrder::find()->where(['status' => 2])->count();
 
-            $requestProgress = RequestOrder::find()->where(['in', 'status',[1,2]])->count();
+            $requestProgress = RequestOrder::find()->where(['in', 'status', [1, 2]])->count();
             $requestCompleted = RequestOrder::find()->where(['status' => 3])->count();
 
             $requestInvoiced = RequestOrder::find()->where(['status' => 4])->count();
@@ -116,18 +117,18 @@ class SiteController extends Controller
             $activityProcess = ActivityContract::find()->where(['status' => 2])->count();
 
             return $this->render('index', [
-                'client' => $client??0,
-                'requestreceive' => $requestreceive??0,
-                'requestWorkinProgress' => $requestWorkinProgress??0,
-                'requestProgress' => $requestProgress??0,
-                'requestCompleted' => $requestCompleted??0,
-                'requestInvoiced' => $requestInvoiced??0,
-                'requestPaid' => $requestPaid??0,
-                'contractCount' => $contractCount??0,
-                'activityOpen' => $activityOpen??0,
-                'activityProcess' => $activityProcess??0,
-                'invoiced' => $invoiced??0,
-                'paid' => $paid??0,
+                'client' => $client ?? 0,
+                'requestreceive' => $requestreceive ?? 0,
+                'requestWorkinProgress' => $requestWorkinProgress ?? 0,
+                'requestProgress' => $requestProgress ?? 0,
+                'requestCompleted' => $requestCompleted ?? 0,
+                'requestInvoiced' => $requestInvoiced ?? 0,
+                'requestPaid' => $requestPaid ?? 0,
+                'contractCount' => $contractCount ?? 0,
+                'activityOpen' => $activityOpen ?? 0,
+                'activityProcess' => $activityProcess ?? 0,
+                'invoiced' => $invoiced ?? 0,
+                'paid' => $paid ?? 0,
             ]);
         } else {
             $request = \Yii::$app->request;
@@ -205,7 +206,7 @@ class SiteController extends Controller
                         $results = $query->all();
 
                         // print_r($results);die;
-                        
+
                         // Loop over the array of objects and extract the id property
                         foreach ($budgetData as $object) {
                             $actualValue = $object->value;
@@ -241,7 +242,7 @@ class SiteController extends Controller
                         'reqInvoiced' => $reqInvoiced + $reqPaid,
                         'reqUnpaid' => $reqInvoiced,
                         'reqPaid' => $reqPaid,
-                        'inProgress' => $sumReqCommited - $reqInvoiced ,
+                        'inProgress' => $sumReqCommited - $reqInvoiced,
                         'reqroactual' => ($sumReqCommited + $reqInvoiced) - $reqPaid,
                         'remaincontvalue' => $contractValueSum - ($sumReqCommited + $reqInvoiced + $reqPaid),
                         'costing' => $costing,
@@ -441,26 +442,127 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionModalCommited(){
+    public function actionModalCommited()
+    {
 
         $contr = Yii::$app->request->get('contr');
         $contractdata = ClientContract::find()->where(['contract_number' => $contr])->one();
         // $reqOrder = RequestOrder::find()->where(['contract_id' => $contractdata->id, 'client_id' => $contractdata->client_id])->one();
+
+
         $query = (new \yii\db\Query())
-        ->select(['a.costing_id', 'SUM(a.sub_total) AS total', 'c.master_activity_code'])
+            ->select([
+                new Expression("DATE_FORMAT(x.start_date, '%Y-%m') AS month_year")
+            ])
+            ->from('request_order_trans a')
+            ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
+            ->where(['x.contract_id' => $contractdata->id, 'x.client_id' => $contractdata->client_id])
+            ->groupBy(['month_year']);
+        $results = $query->all();
+        foreach ($results as $key => $row) {
+            $monthYear = $row['month_year'];
+            // Process the month and year values as needed
+            $queryCommited = (new \yii\db\Query())
+                ->select(['a.sub_total', 'a.*', 'x.*'])
+                ->from('request_order_trans a')
+                ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
+                ->where([
+                    'x.contract_id' => $contractdata->id,
+                    'x.client_id' => $contractdata->client_id,
+                ])
+                ->andWhere(['IN', 'status', [1, 2, 3]])
+                ->andWhere(new \yii\db\Expression('DATE_FORMAT(x.start_date, "%Y-%m") = :month_year', [':month_year' => $row['month_year']]));
+
+            $resultsCommited = $queryCommited->all();
+            $subTotal = 0;
+            foreach ($resultsCommited as $row1) {
+                $subTotal = $subTotal + $row1['sub_total'];
+                // Process the values as needed
+            }
+
+            $queryInvoiced = (new \yii\db\Query())
+                ->select(['a.sub_total', 'a.*', 'x.*'])
+                ->from('request_order_trans a')
+                ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
+                ->where([
+                    'x.contract_id' => $contractdata->id,
+                    'x.client_id' => $contractdata->client_id,
+                ])
+                ->andWhere(['IN', 'status', [4]])
+                ->andWhere(new \yii\db\Expression('DATE_FORMAT(x.start_date, "%Y-%m") = :month_year', [':month_year' => $row['month_year']]));
+
+            $resultsIncoiced = $queryInvoiced->all();
+            $subTotalIncoiced = 0;
+            foreach ($resultsIncoiced as $row2) {
+                $subTotalIncoiced = $subTotalIncoiced + $row2['sub_total'];
+                // Process the values as needed
+            }
+
+            $queryPaid = (new \yii\db\Query())
+                ->select(['a.sub_total', 'a.*', 'x.*'])
+                ->from('request_order_trans a')
+                ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
+                ->where([
+                    'x.contract_id' => $contractdata->id,
+                    'x.client_id' => $contractdata->client_id,
+                ])
+                ->andWhere(['IN', 'status', [9]])
+                ->andWhere(new \yii\db\Expression('DATE_FORMAT(x.start_date, "%Y-%m") = :month_year', [':month_year' => $row['month_year']]));
+
+            $resultsPaid = $queryPaid->all();
+            $subTotalPaid = 0;
+            foreach ($resultsPaid as $row3) {
+                $subTotalPaid = $subTotalPaid + $row3['sub_total'];
+                // Process the values as needed
+            }
+
+            $resultArray[$key] = [
+                'month_year' => $row['month_year'],
+                'commited' => $subTotal,
+                'invoiced' => $subTotalIncoiced,
+                'paid' => $subTotalPaid,
+            ];
+        }
+
+        return $this->renderAjax('modalCommited', [
+            'model' => $resultArray,
+        ]);
+    }
+    public function actionChartData()
+    {
+
+        $id = Yii::$app->request->get('id');
+        $noReq = Yii::$app->request->get('noReq');
+
+        $contractdata = ClientContract::find()->where(['contract_number' => $noReq])->one();
+
+        $query = (new \yii\db\Query())
+        ->select([
+            'SUM(a.sub_total) AS total','c.master_activity_code',
+            new Expression("DATE_FORMAT(x.start_date, '%Y-%m') AS month_year")
+        ])
+
         ->from('request_order_trans a')
         ->join('JOIN', 'costing b', 'b.id = a.costing_id')
         ->join('JOIN', 'item c', 'c.id = b.item_id')
         ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
-        ->where(['x.contract_id' => $contractdata->id] )
-        ->andWhere(['x.client_id' => $contractdata->client_id ])
-        ->groupBy('x.status');
+        ->where(['x.contract_id' => $contractdata->id, 'x.client_id' => $contractdata->client_id])
+        ->andWhere(['c.master_activity_code' => $id])
+        ->groupBy(['month_year']);
         $results = $query->all();
-        print_r($results);die;
 
-        return $this->renderAjax('modalCommited', [
-            // 'model' => $model,
-            // Data lain yang diperlukan oleh tampilan
+        $cav = ContractActivityValue::find()->where(['contract_id' => $contractdata->id, 'activity_id'=>$id])->one();
+
+        foreach ($results as $key => $row) {
+            $resultArray[$key] = [
+                'month_year' => $row['month_year'],
+                'bar' => $row['total'],
+                'line' => $cav->value,
+            ];
+        }
+
+        return $this->renderAjax('modalPie', [
+            'model' => $resultArray,
         ]);
     }
 }

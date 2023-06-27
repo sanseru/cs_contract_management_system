@@ -5,27 +5,22 @@
 use yii\web\JsExpression;
 
 $bar1 = [];
-$bar2 = [];
-$bar3 = [];
 $myear = [];
 $line = [];
 
 
 foreach ($model as $key => $value) {
-    $bar1[] = $value['commited'];
-    $bar2[] = $value['invoiced']; 
-    $bar3[] = $value['paid']; 
+    $bar1[] = $value['bar'];
     $myear[] = $value['month_year'];
-    $line[] = $value['commited'] + $value['invoiced'] + $value['paid'];
+    $line [] = $value['line']* 0.009;
 
 }
 
 $bar1 = json_encode($bar1);
-$bar2 = json_encode($bar2);
-$bar3 = json_encode($bar3);
 $myear = json_encode($myear);
 $line = json_encode($line);
 
+// var_dump($line);die;
 $jsTables = <<<JS
 $(document).ready(function() {
     var ctx = document.getElementById('comboChart').getContext('2d');
@@ -44,22 +39,6 @@ $(document).ready(function() {
                         borderWidth: 1
                     },
                     {
-                        type: 'bar',
-                        label: 'Invoiced',
-                        data: $bar2,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        type: 'bar',
-                        label: 'Paid',
-                        data: $bar3,
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    },
-                    {
                         type: 'line',
                         label: 'High Value',
                         data: $line, // The data will be computed dynamically
@@ -71,14 +50,14 @@ $(document).ready(function() {
             },
             options: {
                 responsive: true,
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true
-                    }
-                },
+                // scales: {
+                //     x: {
+                //         stacked: true
+                //     },
+                //     y: {
+                //         stacked: true
+                //     }
+                // },
                 plugins: {
                     tooltip: {
                         mode: 'index',
