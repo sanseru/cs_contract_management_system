@@ -1,4 +1,4 @@
-<canvas id="comboChart"></canvas>
+<canvas id="comboChart1"></canvas>
 
 <?php
 
@@ -23,7 +23,7 @@ $line = json_encode($line);
 // var_dump($line);die;
 $jsTables = <<<JS
 $(document).ready(function() {
-    var ctx = document.getElementById('comboChart').getContext('2d');
+    var ctx = document.getElementById('comboChart1').getContext('2d');
 
         var comboChart = new Chart(ctx, {
             type: 'bar',
