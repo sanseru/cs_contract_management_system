@@ -552,7 +552,7 @@ class SiteController extends Controller
         $results = $query->all();
 
         $cav = ContractActivityValue::find()->where(['contract_id' => $contractdata->id, 'activity_id'=>$id])->one();
-
+        $resultArray = [];
         foreach ($results as $key => $row) {
             $resultArray[$key] = [
                 'month_year' => $row['month_year'],
