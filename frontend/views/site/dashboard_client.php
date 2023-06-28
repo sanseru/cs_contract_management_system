@@ -42,7 +42,7 @@ $this->title = 'Contrack Management System';
             <div class="col-md-9">
                 <div class="row">
                     <?php if (empty($result)) { ?>
-                        <div class="row mb-3 text-center mt-4 ">
+                        <div class="row mb-3 text-center">
                             <div class="col-md-12  text-white">
                                 <div class="alert alert-primary" role="alert">
                                     --- Silahkan Pilih kontrak Di List ---
@@ -288,10 +288,7 @@ $this->title = 'Contrack Management System';
                         <h5 class="fw-bold">List Activity</h5>
                     </div>
                     <div class="table-responsive card-body">
-                        <table class="table 
-                    table-hover	
-                    table-borderless
-                    align-middle" id="myTable">
+                        <table class="table table-hover	table-borderless align-middle" id="myTable">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Activity</th>
@@ -331,10 +328,7 @@ $this->title = 'Contrack Management System';
                         <h5 class="fw-bold">List Request Order</h5>
                     </div>
                     <div class="table-responsive card-body">
-                        <table class="table 
-                    table-hover	
-                    table-borderless
-                    align-middle clientTables">
+                        <table class="table table-hover	table-borderless align-middle clientTables">
                             <thead class="table-dark">
                                 <tr>
                                     <th>RO Number</th>
@@ -394,7 +388,6 @@ $this->title = 'Contrack Management System';
     </div>
 </div>
 
-
 <!-- Modal -->
 <div class="modal fade" id="modalCommited" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -425,15 +418,12 @@ $this->title = 'Contrack Management System';
     </div>
 </div>
 
-
-
 <?php
 $jsTables = <<<JS
     // Fungsi untuk menyembunyikan loading page dan menampilkan halaman utama
     function showPage() {
-      $('.loading-page').fadeOut();
-      $('.chartData').fadeIn();
-
+        $('.loading-page').fadeOut();
+        $('.chartData').fadeIn();
     }
 
     // Simulasi penundaan selama 3 detik sebelum menampilkan halaman utama
@@ -442,14 +432,17 @@ $jsTables = <<<JS
         var myModal = new bootstrap.Modal(document.getElementById('modalCommited2'))
 
         $('.clientTables').DataTable({
-            "autoWidth": true
+            "autoWidth": true,
+            "lengthMenu": [ 10 ],
         });
 
         $('#myTable').DataTable({
             "ordering": false,
-            "autoWidth": true
-
+            "autoWidth": true,
+            "lengthChange": false,
+            "info": false,
         });
+
         function chartpie(params) {
             myModal.show();
             alert(params);
