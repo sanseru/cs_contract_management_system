@@ -16,11 +16,11 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="client-index">
     <div class="card">
-        <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
+        <h5 class="card-header bg-formbarblue text-white"><?= Html::encode($this->title) ?></h5>
         <div class="card-body">
 
             <p>
-                <?= Html::a('Create', ['create'], ['class' => 'btn btn-dark text-white']) ?>
+                <?= Html::a('Create', ['create'], ['class' => 'btn bg-btnblue text-white']) ?>
             </p>
 
             <?php // echo $this->render('_search', ['model' => $searchModel]); 

@@ -110,6 +110,15 @@ a.desc:after {
 .bg-navbarnavypastel {
   background-color: #0c134f;
 }
+.bg-navbarblue {
+  background-color: #0079FF;
+}
+.bg-formbarblue {
+  background-color: #5A96E3;
+}
+.bg-btnblue {
+  background-color: #146C94 !important;
+}
 .bg-beigebtn {
   background-color: #cbb279;
 }
@@ -141,9 +150,19 @@ body {
 }
 
 .btn-createcust {
-  width: 200px; /* Set your desired width here */
+  /* Set your desired width here */
+  width: 100px; 
   font-size: 18px;
   font-weight: bold;
+  background-color: #0A4D68 !important;
+}
+
+.btn-cancelform
+{
+  width: 100px;
+  font-size: 18px;
+  font-weight: bold;
+  border-color: #0A4D68 !important;
 }
 
 .bg-cs1 {

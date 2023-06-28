@@ -12,7 +12,7 @@ $this->title = 'Contrack Management System';
 ?>
 
 <div class="site-index card mt-4">
-    <div class="card-header text-center bg-cs1 text-white">
+    <div class="card-header text-center bg-formbarblue text-white">
         <h3 class="fw-bold"><?= Yii::$app->user->identity->client->name; ?></h3>
     </div>
     <div class="body-content card-body">
@@ -52,7 +52,7 @@ $this->title = 'Contrack Management System';
                     <?php } ?>
                     <?php foreach ($result as $key => $value) { ?>
                         <div class="row mb-3">
-                            <div class="col-md-6 mt-3">
+                            <div class="col-md-6">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -72,7 +72,7 @@ $this->title = 'Contrack Management System';
                                 </div>
                             </div>
 
-                            <div class="col-md-6 mt-3 mt-3">
+                            <div class="col-md-6">
                                 <div class="accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -284,7 +284,7 @@ $this->title = 'Contrack Management System';
         <div class="row mt-5">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header text-center bg-cs1 text-white">
+                    <div class="card-header text-center bg-formbarblue text-white">
                         <h5 class="fw-bold">List Activity</h5>
                     </div>
                     <div class="table-responsive card-body">
@@ -327,7 +327,7 @@ $this->title = 'Contrack Management System';
             </div>
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header text-center bg-cs1 text-white">
+                    <div class="card-header text-center bg-formbarblue text-white">
                         <h5 class="fw-bold">List Request Order</h5>
                     </div>
                     <div class="table-responsive card-body">

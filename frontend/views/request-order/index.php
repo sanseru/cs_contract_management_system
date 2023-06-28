@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contract-index">
     <div class="card">
-        <h5 class="card-header bg-1D267D text-white"><?= Html::encode($this->title) ?></h5>
+        <h5 class="card-header bg-formbarblue text-white"><?= Html::encode($this->title) ?></h5>
         <div class="card-body">
 
             <p>
@@ -33,12 +33,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['class' => 'yii\grid\SerialColumn'],
                     'ro_number',
                     [
+                        'label' => 'Period Start',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            return '<span class="text-nowrap">'.date('d-m-Y', strtotime($model->start_date)).'</span>';
+                        }
+                    ],
+                    [
                         'label' => 'Client Name',
-                        'attribute' => 'clientName',
+                        // 'attribute' => 'clientName',
                         'value' => 'client.name'
                     ],
                     'so_number',
-                    'contract_type',
+                    // 'contract_type',
                     [
                         'attribute' => 'requestOrderActivities',
                         'value' => function ($model) {

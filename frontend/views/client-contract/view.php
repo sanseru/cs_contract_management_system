@@ -31,7 +31,6 @@ if ($reqOrder) {
 }
 
 \yii\web\YiiAsset::register($this);
-
 ?>
 <div class="client-contract-view">
     <div class="row">
@@ -54,16 +53,12 @@ if ($reqOrder) {
                             ],
                         ],
                     ]) ?>
-
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <canvas id="myChart"></canvas>
-
-
         </div>
-
     </div>
 
 </div>
@@ -76,10 +71,9 @@ if ($reqOrder) {
     }
 
     .nav-tabs .nav-link {
-    background: #1d267447;
-    color: white;
-
-}
+        background: #1d267447;
+        color: white;
+    }
 </style>
 
 <ul class="nav nav-tabs nav-justified mt-3" id="myTab" role="tablist">
@@ -202,7 +196,8 @@ if ($reqOrder) {
                             // 'contract_id',
                             [
                                 'attribute' => 'activity.activity_name',
-                                'footer' => 'Total'
+                                'footer' => 'Total',
+                                'contentOptions' => ['class' => 'text-start'],
                             ],
                             [
                                 'attribute' => 'value',

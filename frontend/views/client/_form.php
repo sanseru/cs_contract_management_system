@@ -35,6 +35,7 @@ use yii\bootstrap5\ActiveForm;
     </div>
     <div class="form-group mt-2 card-footer text-center">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success btn-createcust']) ?>
+        <?= Html::a('Cancel', ['/client/index'], ['class' => 'btn btn-cancelform']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

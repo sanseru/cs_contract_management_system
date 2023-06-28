@@ -49,8 +49,16 @@ $this->registerJsFile('@web/js/client/script.js', ['depends' => [\yii\web\Jquery
                     'address:ntext',
                     'phone_number',
                     'email:email',
-                    'created_at',
-                    'updated_at',
+                    [
+                        'attribute' => 'created_at',
+                        'format' => ['date', 'php:d-m-Y']
+                    ],
+                    [
+                        'attribute' => 'updated_at',
+                        'format' => ['date', 'php:d-m-Y']
+                    ],
+                    // 'created_at',
+                    // 'updated_at',
                 ],
             ]) ?>
 
@@ -83,8 +91,16 @@ $this->registerJsFile('@web/js/client/script.js', ['depends' => [\yii\web\Jquery
                             'attribute' => 'clientName',
                             'value' => 'client.name'
                         ],
-                        'start_date',
-                        'end_date',
+                        [
+                            'attribute' => 'start_date',
+                            'format' => ['date', 'php:d-m-Y']
+                        ],
+                        [
+                            'attribute' => 'end_date',
+                            'format' => ['date', 'php:d-m-Y']
+                        ],
+                        // 'start_date',
+                        // 'end_date',
                         [
                             'class' => ActionColumn::className(),
                             'template' => '{view} {update} {delete}', // Show only Update and Delete buttons

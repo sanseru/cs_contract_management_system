@@ -16,7 +16,7 @@ $this->title = 'Contrack Management System';
                         <i class="fa-solid fa-user fa-2xl"></i>
                     </div>
                     <div class="content">
-                        <div class="text text-white fs-6">CLIENT</div>
+                        <div class="text text-white fs-6">CLIENTS</div>
                         <div class="number text-white"><?= $client ?></div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@ $this->title = 'Contrack Management System';
                         <i class="fa-solid fa-file-contract fa-2xl"></i>
                     </div>
                     <div class="content">
-                        <div class="text text-white fs-6">CONTRACT</div>
+                        <div class="text text-white fs-6">CONTRACTS</div>
                         <div class="number text-white"><?= $contractCount ?></div>
                     </div>
                 </div>
