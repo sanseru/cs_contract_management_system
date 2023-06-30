@@ -111,7 +111,25 @@ a.desc:after {
   background-color: #0c134f;
 }
 .bg-navbarblueindigo {
-  background-color: #4473c5;
+  background-color: #4473c5 !important;
+}
+.bg-blue1 {
+  background-color: #054f8c !important;
+}
+.text-blue1 {
+  color: #054f8c !important;
+}
+.bg-blue2 {
+  background-color: #1889b5 !important;
+}
+.bg-blue3 {
+  background-color: #2ea2c7 !important;
+}
+.bg-blue4 {
+  background-color: #68cbe0 !important;
+}
+.bg-blue5 {
+  background-color: #9fdae2 !important;
 }
 .bg-navbarblue {
   background-color: #0079FF;

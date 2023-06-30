@@ -34,8 +34,10 @@ $(document).ready(function() {
                         type: 'bar',
                         label: 'Request Order',
                         data: $bar1,
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
+                        // backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        // borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(5, 79, 140, 0.8)',
+                        borderColor: 'rgba(5, 79, 140, 1)',
                         borderWidth: 1
                     },
                     {
@@ -43,7 +45,8 @@ $(document).ready(function() {
                         label: 'High Value',
                         data: $line, // The data will be computed dynamically
                         fill: false,
-                        borderColor: 'rgba(255, 206, 86, 1)',
+                        // borderColor: 'rgba(255, 206, 86, 1)',
+                        borderColor: 'rgba(4, 201, 166, 1)',
                         borderWidth: 2
                     }
                 ]
