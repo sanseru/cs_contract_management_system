@@ -526,32 +526,32 @@ class SiteController extends Controller
 
         return $this->renderAjax('modalCommited', [
             'model' => $resultArray,
+            'title' => 'Request Order Commited'
         ]);
     }
     public function actionChartData()
     {
-
         $id = Yii::$app->request->get('id');
         $noReq = Yii::$app->request->get('noReq');
 
         $contractdata = ClientContract::find()->where(['contract_number' => $noReq])->one();
 
         $query = (new \yii\db\Query())
-        ->select([
-            'SUM(a.sub_total) AS total','c.master_activity_code',
-            new Expression("DATE_FORMAT(x.start_date, '%Y-%m') AS month_year")
-        ])
-
-        ->from('request_order_trans a')
-        ->join('JOIN', 'costing b', 'b.id = a.costing_id')
-        ->join('JOIN', 'item c', 'c.id = b.item_id')
-        ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
-        ->where(['x.contract_id' => $contractdata->id, 'x.client_id' => $contractdata->client_id])
-        ->andWhere(['c.master_activity_code' => $id])
-        ->groupBy(['month_year']);
+            ->select([
+                'SUM(a.sub_total) AS total','c.master_activity_code',
+                new Expression("DATE_FORMAT(x.start_date, '%Y-%m') AS month_year")
+            ])
+            ->from('request_order_trans a')
+            ->join('JOIN', 'costing b', 'b.id = a.costing_id')
+            ->join('JOIN', 'item c', 'c.id = b.item_id')
+            ->join('JOIN', 'request_order x', 'x.id = a.request_order_id')
+            ->where(['x.contract_id' => $contractdata->id, 'x.client_id' => $contractdata->client_id])
+            ->andWhere(['c.master_activity_code' => $id])
+            ->groupBy(['month_year']);
         $results = $query->all();
 
         $cav = ContractActivityValue::find()->where(['contract_id' => $contractdata->id, 'activity_id'=>$id])->one();
+
         $resultArray = [];
         foreach ($results as $key => $row) {
             $resultArray[$key] = [
@@ -563,6 +563,7 @@ class SiteController extends Controller
 
         return $this->renderAjax('modalPie', [
             'model' => $resultArray,
+            'title' => $cav->activity->activity_name
         ]);
     }
 }

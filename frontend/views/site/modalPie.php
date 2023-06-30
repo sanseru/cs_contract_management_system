@@ -8,19 +8,17 @@ $bar1 = [];
 $myear = [];
 $line = [];
 
-
 foreach ($model as $key => $value) {
     $bar1[] = $value['bar'];
     $myear[] = $value['month_year'];
     $line [] = $value['line'];
-
 }
 
 $bar1 = json_encode($bar1);
 $myear = json_encode($myear);
 $line = json_encode($line);
+$title = json_encode($title);
 
-// var_dump($line);die;
 $jsTables = <<<JS
 $(document).ready(function() {
     var ctx = document.getElementById('comboChart1').getContext('2d');
@@ -53,14 +51,6 @@ $(document).ready(function() {
             },
             options: {
                 responsive: true,
-                // scales: {
-                //     x: {
-                //         stacked: true
-                //     },
-                //     y: {
-                //         stacked: true
-                //     }
-                // },
                 plugins: {
                     tooltip: {
                         mode: 'index',
@@ -68,7 +58,8 @@ $(document).ready(function() {
                     },
                     title: {
                         display: true,
-                        text: 'Chart Bar And Line Request Order'
+                        // text: 'Chart Bar And Line Request Order'
+                        text: $title
                     }
                 }
             }

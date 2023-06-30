@@ -433,10 +433,10 @@ $jsTables = <<<JS
             "info": false,
         });
 
-        function chartpie(params) {
-            myModal.show();
-            alert(params);
-        }
+        // function chartpie(params) {
+        //     myModal.show();
+        //     alert(params);
+        // }
 
         /* Generate pie chart */
         $('.chartData').click(function() {

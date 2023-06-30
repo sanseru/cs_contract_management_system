@@ -25,6 +25,7 @@ $bar2 = json_encode($bar2);
 $bar3 = json_encode($bar3);
 $myear = json_encode($myear);
 $line = json_encode($line);
+$title = json_encode($title);
 
 $jsTables = <<<JS
 $(document).ready(function() {
@@ -92,7 +93,7 @@ $(document).ready(function() {
                     },
                     title: {
                         display: true,
-                        text: 'Chart Bar And Line Request Order'
+                        text: $title
                     }
                 }
             }
