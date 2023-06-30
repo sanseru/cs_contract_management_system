@@ -36,7 +36,7 @@ AppAsset::register($this);
             'brandLabel' => '<i class="fa-solid fa-network-wired"></i> ' . Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
             'options' => [
-                'class' => 'navbar navbar-expand-md navbar-dark bg-navbarblue fixed-top',
+                'class' => 'navbar navbar-expand-md navbar-dark bg-navbarblueindigo fixed-top',
             ],
         ]);
         $menuItems = [

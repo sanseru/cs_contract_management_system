@@ -17,7 +17,7 @@ $this->title = 'Contrack Management System';
     </div>
     <div class="body-content card-body">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-12 my-2">
                 <div class="list-group overflow-auto" style="max-height: 290px;">
                     <li class="list-group-item disabled bg-secondary text-white" aria-disabled="true"><i class="fa-solid fa-file-contract"></i> List Contract</li>
                     <?php
@@ -29,218 +29,221 @@ $this->title = 'Contrack Management System';
                         if ($value->contract_number == $id) {
                             $class = 'active';
                         }
-
                     ?>
                         <a href="<?= $url ?>" class="list-group-item list-group-item-action <?= $class ?>" aria-current="true">
                             <i class="fa-solid fa-arrow-right"></i> <strong><?= $value->contract_number ?></strong>
                         </a>
                     <?php } ?>
-
-
                 </div>
             </div>
-            <div class="col-md-9">
-                <div class="row">
-                    <?php if (empty($result)) { ?>
-                        <div class="row mb-3 text-center">
-                            <div class="col-md-12  text-white">
-                                <div class="alert alert-primary" role="alert">
-                                    --- Silahkan Pilih kontrak Di List ---
-                                </div>
+            <div class="col-lg-9 col-md-12">
+                <?php if (empty($result)) { ?>
+                    <div class="row mb-3 text-center">
+                        <div class="col-md-12  text-white">
+                            <div class="alert alert-primary" role="alert">
+                                --- Silahkan Pilih kontrak Di List ---
                             </div>
                         </div>
-                    <?php } ?>
-                    <?php foreach ($result as $key => $value) { ?>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs1 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#contract_value" aria-expanded="true" aria-controls="contract_value">
-                                                <div class="icon me-3">
-                                                    <i class="fa-solid fa-vault fa-2xl"></i>
-                                                </div>
-                                                <div class="content w-100 me-4">
-                                                    <div class="text text-white">Contract Value</div>
-                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['contractValueSum']) ? $value['contractValueSum'] : 0); ?></span></div>
-                                                </div>
-                                                <!-- <strong> Contract Value <?= Yii::$app->formatter->asCurrency($value['contractValueSum'], 'IDR'); ?></strong> -->
-                                            </button>
-                                        </h2>
+                    </div>
+                <?php } ?>
 
+                <?php foreach ($result as $key => $value) { ?>
+                <div class="row mb-3">
+                    <div class="col-lg-6 col-md-12 my-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="align-self-center">
+                                        <i class="fa-regular fa-handshake fa-2xl"></i>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs2 text-white" type="button" data-bs-toggle="modal" data-bs-target="#modalCommited" data-contr="<?= Yii::$app->request->get('id'); ?>" data-url="commited">
-                                                <div class="icon me-3">
-                                                    <i class="fa-solid fa-money-bill-trend-up fa-2xl"></i>
-                                                </div>
-                                                <div class="content w-100 me-4">
-                                                    <div class="text text-white">Request Order Commited</div>
-                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['sumReqCommited']) ? $value['sumReqCommited'] : 0); ?></span></div>
-                                                </div>
-                                            </button>
-                                        </h2>
+                                    <div class="text-right">
+                                        <h3>IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['contractValueSum']) ? $value['contractValueSum'] : 0); ?></span></h3>
+                                        <span>Contract Value</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6 mt-3">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs3 text-white" type="button">
-                                                <div class="icon me-3">
-                                                    <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
-                                                </div>
-                                                <div class="content w-100 me-4">
-                                                    <div class="text text-white">Request Order Invoiced</div>
-                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqInvoiced']) ? $value['reqInvoiced'] : 0); ?></span></div>
-                                                </div>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                </div>
+            
+                        <!-- <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="card-acordion rounded bg-cs1 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#contract_value" aria-expanded="true" aria-controls="contract_value">
+                                        <div class="icon me-3">
+                                            <i class="fa-solid fa-vault fa-2xl"></i>
+                                        </div>
+                                        <div class="content w-100 me-4">
+                                            <div class="text text-white">Contract Value</div>
+                                            <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['contractValueSum']) ? $value['contractValueSum'] : 0); ?></span></div>
+                                        </div>
+                                    </button>
+                                </h2>
                             </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs1 text-white" type="button">
-                                                <div class="icon me-3">
-                                                    <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
-                                                </div>
-                                                <div class="content w-100 me-4">
-                                                    <div class="text text-white">InProgress Request Order</div>
-                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div>
-                                                    <!-- <div class="text text-white">Request Order Paid</div>
-                                                    <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqPaid']) ? $value['reqPaid'] : 0); ?></span></div> -->
-                                                </div>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                </div>
+                        </div> -->
+                    </div>
+                    <div class="col-md-6 my-2">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="card-acordion rounded bg-cs2 text-white" type="button" data-bs-toggle="modal" data-bs-target="#modalCommited" data-contr="<?= Yii::$app->request->get('id'); ?>" data-url="commited">
+                                        <div class="icon me-3">
+                                            <i class="fa-solid fa-money-bill-trend-up fa-2xl"></i>
+                                        </div>
+                                        <div class="content w-100 me-4">
+                                            <div class="text text-white">Request Order Commited</div>
+                                            <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['sumReqCommited']) ? $value['sumReqCommited'] : 0); ?></span></div>
+                                        </div>
+                                    </button>
+                                </h2>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mt-3">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs4 text-white" type="button">
-                                                <div class="icon me-3">
-                                                    <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
-                                                </div>
-                                                <div class="content w-100 me-4">
-                                                    <div class="text text-white">Request Order UnPaid</div>
-                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqUnpaid']) ? $value['reqUnpaid'] : 0); ?></span></div>
-                                                    <!-- <div class="text text-white">InProgress Request Order</div>
-                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div> -->
-                                                </div>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="card-acordion rounded bg-cs5 text-white" type="button">
-                                                <div class="icon me-3">
-                                                    <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
-                                                </div>
-                                                <div class="content w-100 me-4">
-                                                    <div class="text text-white">Remaining Contract Value</div>
-                                                    <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['remaincontvalue']) ? $value['remaincontvalue'] : 0); ?></span></div>
-                                                </div>
-                                            </button>
-                                        </h2>
-                                    </div>
-                                </div>
+                    </div>
+                    <div class="col-md-6 my-2">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="card-acordion rounded bg-cs3 text-white" type="button">
+                                        <div class="icon me-3">
+                                            <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
+                                        </div>
+                                        <div class="content w-100 me-4">
+                                            <div class="text text-white">Request Order Invoiced</div>
+                                            <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqInvoiced']) ? $value['reqInvoiced'] : 0); ?></span></div>
+                                        </div>
+                                    </button>
+                                </h2>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-6 my-2">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="card-acordion rounded bg-cs1 text-white" type="button">
+                                        <div class="icon me-3">
+                                            <i class="fa-solid fa-file-invoice-dollar fa-2xl"></i>
+                                        </div>
+                                        <div class="content w-100 me-4">
+                                            <div class="text text-white">InProgress Request Order</div>
+                                            <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div>
+                                            <!-- <div class="text text-white">Request Order Paid</div>
+                                            <div class="number text-white  text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqPaid']) ? $value['reqPaid'] : 0); ?></span></div> -->
+                                        </div>
+                                    </button>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 my-2">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="card-acordion rounded bg-cs4 text-white" type="button">
+                                        <div class="icon me-3">
+                                            <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
+                                        </div>
+                                        <div class="content w-100 me-4">
+                                            <div class="text text-white">Request Order UnPaid</div>
+                                            <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['reqUnpaid']) ? $value['reqUnpaid'] : 0); ?></span></div>
+                                            <!-- <div class="text text-white">InProgress Request Order</div>
+                                            <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['inProgress']) ? $value['inProgress'] : 0); ?></span></div> -->
+                                        </div>
+                                    </button>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 my-2">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="card-acordion rounded bg-cs5 text-white" type="button">
+                                        <div class="icon me-3">
+                                            <i class="fa-solid fa-money-bill-transfer fa-2xl"></i>
+                                        </div>
+                                        <div class="content w-100 me-4">
+                                            <div class="text text-white">Remaining Contract Value</div>
+                                            <div class="number text-white text-start fw-bold mt-3">IDR <span class="fs-3"><?= Yii::$app->formatter->asDecimal(!empty($value['remaincontvalue']) ? $value['remaincontvalue'] : 0); ?></span></div>
+                                        </div>
+                                    </button>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <?php
-                        $dataModel = $value['dataProvidercav']->getModels();
-                        foreach ($dataModel as $key => $object) {
+                    $dataModel = $value['dataProvidercav']->getModels();
+                    foreach ($dataModel as $key => $object) {
 
-                            $activityCode = $object->activity->activity_code;
-                            $activityName = $object->activity->activity_name;
+                        $activityCode = $object->activity->activity_code;
+                        $activityName = $object->activity->activity_name;
 
-                            $activityCode = json_encode($activityCode);
-                            $activityName = json_encode($activityName);
+                        $activityCode = json_encode($activityCode);
+                        $activityName = json_encode($activityName);
 
-                            $budgetsPieData = 0;
+                        $budgetsPieData = 0;
 
-                            foreach ($value['budgetsPie'] as $budgetxs) {
-                                if (isset($actualsd['activity_id'])) {
+                        foreach ($value['budgetsPie'] as $budgetxs) {
+                            if (isset($actualsd['activity_id'])) {
 
-                                    if ($object->activity->id == $budgetxs['activity_id']) {
-                                        $budgetsPieData = $budgetxs['value'];
-                                        // break;
-                                    }
+                                if ($object->activity->id == $budgetxs['activity_id']) {
+                                    $budgetsPieData = $budgetxs['value'];
+                                    // break;
                                 }
                             }
-
-                            $actualPieData = 0;
-                            foreach ($value['actualsData'] as $actualsd) {
-                                if (isset($actualsd['activity_id'])) {
-                                    if ($object->activity->id == $actualsd['activity_id']) {
-                                        $actualPieData = $actualPieData + $actualsd['value'];
-                                        // break;
-                                    }
-                                }
-                            }
-
-
-                            $remaining = 0;
-                            $remaining = $object->value - $actualPieData;
-
-
-                            $jsx = <<<JS
-                        var data1 = {
-                            labels: ['Budget', 'Used', 'Remaining'],
-                            datasets: [{
-                                data: [$object->value,$actualPieData,$remaining],
-                                backgroundColor: ['#7C96AB', '#00ABB3', '#B46060'],
-                            }]
-                            };
-
-                            var options1 = {
-                                responsive: true,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: $activityName,
-                                    },
-                                    
-                            }
-                            };
-                            var charts = 'chart' + $activityCode;
-                            var ctx1 = document.getElementById(charts).getContext('2d');
-                            // Chart.register(ChartDataLabels);
-
-                            new Chart(ctx1, {
-                            type: 'pie',
-                            data: data1,
-                            options: options1
-                            });
-                        JS;
-                            $this->registerJs(new JsExpression($jsx));
                         }
 
+                        $actualPieData = 0;
+                        foreach ($value['actualsData'] as $actualsd) {
+                            if (isset($actualsd['activity_id'])) {
+                                if ($object->activity->id == $actualsd['activity_id']) {
+                                    $actualPieData = $actualPieData + $actualsd['value'];
+                                    // break;
+                                }
+                            }
+                        }
+
+
+                        $remaining = 0;
+                        $remaining = $object->value - $actualPieData;
+
+
+                        $jsx = <<<JS
+                    var data1 = {
+                        labels: ['Budget', 'Used', 'Remaining'],
+                        datasets: [{
+                            data: [$object->value,$actualPieData,$remaining],
+                            backgroundColor: ['#7C96AB', '#00ABB3', '#B46060'],
+                        }]
+                        };
+
+                        var options1 = {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: $activityName,
+                                },
+                                
+                        }
+                        };
+                        var charts = 'chart' + $activityCode;
+                        var ctx1 = document.getElementById(charts).getContext('2d');
+                        // Chart.register(ChartDataLabels);
+
+                        new Chart(ctx1, {
+                        type: 'pie',
+                        data: data1,
+                        options: options1
+                        });
+                    JS;
+                        $this->registerJs(new JsExpression($jsx));
+                    }
                 ?>
             </div>
         </div>
-        <div class="row mt-5">
+
+        <div class="row mt-3 mb-5">
             <!-- <div class="d-flex align-items-center loading-page">
                 <strong>Loading...</strong>
                 <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
@@ -273,16 +276,16 @@ $this->title = 'Contrack Management System';
                 </div>
             </div> -->
             <?php
-                        foreach ($dataModel as $object) { ?>
-                <div class="col-md-2 chartData" style="display: none;" data-id="<?= $object->activity->id ?>" data-noreq="<?= \Yii::$app->request->get('id') ?>">
-                    <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
-                </div>
+                foreach ($dataModel as $object) { ?>
+                    <div class="col-lg-2 col-md-4 chartData" style="display: none;" data-id="<?= $object->activity->id ?>" data-noreq="<?= \Yii::$app->request->get('id') ?>">
+                        <canvas id="chart<?= $object->activity->activity_code ?>"></canvas>
+                    </div>
             <?php } ?>
 
         </div>
 
-        <div class="row mt-5">
-            <div class="col-md-6">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 my-2">
                 <div class="card">
                     <div class="card-header text-center bg-formbarblue text-white">
                         <h5 class="fw-bold">List Activity</h5>
@@ -322,7 +325,7 @@ $this->title = 'Contrack Management System';
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12 my-2">
                 <div class="card">
                     <div class="card-header text-center bg-formbarblue text-white">
                         <h5 class="fw-bold">List Request Order</h5>
@@ -390,7 +393,7 @@ $this->title = 'Contrack Management System';
 
 <!-- Modal -->
 <div class="modal fade" id="modalCommited" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -405,7 +408,7 @@ $this->title = 'Contrack Management System';
 
 <!-- Modal -->
 <div class="modal fade" id="modalCommited2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -513,132 +516,7 @@ $jsTables = <<<JS
     });
 });
 
-
-
 JS;
 $this->registerJs(new JsExpression($jsTables));
 
 ?>
-<style>
-    .loading-page {
-        width: 100%;
-        height: 20vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        /* background-color: #f8f9fa; */
-        background-color: #fff;
-
-    }
-
-    .spinner {
-        width: 6rem;
-        height: 6rem;
-    }
-
-    /* Spinner */
-    .lds-roller {
-        display: inline-block;
-        position: relative;
-        width: 64px;
-        height: 64px;
-    }
-
-    .lds-roller div {
-        animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        transform-origin: 32px 32px;
-    }
-
-    .lds-roller div:after {
-        content: " ";
-        display: block;
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #333;
-        margin: -3px 0 0 -3px;
-    }
-
-    .lds-roller div:nth-child(1) {
-        animation-delay: -0.036s;
-    }
-
-    .lds-roller div:nth-child(1):after {
-        top: 50px;
-        left: 50px;
-    }
-
-    .lds-roller div:nth-child(2) {
-        animation-delay: -0.072s;
-    }
-
-    .lds-roller div:nth-child(2):after {
-        top: 54px;
-        left: 45px;
-    }
-
-    .lds-roller div:nth-child(3) {
-        animation-delay: -0.108s;
-    }
-
-    .lds-roller div:nth-child(3):after {
-        top: 57px;
-        left: 39px;
-    }
-
-    .lds-roller div:nth-child(4) {
-        animation-delay: -0.144s;
-    }
-
-    .lds-roller div:nth-child(4):after {
-        top: 58px;
-        left: 32px;
-    }
-
-    .lds-roller div:nth-child(5) {
-        animation-delay: -0.18s;
-    }
-
-    .lds-roller div:nth-child(5):after {
-        top: 57px;
-        left: 25px;
-    }
-
-    .lds-roller div:nth-child(6) {
-        animation-delay: -0.216s;
-    }
-
-    .lds-roller div:nth-child(6):after {
-        top: 54px;
-        left: 19px;
-    }
-
-    .lds-roller div:nth-child(7) {
-        animation-delay: -0.252s;
-    }
-
-    .lds-roller div:nth-child(7):after {
-        top: 50px;
-        left: 14px;
-    }
-
-    .lds-roller div:nth-child(8) {
-        animation-delay: -0.288s;
-    }
-
-    .lds-roller div:nth-child(8):after {
-        top: 45px;
-        left: 10px;
-    }
-
-    @keyframes lds-roller {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>
