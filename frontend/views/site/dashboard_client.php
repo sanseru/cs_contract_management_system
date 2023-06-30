@@ -385,8 +385,8 @@ $this->title = 'Contrack Management System';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="commitedBody">
-                Fetch Data...
-                <p>If Not Show Please Close And Open Again...</p>
+                Downloading data...
+                <p>Please wait or re-open the chart window...</p>
             </div>
         </div>
     </div>
@@ -400,8 +400,8 @@ $this->title = 'Contrack Management System';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="pieData">
-                Fetch Data...
-                <p>If Not Show Please Close And Open Again...</p>
+                Downloading data...
+                <p>Please wait or re-open the chart window...</p>
             </div>
         </div>
     </div>
