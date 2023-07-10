@@ -11,12 +11,11 @@ use yii\web\View;
 
 $this->title = 'Login';
 // $this->params['breadcrumbs'][] = $this->title;
-AppAsset::register($this);
+// AppAsset::register($this);
 
 
-$this->registerCssFile("@web/css/clont.css", [
-    'depends' => [\yii\bootstrap5\BootstrapAsset::class],
-], 'login');
+$this->registerCssFile("@web/css/clont.css");
+$this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css', ['integrity' => 'YOUR_INTEGRITY_VALUE', 'crossorigin' => 'anonymous']);
 
 ?>
 <?php $this->beginPage() ?>
@@ -41,7 +40,7 @@ $this->registerCssFile("@web/css/clont.css", [
                     <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
                     <h1 class="text-login">Login</h1>
                     <p class="text-signin">Sign In to your account</p>
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3 field-loginform-username required">
                         <span class="input-group-addon bg-white border-0"><i class="fa fa-user pt-1"></i></span>
                         <input type="text" class="form-control border-0" name="LoginForm[username]" autofocus="true" placeholder="Username" value="">
                     </div>
@@ -60,13 +59,15 @@ $this->registerCssFile("@web/css/clont.css", [
                 </div>
             </div>
         </div>
-        <div class="col-md-9 content-frame-kanan">
+        <div class="col-md-9  p-0">
+            <!-- content-frame-kanan -->
+            <?= Html::img('@web/images/valve.jpg', ['alt' => 'Img PTCS', 'width' => '100%', 'height' => '400px']); ?>
             <div class="content-frame-kanan-text">
                 <span class="font-weight-semibold text-ptcs">PT. Control Sytems Arena Para Nusa</span>
-                <p class="font-weight-bold text-title">Valve & Instrument</p>
-                <span class="font-weight-bold text-subtitle">Asset Management Software</span>
+                <!-- <p class="font-weight-bold text-title">Valve & Instrument</p> -->
+                <span class="font-weight-bold text-subtitle">Contract Management</span>
                 <p class="text-description">
-                    Welcome to PT. Control Systems Valve & Instrument Asset Manager, a software solution designed to streamline the management of Valve & Instrument install base. Our software enables to effectively track and monitor the data and health conditions of valves and instrumentation. With our comprehensive tools and features, we can gain valuable insights into the performance and maintenance requirements of each asset. Seamlessly organize and analyze data, allowing for proactive decision-making and optimal asset utilization.
+                    Welcome to PT. Control Systems Contract management Software. Our software provides a comprehensive solution that empowers contract managers and their customers to efficiently manage and monitor contracts. With our intuitive interface and advanced features, you can easily navigate through the contract lifecycle, ensuring seamless collaboration and effective oversight. Please enter your credentials to access the full suite of contract management tools and unlock the potential of enhanced contract administration.
                 </p>
             </div>
         </div>
@@ -115,12 +116,12 @@ $this->registerCssFile("@web/css/clont.css", [
         /* Ensures the background image covers the entire container */
         padding: 0;
         height: 400px;
-       
+
     }
 
 
     .content-frame-kanan-text {
-        margin-top: 23rem;
+        margin-top: 0rem;
         background-color: white;
         padding: 1rem;
     }
@@ -132,7 +133,7 @@ $this->registerCssFile("@web/css/clont.css", [
 
     .text-title {
         font-size: 2.5rem;
-        padding-top: 1.7rem;
+        padding-top: 0.2rem;
         margin-bottom: 0;
         color: #155584;
     }
@@ -144,7 +145,7 @@ $this->registerCssFile("@web/css/clont.css", [
     }
 
     .text-description {
-        padding-top: 1.7rem;
+        padding-top: 1rem;
         text-align: justify;
         font-size: 1.1rem;
     }
