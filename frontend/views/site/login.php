@@ -61,7 +61,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.
         </div>
         <div class="col-md-9  p-0">
             <!-- content-frame-kanan -->
-            <?= Html::img('@web/images/valve.jpg', ['alt' => 'Img PTCS', 'width' => '100%', 'height' => '400px']); ?>
+            <?= Html::img('@web/images/valve.jpg', ['alt' => 'Img PTCS', 'width' => '100%', 'height' => '480px']); ?>
             <div class="content-frame-kanan-text">
                 <span class="font-weight-semibold text-ptcs">PT. Control Sytems Arena Para Nusa</span>
                 <p class="font-weight-bold text-title"></p>
