@@ -64,7 +64,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.
             <?= Html::img('@web/images/valve.jpg', ['alt' => 'Img PTCS', 'width' => '100%', 'height' => '400px']); ?>
             <div class="content-frame-kanan-text">
                 <span class="font-weight-semibold text-ptcs">PT. Control Sytems Arena Para Nusa</span>
-                <!-- <p class="font-weight-bold text-title">Valve & Instrument</p> -->
+                <p class="font-weight-bold text-title"></p>
                 <span class="font-weight-bold text-subtitle">Contract Management</span>
                 <p class="text-description">
                     Welcome to PT. Control Systems Contract management Software. Our software provides a comprehensive solution that empowers contract managers and their customers to efficiently manage and monitor contracts. With our intuitive interface and advanced features, you can easily navigate through the contract lifecycle, ensuring seamless collaboration and effective oversight. Please enter your credentials to access the full suite of contract management tools and unlock the potential of enhanced contract administration.
@@ -141,7 +141,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.
     .text-subtitle {
         font-size: 2rem;
         padding-top: 0;
-        color: #CF0A0A;
+        color: #155584;
     }
 
     .text-description {
