@@ -108,10 +108,10 @@ $this->registerCssFile("@web/css/clont.css", [
     }
 
     .content-frame-kanan {
-        /* background-image: url("../images/valve.jpg");
+        background-image: url("../images/valve.jpg");
         background-repeat: no-repeat;
         background-position-y: -8rem;
-        background-size: cover; */
+        background-size: cover;
         /* Ensures the background image covers the entire container */
         padding: 0;
         height: 400px;
