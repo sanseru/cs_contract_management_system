@@ -38,30 +38,35 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.
             <div class="row">
                 <div class="col-12 pl-7 pr-7 form-horizontal form-material">
                     <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
-                    <h1 class="text-login">Login</h1>
-                    <p class="text-signin">Sign In to your account</p>
-                    <div class="input-group mb-3 field-loginform-username required">
-                        <span class="input-group-addon bg-white border-0"><i class="fa fa-user pt-1"></i></span>
-                        <input type="text" class="form-control border-0" name="LoginForm[username]" autofocus="true" placeholder="Username" value="">
-                    </div>
-                    <div class="input-group mb-4">
+                    <h1 class="text-login text-center">Login</h1>
+                    <p class="text-signin text-center">Sign In to your account</p>
+                    <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder' => "username"])->label(false) ?>
+
+                    <!-- <div class="input-group mb-3 field-loginform-username required"> -->
+
+                    <!-- <span class="input-group-addon bg-white border-0"><i class="fa fa-user pt-1"></i></span>
+                        <input type="text" class="form-control border-0" name="LoginForm[username]" autofocus="true" placeholder="Username" value=""> -->
+                    <!-- </div> -->
+                    <?= $form->field($model, 'password')->passwordInput(['placeholder' => "Password"])->label(false) ?>
+
+                    <!-- <div class="input-group mb-4">
                         <span class="input-group-addon bg-white border-0"><i class="fa fa-lock pt-1"></i></span>
                         <input type="password" class="form-control border-0" name="LoginForm[password]" id="LoginForm[password]" placeholder="Password">
-                    </div>
+                    </div> -->
                     <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-login btn-block">Login</button>
+                            <button type="submit" class="btn btn-login btn-block text-white">Login</button>
                         </div>
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>
         </div>
-        <div class="col-md-9  p-0">
+        <div class="col-md-9  p-0 content-frame-kanan">
             <!-- content-frame-kanan -->
-            <?= Html::img('@web/images/valve.jpg', ['alt' => 'Img PTCS', 'width' => '100%', 'height' => '480px']); ?>
+            <?php // Html::img('@web/images/valve.jpg', ['alt' => 'Img PTCS', 'width' => '100%', 'height' => '480px']); ?>
             <div class="content-frame-kanan-text">
                 <span class="font-weight-semibold text-ptcs">PT. Control Sytems Arena Para Nusa</span>
                 <p class="font-weight-bold text-title"></p>
@@ -111,17 +116,17 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.
     .content-frame-kanan {
         background-image: url("../images/valve.jpg");
         background-repeat: no-repeat;
-        background-position-y: -8rem;
+        background-position-y: -12rem;
         background-size: cover;
         /* Ensures the background image covers the entire container */
         padding: 0;
-        height: 400px;
+        /* height: 400px; */
 
     }
 
 
     .content-frame-kanan-text {
-        margin-top: 0rem;
+        margin-top: 40rem;
         background-color: white;
         padding: 1rem;
     }
