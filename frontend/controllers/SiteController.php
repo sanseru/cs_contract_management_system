@@ -150,7 +150,8 @@ class SiteController extends Controller
                     $contractValueData = $contractValue->all();
 
                     $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
-                    $reqCommited = $requestOrder->andWhere(['IN', 'status', [1, 2, 3]])->joinWith('requestOrderTrans');
+                    // $reqCommited = $requestOrder->andWhere(['IN', 'status', [1, 2, 3, 4, 9]])->joinWith('requestOrderTrans');
+                    $reqCommited = $requestOrder->joinWith('requestOrderTrans');
                     $sumReqCommited = $reqCommited->sum('request_order_trans.sub_total');
 
                     $requestOrder = RequestOrder::find()->where(['contract_id' => $value->id, 'client_id' => $clientId]);
